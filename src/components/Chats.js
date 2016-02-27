@@ -5,6 +5,7 @@ import ListItem from "material-ui/lib/lists/list-item";
 import CommunicationChatBubble from "material-ui/lib/svg-icons/communication/chat";
 import RefreshIndicator from "material-ui/lib/refresh-indicator";
 import SearchBox from "./SearchBox";
+import Colors from 'material-ui/lib/styles/colors';
 import chats from "../api/chats";
 
 export default React.createClass({
@@ -52,15 +53,16 @@ export default React.createClass({
                     position: 'relative',
                 },
                 refresh: {
-                    display: 'inline-block',
+                    display: 'block',
                     position: 'relative',
+                    margin: '0 auto'
                 },
             };
             return <RefreshIndicator
-                size={50}
-                left={70}
-                top={150}
-                loadingColor={"#FF9800"}
+                size={70}
+                left={0}
+                top={60}
+                loadingColor={Colors.red500}
                 status="loading"
                 style={style.refresh}
             />
