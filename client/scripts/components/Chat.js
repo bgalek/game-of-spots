@@ -27,6 +27,14 @@ const customStyles = {
 export default React.createClass({
     displayName: 'Chat',
 
+    contextTypes: {
+        router: React.PropTypes.object
+    },
+
+    answerQuestion(chatId, questionId, event) {
+        this.context.router.push(`/chats/${chatId}/question/${questionId}`);
+    },
+
     getInitialState: function () {
         return {
             tab: 'ask',
@@ -86,6 +94,8 @@ export default React.createClass({
                                   </p>
                                 }
                                 secondaryTextLines={2}
+                                onTouchTap={this.answerQuestion.bind(this, 'testRoom')}
+                                onClick={this.answerQuestion.bind(this, 'testRoom')}
                               />
                               <ListItem
                                 leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
@@ -96,8 +106,9 @@ export default React.createClass({
                                     I&apos;ll be in your neighborhood doing errands this weekend. Do you want to grab brunch?
                                   </p>
                                 }
-                                    secondaryTextLines={2}
-
+                                secondaryTextLines={2}
+                                onTouchTap={this.answerQuestion.bind(this, 'testRoom')}
+                                onClick={this.answerQuestion.bind(this, 'testRoom')}
                               />
                                 <ListItem
                                     rightAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
@@ -107,8 +118,11 @@ export default React.createClass({
                                     <span style={{color: Colors.darkBlack}}>Brendan Lim</span> --
                                     I&apos;ll be in your neighborhood doing errands this weekend. Do you want to grab brunch?
                                   </p>
+
                                 }
-                                    secondaryTextLines={10}
+                                    secondaryTextLines={2}
+                                    onTouchTap={this.answerQuestion.bind(this, 'testRoom')}
+                                    onClick={this.answerQuestion.bind(this, 'testRoom')}
                                 />
                             </List>
                         </div>

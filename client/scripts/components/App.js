@@ -5,8 +5,10 @@ import Chats from "./Chats";
 import Chat from "./Chat";
 import Error404 from "./Error404";
 import About from "./About";
+import Answer from "./Answer"
 import LeftNav from "material-ui/lib/left-nav";
 import MenuItem from "material-ui/lib/menus/menu-item";
+import PinDrop from 'material-ui/lib/svg-icons/maps/pin-drop';
 
 export default React.createClass({
     displayName: 'App',
@@ -34,6 +36,7 @@ export default React.createClass({
                 <Router history={hashHistory}>
                     <Route path="/" component={Chats}/>
                     <Route path="/chats/:chatId" component={Chat}/>
+                    <Route path="/chats/:chatId/question/:questionId" component={Answer}/>
                     <Route path="/about" component={About}/>
                     <Route path="*" component={Error404}/>
                 </Router>
