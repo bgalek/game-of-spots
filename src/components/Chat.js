@@ -21,21 +21,22 @@ const customStyles = {
         padding: '15'
     },
     questionInputStyle: {
-        textAlign: 'center',
-        fontSize: 20
+        fontSize: 20,
+        marginBottom: '7'
     },
     questionListHeading: {
         textAlign: 'center',
         fontSize: 14,
         fontWeight: '700',
         textTransform: 'uppercase',
-        color: Colors.red500
-    },
-    cardMediaPhotoWrapper: {
-        height: '250',
-        minHeight: '250',
-        overflow: 'hidden'
+        color: Colors.red500,
+        margin: '0'
     }
+    //cardMediaPhotoWrapper: {
+        //height: '250',
+        //minHeight: '250',
+        //overflow: 'hidden'
+    //}
 };
 
 export default React.createClass({
@@ -43,10 +44,6 @@ export default React.createClass({
 
     contextTypes: {
         router: React.PropTypes.object
-    },
-
-    answerQuestion(chatId, questionId, event) {
-        this.context.router.push(`/chats/${chatId}/question/${questionId}`);
     },
 
     getInitialState: function () {
@@ -102,7 +99,7 @@ export default React.createClass({
                             <TextField
                                 hintText="Ask any question..."
                                 fullWidth={true}
-                                style={customStyles.questionInputStyle}
+                                inputStyle={customStyles.questionInputStyle}
                             />
                             <RaisedButton
                                 label="Send!" secondary={true}
@@ -133,8 +130,6 @@ export default React.createClass({
                                   </p>
                                 }
                                     secondaryTextLines={2}
-                                    onTouchTap={this.answerQuestion.bind(this, 1)}
-                                    onClick={this.answerQuestion.bind(this, 1)}
                                 />
                                 <ListItem
                                     leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
@@ -146,8 +141,6 @@ export default React.createClass({
                                   </p>
                                 }
                                     secondaryTextLines={2}
-                                    onTouchTap={this.answerQuestion.bind(this, 1)}
-                                    onClick={this.answerQuestion.bind(this, 1)}
                                 />
                                 <ListItem
                                     rightAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
@@ -160,8 +153,6 @@ export default React.createClass({
 
                                 }
                                     secondaryTextLines={2}
-                                    onTouchTap={this.answerQuestion.bind(this, 1)}
-                                    onClick={this.answerQuestion.bind(this, 1)}
                                 />
                             </List>
                             <PostSender/>

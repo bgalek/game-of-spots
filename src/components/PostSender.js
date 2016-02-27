@@ -4,7 +4,7 @@ import Colors from 'material-ui/lib/styles/colors';
 import Paper from "material-ui/lib/paper";
 import RaisedButton from 'material-ui/lib/raised-button';
 import TextField from "material-ui/lib/text-field";
-import SMS from 'material-ui/lib/svg-icons/notification/sms';
+import SendIcon from 'material-ui/lib/svg-icons/content/send';
 import IconButton from 'material-ui/lib/icon-button';
 
 const customStyles = {
@@ -56,7 +56,7 @@ export default React.createClass({
                 </div>
                 <div style={customStyles.postSenderButtonWrapper}>
                     <IconButton iconStyle={customStyles.sendPostIcon}>
-                        <SMS />
+                        <SendIcon />
                     </IconButton>
                 </div>
             </form>

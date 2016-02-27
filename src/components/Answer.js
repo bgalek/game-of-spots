@@ -7,6 +7,7 @@ import CardHeader from "material-ui/lib/card/card-header";
 import CardMedia from "material-ui/lib/card/card-media";
 import CardTitle from "material-ui/lib/card/card-title";
 import CardText from "material-ui/lib/card/card-text";
+import Dialog from 'material-ui/lib/dialog';
 
 const customStyles = {
     defaultPadding: {
@@ -19,8 +20,8 @@ const customStyles = {
         padding: '15'
     },
     questionInputStyle: {
-        textAlign: 'center',
-        fontSize: 20
+        fontSize: 20,
+        marginBottom: '7'
     },
     cardMediaPhotoWrapper: {
         height: '250',
@@ -61,12 +62,37 @@ export default React.createClass({
     contextTypes: {
         router: React.PropTypes.object
     },
-    backToChat(chatId, event) {
-        this.context.router.push(`/chats/${chatId}`);
+    getInitialState: function(props) {
+        return {
+            open: false
+        };
+    },
+    handleOpen: function() {
+        this.setState({open: true});
+    },
+    handleClose: function() {
+        this.setState({open: false});
+    },
+    backToChat(event) {
+        this.context.router.goBack();
     },
     render() {
         return (
             <div className="app-chat">
+                <Dialog
+                    title="Thank you!"
+                    modal={false}
+                    open={this.state.open}
+                    onRequestClose={this.handleClose}
+                    actions={<RaisedButton
+                                label="Close"
+                                secondary={true}
+                                keyboardFocused={true}
+                                onTouchTap={this.backToChat}
+                            />}
+                >
+                    Thank you for answering the question!
+                </Dialog>
                 <Card>
                     <CardMedia
                         overlay={<CardTitle title="Multitap PiwPaw" subtitle="0.2km away from you" />}
@@ -91,18 +117,20 @@ export default React.createClass({
                     <TextField
                         hintText="Your answer"
                         fullWidth={true}
-                        style={customStyles.questionInputStyle}
+                        inputStyle={customStyles.questionInputStyle}
                     />
                     <RaisedButton
                         label="Send!" secondary={true}
                         fullWidth={true}
+                        onTouchTap={this.handleOpen}
+                        onClick={this.handleOpen}
                     />
                     <RaisedButton
                         label="I am not there / I don't know"
                         fullWidth={true}
                         style={customStyles.topMarginSmall}
-                        onTouchTap={this.backToChat.bind(this, 1)}
-                        onClick={this.backToChat.bind(this, 1)}
+                        onTouchTap={this.backToChat}
+                        onClick={this.backToChat}
                     />
                 </div>
             </div>
