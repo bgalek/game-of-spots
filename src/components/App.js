@@ -5,10 +5,9 @@ import Chats from "./Chats";
 import Chat from "./Chat";
 import Error404 from "./Error404";
 import About from "./About";
-import Answer from "./Answer"
+import Answer from "./Answer";
 import LeftNav from "material-ui/lib/left-nav";
 import MenuItem from "material-ui/lib/menus/menu-item";
-import PinDrop from 'material-ui/lib/svg-icons/maps/pin-drop';
 
 export default React.createClass({
     displayName: 'App',
