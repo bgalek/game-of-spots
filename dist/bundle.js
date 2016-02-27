@@ -58,7 +58,7 @@
 
 	var _App2 = _interopRequireDefault(_App);
 
-	var _reactTapEventPlugin = __webpack_require__(370);
+	var _reactTapEventPlugin = __webpack_require__(375);
 
 	var _reactTapEventPlugin2 = _interopRequireDefault(_reactTapEventPlugin);
 
@@ -19698,23 +19698,23 @@
 
 	var _Chat2 = _interopRequireDefault(_Chat);
 
-	var _Error = __webpack_require__(341);
+	var _Error = __webpack_require__(343);
 
 	var _Error2 = _interopRequireDefault(_Error);
 
-	var _About = __webpack_require__(342);
+	var _About = __webpack_require__(344);
 
 	var _About2 = _interopRequireDefault(_About);
 
-	var _Answer = __webpack_require__(343);
+	var _Answer = __webpack_require__(345);
 
 	var _Answer2 = _interopRequireDefault(_Answer);
 
-	var _leftNav = __webpack_require__(346);
+	var _leftNav = __webpack_require__(355);
 
 	var _leftNav2 = _interopRequireDefault(_leftNav);
 
-	var _menuItem = __webpack_require__(361);
+	var _menuItem = __webpack_require__(367);
 
 	var _menuItem2 = _interopRequireDefault(_menuItem);
 
@@ -19722,7 +19722,7 @@
 
 	var _themeManager2 = _interopRequireDefault(_themeManager);
 
-	var _CustomTheme = __webpack_require__(369);
+	var _CustomTheme = __webpack_require__(374);
 
 	var _CustomTheme2 = _interopRequireDefault(_CustomTheme);
 
@@ -19766,7 +19766,7 @@
 	                _react2.default.createElement(
 	                    _menuItem2.default,
 	                    { onTouchTap: this.handleGoTo.bind(this, '/') },
-	                    "Chats"
+	                    "Available spots"
 	                ),
 	                _react2.default.createElement(
 	                    _menuItem2.default,
@@ -33332,7 +33332,6 @@
 	            var slug_name = result.slug_name;
 	            var name = result.name;
 	            var avatar = result.avatar;
-	            var image = result.image;
 
 	            return _react2.default.createElement(_listItem2.default, {
 	                key: "" + slug_name,
@@ -34986,25 +34985,20 @@
 	exports.default = _react2.default.createClass({
 	    displayName: 'SearchBox',
 
-	    getInitialState: function getInitialState() {
-	        return {
-	            value: ''
-	        };
-	    },
-	    handleQuestionChange: function handleChange(event) {
-	        this.setState({
-	            value: event.target.value
-	        });
+	    handleChange: function handleChange(event) {
+	        this.props.onSubmit(event.target.value);
 	    },
 	    handleSearch: function handleSearch(event) {
 	        event.preventDefault();
-	        this.props.onSubmit(this.state.value);
+	        if (typeof event.target.value !== "undefined") {
+	            this.props.onSubmit(event.target.value);
+	        }
 	    },
 	    render: function render() {
 	        return _react2.default.createElement(
 	            "form",
 	            { style: customStyles.defaultPadding, onSubmit: this.handleSearch },
-	            _react2.default.createElement(_textField2.default, { hintText: "Find a spot", value: this.state.value, onChange: this.handleQuestionChange, fullWidth: true })
+	            _react2.default.createElement(_textField2.default, { hintText: "Find a spot", onChange: this.handleQuestionChange, fullWidth: true })
 	        );
 	    }
 	});
@@ -36212,6 +36206,39 @@
 	                var requestInstance = _superagent2.default.get(API_HOST + "/chats/").accept('application/json').query({
 	                    'name': query
 	                });
+	                requestInstance.end(function (error, res) {
+	                    if (error) reject(error);
+	                    resolve(res.body.results);
+	                });
+	            });
+	        }
+	    }, {
+	        key: "join",
+	        value: function join(chatId) {
+	            return new Promise(function (resolve, reject) {
+	                var requestInstance = _superagent2.default.post(API_HOST + "/chats/" + chatId + "/join/").accept('application/json');
+	                requestInstance.end(function (error, res) {
+	                    if (error) reject(error);
+	                    resolve(res.body);
+	                });
+	            });
+	        }
+	    }, {
+	        key: "sendMessage",
+	        value: function sendMessage(chatId, message, username) {
+	            return new Promise(function (resolve, reject) {
+	                var requestInstance = _superagent2.default.post(API_HOST + "/chats/" + chatId + "/messages/").accept('application/json').send("{\"body\":\"" + message + "\",\"username\":\"" + username + "\"}");
+	                requestInstance.end(function (error, res) {
+	                    if (error) reject(error);
+	                    resolve(res.body);
+	                });
+	            });
+	        }
+	    }, {
+	        key: "chatLog",
+	        value: function chatLog(chatId) {
+	            return new Promise(function (resolve, reject) {
+	                var requestInstance = _superagent2.default.get(API_HOST + "/chats/" + chatId + "/messages/").accept('application/json');
 	                requestInstance.end(function (error, res) {
 	                    if (error) reject(error);
 	                    resolve(res.body.results);
@@ -37685,17 +37712,9 @@
 
 	var _cardTitle2 = _interopRequireDefault(_cardTitle);
 
-	var _avatar = __webpack_require__(299);
-
-	var _avatar2 = _interopRequireDefault(_avatar);
-
 	var _colors = __webpack_require__(242);
 
 	var _colors2 = _interopRequireDefault(_colors);
-
-	var _chats = __webpack_require__(316);
-
-	var _chats2 = _interopRequireDefault(_chats);
 
 	var _raisedButton = __webpack_require__(338);
 
@@ -37705,47 +37724,56 @@
 
 	var _PostSender2 = _interopRequireDefault(_PostSender);
 
+	var _chats = __webpack_require__(316);
+
+	var _chats2 = _interopRequireDefault(_chats);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var LocalStorageMixin = __webpack_require__(341);
 
 	var customStyles = {
 	    defaultPadding: {
 	        padding: '15'
 	    },
 	    questionInputStyle: {
-	        textAlign: 'center',
-	        fontSize: 20
+	        fontSize: 20,
+	        marginBottom: '7'
 	    },
 	    questionListHeading: {
 	        textAlign: 'center',
 	        fontSize: 14,
 	        fontWeight: '700',
 	        textTransform: 'uppercase',
-	        color: _colors2.default.red500
+	        color: _colors2.default.red500,
+	        margin: '0'
 	    },
-	    cardMediaPhotoWrapper: {
-	        height: '250',
-	        minHeight: '250',
-	        overflow: 'hidden'
+	    myCommentsStyle: {
+	        borderTopStyle: 'solid',
+	        borderTopWidth: '3',
+	        borderTopColor: _colors2.default.red500,
+	        backgroundColor: _colors2.default.grey100
 	    }
 	};
 
 	exports.default = _react2.default.createClass({
+
 	    displayName: 'Chat',
+	    mixins: [LocalStorageMixin],
 
 	    contextTypes: {
 	        router: _react2.default.PropTypes.object
 	    },
 
-	    answerQuestion: function answerQuestion(chatId, questionId, event) {
-	        this.context.router.push("/chats/" + chatId + "/question/" + questionId);
-	    },
-
-
 	    getInitialState: function getInitialState() {
 	        return {
 	            tab: 'ask',
 	            distance: 'calculating distance...',
-	            result: {}
+	            result: {},
+	            question: '',
+	            user: null,
+	            chatLog: [],
+	            loading: true
 	        };
 	    },
 
@@ -37767,6 +37795,12 @@
 	        navigator.geolocation.getCurrentPosition(function (position) {
 	            return _this.calculateDistance(position.coords.latitude, position.coords.longitude, _this.state.result.geo_location[0], _this.state.result.geo_location[1]);
 	        });
+
+	        (0, _chats2.default)().chatLog(this.props.params.chatId).then(function (response) {
+	            _this.setState({ chatLog: response, loading: false });
+	        }).catch(function (error) {
+	            console.log(error);
+	        });
 	    },
 	    calculateDistance: function calculateDistance(lat1, lon1, lat2, lon2) {
 	        var radlat1 = Math.PI * lat1 / 180;
@@ -37779,6 +37813,26 @@
 	        dist = dist * 60 * 1.1515;
 	        dist = dist * 1.609344;
 	        this.setState({ "distance": Math.round(dist * 100) / 100 + " km" });
+	    },
+	    handleQuestionSubmit: function handleQuestionSubmit(event) {
+	        var _this2 = this;
+
+	        event.preventDefault();
+	        if (this.state.user == null) {
+	            (0, _chats2.default)().join(this.props.params.chatId).then(function (response) {
+	                _this2.setState({ user: response });
+	            });
+	        } else {
+	            (0, _chats2.default)().sendMessage(this.props.params.chatId, this.state.question, this.state.user.username).then(function (response) {
+	                console.log(response);
+	                console.log('posted!');
+	            });
+	        }
+	    },
+	    handleQuestionChange: function handleQuestionChange(event) {
+	        this.setState({
+	            question: event.target.value
+	        });
 	    },
 	    render: function render() {
 	        return _react2.default.createElement(
@@ -37802,16 +37856,21 @@
 	                    _tab2.default,
 	                    { label: "Ask a question" },
 	                    _react2.default.createElement(
-	                        "div",
-	                        { style: customStyles.defaultPadding },
+	                        "form",
+	                        { style: customStyles.defaultPadding, onSubmit: this.handleQuestionSubmit },
 	                        _react2.default.createElement(_textField2.default, {
 	                            hintText: "Ask any question...",
 	                            fullWidth: true,
+	                            inputStyle: customStyles.questionInputStyle,
+	                            value: this.state.question,
+	                            onChange: this.handleQuestionChange,
 	                            style: customStyles.questionInputStyle
 	                        }),
 	                        _react2.default.createElement(_raisedButton2.default, {
-	                            label: "Send!", secondary: true,
-	                            fullWidth: true
+	                            label: "Send!",
+	                            secondary: true,
+	                            fullWidth: true,
+	                            onClick: this.handleQuestionSubmit
 	                        })
 	                    ),
 	                    _react2.default.createElement(
@@ -37825,9 +37884,9 @@
 	                        _react2.default.createElement(
 	                            _list2.default,
 	                            null,
-	                            _react2.default.createElement(_listItem2.default, { primaryText: "Is the spot crowded right now?", rightIcon: _react2.default.createElement(_touchApp2.default, null) }),
-	                            _react2.default.createElement(_listItem2.default, { primaryText: "Is the spot crowded right now?", rightIcon: _react2.default.createElement(_touchApp2.default, null) }),
-	                            _react2.default.createElement(_listItem2.default, { primaryText: "Is the spot crowded right now?", rightIcon: _react2.default.createElement(_touchApp2.default, null) })
+	                            _react2.default.createElement(_listItem2.default, { primaryText: "Are there any free spots there right now?", rightIcon: _react2.default.createElement(_touchApp2.default, null) }),
+	                            _react2.default.createElement(_listItem2.default, { primaryText: "How long will I wait for service?", rightIcon: _react2.default.createElement(_touchApp2.default, null) }),
+	                            _react2.default.createElement(_listItem2.default, { primaryText: "Are the waitresses pretty?", rightIcon: _react2.default.createElement(_touchApp2.default, null) })
 	                        )
 	                    )
 	                ),
@@ -37841,7 +37900,7 @@
 	                            _list2.default,
 	                            null,
 	                            _react2.default.createElement(_listItem2.default, {
-	                                leftAvatar: _react2.default.createElement(_avatar2.default, { src: "http://www.material-ui.com/images/ok-128.jpg" }),
+	                                leftAvatar: _react2.default.createElement(Avatar, { src: "http://www.material-ui.com/images/ok-128.jpg" }),
 	                                primaryText: "Brunch this weekend?",
 	                                secondaryText: _react2.default.createElement(
 	                                    "p",
@@ -37858,7 +37917,7 @@
 	                                onClick: this.answerQuestion.bind(this, 1)
 	                            }),
 	                            _react2.default.createElement(_listItem2.default, {
-	                                leftAvatar: _react2.default.createElement(_avatar2.default, { src: "http://www.material-ui.com/images/ok-128.jpg" }),
+	                                leftAvatar: _react2.default.createElement(Avatar, { src: "http://www.material-ui.com/images/ok-128.jpg" }),
 	                                primaryText: "Brunch this weekend?",
 	                                secondaryText: _react2.default.createElement(
 	                                    "p",
@@ -37875,7 +37934,7 @@
 	                                onClick: this.answerQuestion.bind(this, 1)
 	                            }),
 	                            _react2.default.createElement(_listItem2.default, {
-	                                rightAvatar: _react2.default.createElement(_avatar2.default, { src: "http://www.material-ui.com/images/ok-128.jpg" }),
+	                                rightAvatar: _react2.default.createElement(Avatar, { src: "http://www.material-ui.com/images/ok-128.jpg" }),
 	                                primaryText: "Brunch this weekend?",
 	                                secondaryText: _react2.default.createElement(
 	                                    "p",
@@ -40003,9 +40062,13 @@
 
 	var _textField2 = _interopRequireDefault(_textField);
 
-	var _sms = __webpack_require__(340);
+	var _send = __webpack_require__(340);
 
-	var _sms2 = _interopRequireDefault(_sms);
+	var _send2 = _interopRequireDefault(_send);
+
+	var _iconButton = __webpack_require__(243);
+
+	var _iconButton2 = _interopRequireDefault(_iconButton);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -40026,6 +40089,19 @@
 	    },
 	    postInputStyle: {
 	        color: _colors2.default.white
+	    },
+	    postSenderInputWrapper: {
+	        display: 'inline-block',
+	        width: '80%'
+	    },
+	    postSenderButtonWrapper: {
+	        display: 'inline-block',
+	        textAlign: 'right',
+	        width: '20%'
+	    },
+	    sendPostIcon: {
+	        color: _colors2.default.red500,
+	        fill: _colors2.default.red500
 	    }
 	};
 
@@ -40035,18 +40111,26 @@
 	        return _react2.default.createElement(
 	            'form',
 	            { style: customStyles.defaultPadding },
-	            _react2.default.createElement(_textField2.default, {
-	                hintText: 'Post a message...',
-	                inputStyle: customStyles.postInputStyle,
-	                hintStyle: customStyles.postInputHintStyle,
-	                underlineStyle: customStyles.postInputUnderlineStyle
-	            }),
-	            _react2.default.createElement(_raisedButton2.default, {
-	                label: 'Send!', primary: true,
-	                labelPosition: 'before',
-	                icon: _react2.default.createElement(_sms2.default, null),
-	                style: customStyles.sendButtonStyle
-	            })
+	            _react2.default.createElement(
+	                'div',
+	                { style: customStyles.postSenderInputWrapper },
+	                _react2.default.createElement(_textField2.default, {
+	                    hintText: 'Post a message...',
+	                    fullWidth: true,
+	                    inputStyle: customStyles.postInputStyle,
+	                    hintStyle: customStyles.postInputHintStyle,
+	                    underlineStyle: customStyles.postInputUnderlineStyle
+	                })
+	            ),
+	            _react2.default.createElement(
+	                'div',
+	                { style: customStyles.postSenderButtonWrapper },
+	                _react2.default.createElement(
+	                    _iconButton2.default,
+	                    { iconStyle: customStyles.sendPostIcon },
+	                    _react2.default.createElement(_send2.default, null)
+	                )
+	            )
 	        );
 	    }
 	});
@@ -40075,8 +40159,8 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var NotificationSms = _react2.default.createClass({
-	  displayName: 'NotificationSms',
+	var ContentSend = _react2.default.createClass({
+	  displayName: 'ContentSend',
 
 	  mixins: [_reactAddonsPureRenderMixin2.default],
 
@@ -40084,16 +40168,209 @@
 	    return _react2.default.createElement(
 	      _svgIcon2.default,
 	      this.props,
-	      _react2.default.createElement('path', { d: 'M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 11H7V9h2v2zm4 0h-2V9h2v2zm4 0h-2V9h2v2z' })
+	      _react2.default.createElement('path', { d: 'M2.01 21L23 12 2.01 3 2 10l15 2-15 2z' })
 	    );
 	  }
 	});
 
-	exports.default = NotificationSms;
+	exports.default = ContentSend;
 	module.exports = exports['default'];
 
 /***/ },
 /* 341 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global, process) {'use strict';
+	var React = __webpack_require__(1);
+	var warn = __webpack_require__(342);
+	var hasLocalStorage = 'localStorage' in global;
+	var ls, testKey;
+
+	if (hasLocalStorage) {
+	  testKey = 'react-localstorage.mixin.test-key';
+	  try {
+	    // Access to global `localStorage` property must be guarded as it
+	    // fails under iOS private session mode.
+	    ls = global.localStorage;
+	    ls.setItem(testKey, 'foo');
+	    ls.removeItem(testKey);
+	  } catch (e) {
+	    hasLocalStorage = false;
+	  }
+	}
+
+	// Warn if localStorage cannot be found or accessed.
+	if (process.browser) {
+	  warn(
+	    hasLocalStorage,
+	    'localStorage not found. Component state will not be stored to localStorage.'
+	  );
+	}
+
+	var Mixin = module.exports = {
+	  /**
+	   * Error checking. On update, ensure that the last state stored in localStorage is equal
+	   * to the state on the component. We skip the check the first time around as state is left
+	   * alone until mount to keep server rendering working.
+	   *
+	   * If it is not consistent, we know that someone else is modifying localStorage out from under us, so we throw
+	   * an error.
+	   *
+	   * There are a lot of ways this can happen, so it is worth throwing the error.
+	   */
+	  componentWillUpdate: function(nextProps, nextState) {
+	    if (!hasLocalStorage || !this.__stateLoadedFromLS) return;
+	    var key = getLocalStorageKey(this);
+	    var prevStoredState = ls.getItem(key);
+	    if (prevStoredState && process.env.NODE_ENV !== "production") {
+	      warn(
+	        prevStoredState === JSON.stringify(getSyncState(this, this.state)),
+	        'While component ' + getDisplayName(this) + ' was saving state to localStorage, ' +
+	        'the localStorage entry was modified by another actor. This can happen when multiple ' +
+	        'components are using the same localStorage key. Set the property `localStorageKey` ' +
+	        'on ' + getDisplayName(this) + '.'
+	      );
+	    }
+	    // Since setState() can't be called in CWU, it's a fine time to save the state.
+	    ls.setItem(key, JSON.stringify(getSyncState(this, nextState)));
+	  },
+
+	  /**
+	   * Load data.
+	   * This seems odd to do this on componentDidMount, but it prevents server checksum errors.
+	   * This is because the server has no way to know what is in your localStorage. So instead
+	   * of breaking the checksum and causing a full rerender, we instead change the component after mount
+	   * for an efficient diff.
+	   */
+	  componentDidMount: function () {
+	    if (!hasLocalStorage) return;
+	    var me = this;
+	    loadStateFromLocalStorage(this, function() {
+	      // After setting state, mirror back to localstorage.
+	      // This prevents invariants if the developer has changed the initial state of the component.
+	      ls.setItem(getLocalStorageKey(me), JSON.stringify(getSyncState(me, me.state)));
+	    });
+	  }
+	};
+
+	function loadStateFromLocalStorage(component, cb) {
+	  if (!ls) return;
+	  var key = getLocalStorageKey(component);
+	  var settingState = false;
+	  try {
+	    var storedState = JSON.parse(ls.getItem(key));
+	    if (storedState) {
+	      settingState = true;
+	      component.setState(storedState, done);
+	    }
+	  } catch(e) {
+	    if (console) console.warn("Unable to load state for", getDisplayName(component), "from localStorage.");
+	  }
+	  // If we didn't set state, run the callback right away.
+	  if (!settingState) done();
+
+	  function done() {
+	    // Flag this component as loaded.
+	    component.__stateLoadedFromLS = true;
+	    cb();
+	  }
+	}
+
+	function getDisplayName(component) {
+	  // at least, we cannot get displayname
+	  // via this.displayname in react 0.12
+	  return component.displayName || component.constructor.displayName || component.constructor.name;
+	}
+
+	function getLocalStorageKey(component) {
+	  if (component.getLocalStorageKey) {
+	    return component.getLocalStorageKey();
+	  }
+	  return component.props.localStorageKey || getDisplayName(component) || 'react-localstorage';
+	}
+
+	function getStateFilterKeys(component) {
+	  if (component.getStateFilterKeys) {
+	    return typeof component.getStateFilterKeys() === 'string' ?
+	      [component.getStateFilterKeys()] : component.getStateFilterKeys();
+	  }
+	  return typeof component.props.stateFilterKeys === 'string' ?
+	    [component.props.stateFilterKeys] : component.props.stateFilterKeys;
+	}
+
+	/**
+	* Filters state to only save keys defined in stateFilterKeys.
+	* If stateFilterKeys is not set, returns full state.
+	*/
+	function getSyncState(component, state) {
+	  var stateFilterKeys = getStateFilterKeys(component);
+	  if (!stateFilterKeys) return state;
+	  var result = {};
+	  stateFilterKeys.forEach(function(sk) {
+	    for (var key in state) {
+	      if (state.hasOwnProperty(key) && sk === key) result[key] = state[key];
+	    }
+	  });
+	  return result;
+	}
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(4)))
+
+/***/ },
+/* 342 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule warning
+	 */
+
+	"use strict";
+
+	/**
+	 * Similar to invariant but only logs a warning if the condition is not met.
+	 * This can be used to log issues in development environments in critical
+	 * paths. Removing the logging code for production environments will keep the
+	 * same logic and follow the same code paths.
+	 */
+
+	var warning = function() {};
+
+	if ("production" !== process.env.NODE_ENV) {
+	  warning = function(condition, format ) {var args=Array.prototype.slice.call(arguments,2);
+	    if (format === undefined) {
+	      throw new Error(
+	        '`warning(condition, format, ...args)` requires a warning ' +
+	        'message argument'
+	      );
+	    }
+
+	    if (!condition) {
+	      var argIndex = 0;
+	      console.warn('Warning: ' + format.replace(/%s/g, function()  {return args[argIndex++];}));
+	    }
+	  };
+	}
+
+	module.exports = warning;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ },
+/* 343 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40116,7 +40393,7 @@
 	});
 
 /***/ },
-/* 342 */
+/* 344 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40143,7 +40420,7 @@
 	});
 
 /***/ },
-/* 343 */
+/* 345 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -40172,7 +40449,7 @@
 
 	var _card2 = _interopRequireDefault(_card);
 
-	var _cardHeader = __webpack_require__(344);
+	var _cardHeader = __webpack_require__(346);
 
 	var _cardHeader2 = _interopRequireDefault(_cardHeader);
 
@@ -40184,9 +40461,13 @@
 
 	var _cardTitle2 = _interopRequireDefault(_cardTitle);
 
-	var _cardText = __webpack_require__(345);
+	var _cardText = __webpack_require__(347);
 
 	var _cardText2 = _interopRequireDefault(_cardText);
+
+	var _dialog = __webpack_require__(348);
+
+	var _dialog2 = _interopRequireDefault(_dialog);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -40201,8 +40482,8 @@
 	        padding: '15'
 	    },
 	    questionInputStyle: {
-	        textAlign: 'center',
-	        fontSize: 20
+	        fontSize: 20,
+	        marginBottom: '7'
 	    },
 	    cardMediaPhotoWrapper: {
 	        height: '250',
@@ -40243,13 +40524,40 @@
 	    contextTypes: {
 	        router: _react2.default.PropTypes.object
 	    },
-	    backToChat: function backToChat(chatId, event) {
-	        this.context.router.push("/chats/" + chatId);
+	    getInitialState: function getInitialState(props) {
+	        return {
+	            open: false
+	        };
+	    },
+	    handleOpen: function handleOpen() {
+	        this.setState({ open: true });
+	    },
+	    handleClose: function handleClose() {
+	        this.setState({ open: false });
+	    },
+	    backToChat: function backToChat(event) {
+	        this.context.router.goBack();
 	    },
 	    render: function render() {
 	        return _react2.default.createElement(
 	            "div",
 	            { className: "app-chat" },
+	            _react2.default.createElement(
+	                _dialog2.default,
+	                {
+	                    title: "Thank you!",
+	                    modal: false,
+	                    open: this.state.open,
+	                    onRequestClose: this.handleClose,
+	                    actions: _react2.default.createElement(_raisedButton2.default, {
+	                        label: "Close",
+	                        secondary: true,
+	                        keyboardFocused: true,
+	                        onTouchTap: this.backToChat
+	                    })
+	                },
+	                "Thank you for answering the question!"
+	            ),
 	            _react2.default.createElement(
 	                _card2.default,
 	                null,
@@ -40291,18 +40599,20 @@
 	                _react2.default.createElement(_textField2.default, {
 	                    hintText: "Your answer",
 	                    fullWidth: true,
-	                    style: customStyles.questionInputStyle
+	                    inputStyle: customStyles.questionInputStyle
 	                }),
 	                _react2.default.createElement(_raisedButton2.default, {
 	                    label: "Send!", secondary: true,
-	                    fullWidth: true
+	                    fullWidth: true,
+	                    onTouchTap: this.handleOpen,
+	                    onClick: this.handleOpen
 	                }),
 	                _react2.default.createElement(_raisedButton2.default, {
 	                    label: "I am not there / I don't know",
 	                    fullWidth: true,
 	                    style: customStyles.topMarginSmall,
-	                    onTouchTap: this.backToChat.bind(this, 1),
-	                    onClick: this.backToChat.bind(this, 1)
+	                    onTouchTap: this.backToChat,
+	                    onClick: this.backToChat
 	                })
 	            )
 	        );
@@ -40310,7 +40620,7 @@
 	});
 
 /***/ },
-/* 344 */
+/* 346 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40471,7 +40781,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 345 */
+/* 347 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40565,7 +40875,1508 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 346 */
+/* 348 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(158);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _windowListenable = __webpack_require__(349);
+
+	var _windowListenable2 = _interopRequireDefault(_windowListenable);
+
+	var _keyCode = __webpack_require__(256);
+
+	var _keyCode2 = _interopRequireDefault(_keyCode);
+
+	var _transitions = __webpack_require__(246);
+
+	var _transitions2 = _interopRequireDefault(_transitions);
+
+	var _stylePropable = __webpack_require__(218);
+
+	var _stylePropable2 = _interopRequireDefault(_stylePropable);
+
+	var _flatButton = __webpack_require__(350);
+
+	var _flatButton2 = _interopRequireDefault(_flatButton);
+
+	var _overlay = __webpack_require__(352);
+
+	var _overlay2 = _interopRequireDefault(_overlay);
+
+	var _renderToLayer = __webpack_require__(353);
+
+	var _renderToLayer2 = _interopRequireDefault(_renderToLayer);
+
+	var _paper = __webpack_require__(297);
+
+	var _paper2 = _interopRequireDefault(_paper);
+
+	var _getMuiTheme = __webpack_require__(263);
+
+	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
+
+	var _warning = __webpack_require__(163);
+
+	var _warning2 = _interopRequireDefault(_warning);
+
+	var _deprecatedPropType = __webpack_require__(354);
+
+	var _deprecatedPropType2 = _interopRequireDefault(_deprecatedPropType);
+
+	var _reactAddonsTransitionGroup = __webpack_require__(259);
+
+	var _reactAddonsTransitionGroup2 = _interopRequireDefault(_reactAddonsTransitionGroup);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+	var TransitionItem = _react2.default.createClass({
+	  displayName: 'TransitionItem',
+
+	  propTypes: {
+	    children: _react2.default.PropTypes.node,
+	    style: _react2.default.PropTypes.object
+	  },
+
+	  contextTypes: {
+	    muiTheme: _react2.default.PropTypes.object
+	  },
+
+	  //for passing default theme context to children
+	  childContextTypes: {
+	    muiTheme: _react2.default.PropTypes.object
+	  },
+
+	  mixins: [_stylePropable2.default],
+
+	  getInitialState: function getInitialState() {
+	    return {
+	      style: {},
+	      muiTheme: this.context.muiTheme || (0, _getMuiTheme2.default)()
+	    };
+	  },
+	  getChildContext: function getChildContext() {
+	    return {
+	      muiTheme: this.state.muiTheme
+	    };
+	  },
+
+	  //to update theme inside state whenever a new theme is passed down
+	  //from the parent / owner using context
+	  componentWillReceiveProps: function componentWillReceiveProps(nextProps, nextContext) {
+	    var newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
+	    this.setState({ muiTheme: newMuiTheme });
+	  },
+	  componentWillEnter: function componentWillEnter(callback) {
+	    this.componentWillAppear(callback);
+	  },
+	  componentWillAppear: function componentWillAppear(callback) {
+	    var spacing = this.state.muiTheme.rawTheme.spacing;
+
+	    this.setState({
+	      style: {
+	        opacity: 1,
+	        transform: 'translate3d(0, ' + spacing.desktopKeylineIncrement + 'px, 0)'
+	      }
+	    });
+
+	    setTimeout(callback, 450); // matches transition duration
+	  },
+	  componentWillLeave: function componentWillLeave(callback) {
+	    var _this = this;
+
+	    this.setState({
+	      style: {
+	        opacity: 0,
+	        transform: 'translate3d(0, 0, 0)'
+	      }
+	    });
+
+	    setTimeout(function () {
+	      if (_this.isMounted()) callback();
+	    }, 450); // matches transition duration
+	  },
+	  render: function render() {
+	    var _props = this.props;
+	    var style = _props.style;
+	    var children = _props.children;
+
+	    var other = _objectWithoutProperties(_props, ['style', 'children']);
+
+	    return _react2.default.createElement(
+	      'div',
+	      _extends({}, other, { style: this.prepareStyles(this.state.style, style) }),
+	      children
+	    );
+	  }
+	});
+
+	var DialogInline = _react2.default.createClass({
+	  displayName: 'DialogInline',
+
+	  propTypes: {
+	    actionFocus: _react2.default.PropTypes.string,
+	    actions: _react2.default.PropTypes.node,
+	    actionsContainerClassName: _react2.default.PropTypes.string,
+	    actionsContainerStyle: _react2.default.PropTypes.object,
+	    autoDetectWindowHeight: _react2.default.PropTypes.bool,
+	    autoScrollBodyContent: _react2.default.PropTypes.bool,
+	    bodyClassName: _react2.default.PropTypes.string,
+	    bodyStyle: _react2.default.PropTypes.object,
+	    children: _react2.default.PropTypes.node,
+	    className: _react2.default.PropTypes.string,
+	    contentClassName: _react2.default.PropTypes.string,
+	    contentStyle: _react2.default.PropTypes.object,
+	    modal: _react2.default.PropTypes.bool,
+	    onRequestClose: _react2.default.PropTypes.func,
+	    open: _react2.default.PropTypes.bool.isRequired,
+	    overlayClassName: _react2.default.PropTypes.string,
+	    overlayStyle: _react2.default.PropTypes.object,
+	    repositionOnUpdate: _react2.default.PropTypes.bool,
+	    style: _react2.default.PropTypes.object,
+	    title: _react2.default.PropTypes.node,
+	    titleClassName: _react2.default.PropTypes.string,
+	    titleStyle: _react2.default.PropTypes.object,
+	    width: _react2.default.PropTypes.any
+	  },
+
+	  contextTypes: {
+	    muiTheme: _react2.default.PropTypes.object
+	  },
+
+	  //for passing default theme context to children
+	  childContextTypes: {
+	    muiTheme: _react2.default.PropTypes.object
+	  },
+
+	  mixins: [_windowListenable2.default, _stylePropable2.default],
+
+	  getInitialState: function getInitialState() {
+	    return {
+	      muiTheme: this.context.muiTheme || (0, _getMuiTheme2.default)()
+	    };
+	  },
+	  getChildContext: function getChildContext() {
+	    return {
+	      muiTheme: this.state.muiTheme
+	    };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this._positionDialog();
+	  },
+	  componentWillReceiveProps: function componentWillReceiveProps(nextProps, nextContext) {
+	    var newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
+	    this.setState({ muiTheme: newMuiTheme });
+	  },
+	  componentDidUpdate: function componentDidUpdate() {
+	    this._positionDialog();
+	  },
+
+	  windowListeners: {
+	    keyup: '_handleWindowKeyUp',
+	    resize: '_handleResize'
+	  },
+
+	  getStyles: function getStyles() {
+	    var _props2 = this.props;
+	    var autoScrollBodyContent = _props2.autoScrollBodyContent;
+	    var open = _props2.open;
+	    var width = _props2.width;
+
+	    var muiTheme = this.state.muiTheme;
+	    var rawTheme = muiTheme.rawTheme;
+	    var spacing = rawTheme.spacing;
+	    var gutter = spacing.desktopGutter;
+
+	    return {
+	      root: {
+	        position: 'fixed',
+	        boxSizing: 'border-box',
+	        WebkitTapHighlightColor: 'rgba(0,0,0,0)',
+	        zIndex: muiTheme.zIndex.dialog,
+	        top: 0,
+	        left: open ? 0 : -10000,
+	        width: '100%',
+	        height: '100%',
+	        transition: open ? _transitions2.default.easeOut('0ms', 'left', '0ms') : _transitions2.default.easeOut('0ms', 'left', '450ms')
+	      },
+	      content: {
+	        boxSizing: 'border-box',
+	        WebkitTapHighlightColor: 'rgba(0,0,0,0)',
+	        transition: _transitions2.default.easeOut(),
+	        position: 'relative',
+	        width: width || '75%',
+	        maxWidth: spacing.desktopKeylineIncrement * 12,
+	        margin: '0 auto',
+	        zIndex: muiTheme.zIndex.dialog
+	      },
+	      body: {
+	        padding: spacing.desktopGutter,
+	        overflowY: autoScrollBodyContent ? 'auto' : 'hidden',
+	        overflowX: 'hidden'
+	      },
+	      actionsContainer: {
+	        boxSizing: 'border-box',
+	        WebkitTapHighlightColor: 'rgba(0,0,0,0)',
+	        padding: 8,
+	        marginBottom: 8,
+	        width: '100%',
+	        textAlign: 'right'
+	      },
+	      paper: {
+	        background: rawTheme.palette.canvasColor
+	      },
+	      overlay: {
+	        zIndex: muiTheme.zIndex.dialogOverlay
+	      },
+	      title: {
+	        margin: 0,
+	        padding: gutter + 'px ' + gutter + 'px 0 ' + gutter + 'px',
+	        color: rawTheme.palette.textColor,
+	        fontSize: 24,
+	        lineHeight: '32px',
+	        fontWeight: 400
+	      }
+	    };
+	  },
+	  _getAction: function _getAction(actionJSON) {
+	    var _this2 = this;
+
+	    process.env.NODE_ENV !== "production" ? (0, _warning2.default)(false, 'using actionsJSON is deprecated on Dialog, please provide an array of\n buttons, or any other components instead. For more information please refer to documentations.') : undefined;
+	    var props = {
+	      secondary: true,
+	      onClick: actionJSON.onClick,
+	      onTouchTap: function onTouchTap() {
+	        if (actionJSON.onTouchTap) {
+	          actionJSON.onTouchTap.call(undefined);
+	        }
+	        if (!(actionJSON.onClick || actionJSON.onTouchTap)) {
+	          _this2._requestClose(true);
+	        }
+	      },
+	      label: actionJSON.text,
+	      style: {
+	        marginRight: 8
+	      }
+	    };
+
+	    if (actionJSON.ref) {
+	      props.ref = actionJSON.ref;
+	      props.keyboardFocused = actionJSON.ref === this.props.actionFocus;
+	    }
+	    if (actionJSON.id) {
+	      props.id = actionJSON.id;
+	    }
+
+	    return _react2.default.createElement(_flatButton2.default, props);
+	  },
+	  _getActionObjects: function _getActionObjects(actions) {
+	    var _this3 = this;
+
+	    var actionObjects = [];
+
+	    // ------- Replace this selction with:
+	    //
+	    // React.Children.forEach(actions, action => {
+	    //   if (React.isValidElement(action)) {
+	    //     actionObjects.push(action);
+	    //   }
+	    // });
+	    //
+	    // Also the return element will not need a call to React.Children.toArray
+	    //
+	    // for the 0.15.0 release
+
+	    if (actions) {
+
+	      if (_react2.default.isValidElement(actions)) {
+	        actionObjects.push(actions);
+	      } else {
+	        actions.forEach(function (action) {
+	          if (action) {
+	            if (!_react2.default.isValidElement(action)) {
+	              action = _this3._getAction(action);
+	            }
+	            actionObjects.push(action);
+	          }
+	        });
+	      }
+	    }
+
+	    // ------- End of section
+
+	    return actionObjects;
+	  },
+	  _getActionsContainer: function _getActionsContainer(actions, styles, className) {
+	    var actionObjects = this._getActionObjects(actions);
+
+	    return actionObjects.length > 0 && _react2.default.createElement(
+	      'div',
+	      { className: className, style: this.prepareStyles(styles) },
+	      _react2.default.Children.toArray(actionObjects)
+	    );
+	  },
+	  _positionDialog: function _positionDialog() {
+	    var _props3 = this.props;
+	    var actions = _props3.actions;
+	    var autoDetectWindowHeight = _props3.autoDetectWindowHeight;
+	    var autoScrollBodyContent = _props3.autoScrollBodyContent;
+	    var bodyStyle = _props3.bodyStyle;
+	    var open = _props3.open;
+	    var repositionOnUpdate = _props3.repositionOnUpdate;
+	    var title = _props3.title;
+
+	    if (!open) {
+	      return;
+	    }
+
+	    var clientHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+	    var container = _reactDom2.default.findDOMNode(this);
+	    var dialogWindow = _reactDom2.default.findDOMNode(this.refs.dialogWindow);
+	    var dialogContent = _reactDom2.default.findDOMNode(this.refs.dialogContent);
+	    var minPaddingTop = 16;
+
+	    //Reset the height in case the window was resized.
+	    dialogWindow.style.height = '';
+	    dialogContent.style.height = '';
+
+	    var dialogWindowHeight = dialogWindow.offsetHeight;
+	    var paddingTop = (clientHeight - dialogWindowHeight) / 2 - 64;
+	    if (paddingTop < minPaddingTop) paddingTop = minPaddingTop;
+
+	    //Vertically center the dialog window, but make sure it doesn't
+	    //transition to that position.
+	    if (repositionOnUpdate || !container.style.paddingTop) {
+	      container.style.paddingTop = paddingTop + 'px';
+	    }
+
+	    // Force a height if the dialog is taller than clientHeight
+	    if (autoDetectWindowHeight || autoScrollBodyContent) {
+	      var styles = this.getStyles();
+	      styles.body = this.mergeStyles(styles.body, bodyStyle);
+	      var maxDialogContentHeight = clientHeight - 2 * (styles.body.padding + 64);
+
+	      if (title) maxDialogContentHeight -= dialogContent.previousSibling.offsetHeight;
+
+	      var hasActions = this._getActionObjects(actions).length > 0;
+	      if (hasActions) maxDialogContentHeight -= dialogContent.nextSibling.offsetHeight;
+
+	      dialogContent.style.maxHeight = maxDialogContentHeight + 'px';
+	    }
+	  },
+	  _requestClose: function _requestClose(buttonClicked) {
+
+	    if (!buttonClicked && this.props.modal) {
+	      return;
+	    }
+
+	    if (this.props.onRequestClose) {
+	      this.props.onRequestClose(!!buttonClicked);
+	    }
+	  },
+	  _handleOverlayTouchTap: function _handleOverlayTouchTap() {
+	    this._requestClose(false);
+	  },
+	  _handleWindowKeyUp: function _handleWindowKeyUp(event) {
+	    if (event.keyCode === _keyCode2.default.ESC) {
+	      this._requestClose(false);
+	    }
+	  },
+	  _handleResize: function _handleResize() {
+	    if (this.props.open) {
+	      this._positionDialog();
+	    }
+	  },
+	  render: function render() {
+	    var _props4 = this.props;
+	    var actions = _props4.actions;
+	    var actionsContainerClassName = _props4.actionsContainerClassName;
+	    var actionsContainerStyle = _props4.actionsContainerStyle;
+	    var bodyClassName = _props4.bodyClassName;
+	    var bodyStyle = _props4.bodyStyle;
+	    var children = _props4.children;
+	    var className = _props4.className;
+	    var contentClassName = _props4.contentClassName;
+	    var contentStyle = _props4.contentStyle;
+	    var overlayClassName = _props4.overlayClassName;
+	    var overlayStyle = _props4.overlayStyle;
+	    var open = _props4.open;
+	    var titleClassName = _props4.titleClassName;
+	    var titleStyle = _props4.titleStyle;
+	    var title = _props4.title;
+	    var style = _props4.style;
+
+	    var styles = this.getStyles();
+
+	    styles.root = this.mergeStyles(styles.root, style);
+	    styles.content = this.mergeStyles(styles.content, contentStyle);
+	    styles.body = this.mergeStyles(styles.body, bodyStyle);
+	    styles.actionsContainer = this.mergeStyles(styles.actionsContainer, actionsContainerStyle);
+	    styles.overlay = this.mergeStyles(styles.overlay, overlayStyle);
+	    styles.title = this.mergeStyles(styles.title, titleStyle);
+
+	    var actionsContainer = this._getActionsContainer(actions, styles.actionsContainer, actionsContainerClassName);
+
+	    var titleElement = typeof title === 'string' ? _react2.default.createElement(
+	      'h3',
+	      { className: titleClassName, style: this.prepareStyles(styles.title) },
+	      title
+	    ) : title;
+
+	    return _react2.default.createElement(
+	      'div',
+	      { className: className, style: this.prepareStyles(styles.root) },
+	      _react2.default.createElement(
+	        _reactAddonsTransitionGroup2.default,
+	        {
+	          component: 'div', ref: 'dialogWindow',
+	          transitionAppear: true, transitionAppearTimeout: 450,
+	          transitionEnter: true, transitionEnterTimeout: 450
+	        },
+	        open && _react2.default.createElement(
+	          TransitionItem,
+	          {
+	            className: contentClassName,
+	            style: styles.content
+	          },
+	          _react2.default.createElement(
+	            _paper2.default,
+	            {
+	              style: styles.paper,
+	              zDepth: 4
+	            },
+	            titleElement,
+	            _react2.default.createElement(
+	              'div',
+	              {
+	                ref: 'dialogContent',
+	                className: bodyClassName,
+	                style: this.prepareStyles(styles.body)
+	              },
+	              children
+	            ),
+	            actionsContainer
+	          )
+	        )
+	      ),
+	      _react2.default.createElement(_overlay2.default, {
+	        show: open,
+	        className: overlayClassName,
+	        style: styles.overlay,
+	        onTouchTap: this._handleOverlayTouchTap
+	      })
+	    );
+	  }
+	});
+
+	var Dialog = _react2.default.createClass({
+	  displayName: 'Dialog',
+
+	  propTypes: {
+	    /**
+	     * The `ref` of the action to focus on when the `Dialog` is displayed.
+	     */
+	    actionFocus: (0, _deprecatedPropType2.default)(_react2.default.PropTypes.string, 'Instead, use a custom `actions` property.'),
+
+	    /**
+	     * This prop can be either a JSON object containing the actions to render (This is **DEPRECATED**),
+	     * a react elements, or an array of react elements.
+	     */
+	    actions: _react2.default.PropTypes.node,
+
+	    /**
+	     * The `className` to add to the actions container's root element.
+	     */
+	    actionsContainerClassName: _react2.default.PropTypes.string,
+
+	    /**
+	     * Overrides the inline-styles of the actions container's root element.
+	     */
+	    actionsContainerStyle: _react2.default.PropTypes.object,
+
+	    /**
+	     * If set to true, the height of the `Dialog` will be auto detected. A max height
+	     * will be enforced so that the content does not extend beyond the viewport.
+	     */
+	    autoDetectWindowHeight: _react2.default.PropTypes.bool,
+
+	    /**
+	     * If set to true, the body content of the `Dialog` will be scrollable.
+	     */
+	    autoScrollBodyContent: _react2.default.PropTypes.bool,
+
+	    /**
+	     * The `className` to add to the content's root element under the title.
+	     */
+	    bodyClassName: _react2.default.PropTypes.string,
+
+	    /**
+	     * Overrides the inline-styles of the content's root element under the title.
+	     */
+	    bodyStyle: _react2.default.PropTypes.object,
+
+	    /**
+	     * The contents of the `Dialog`.
+	     */
+	    children: _react2.default.PropTypes.node,
+
+	    /**
+	     * The css class name of the root element.
+	     */
+	    className: _react2.default.PropTypes.string,
+
+	    /**
+	     * The `className` to add to the content container.
+	     */
+	    contentClassName: _react2.default.PropTypes.string,
+
+	    /**
+	     * Overrides the inline-styles of the content container.
+	     */
+	    contentStyle: _react2.default.PropTypes.object,
+
+	    /**
+	     * Force the user to use one of the actions in the `Dialog`.
+	     * Clicking outside the `Dialog` will not trigger the `onRequestClose`.
+	     */
+	    modal: _react2.default.PropTypes.bool,
+
+	    /**
+	     * Fired when the `Dialog` is requested to be closed by a click outside the `Dialog` or on the buttons.
+	     *
+	     * @param {bool} buttonClicked Determines whether a button click triggered this request.
+	     */
+	    onRequestClose: _react2.default.PropTypes.func,
+
+	    /**
+	     * Controls whether the Dialog is opened or not.
+	     */
+	    open: _react2.default.PropTypes.bool.isRequired,
+
+	    /**
+	     * The `className` to add to the `Overlay` component that is rendered behind the `Dialog`.
+	     */
+	    overlayClassName: _react2.default.PropTypes.string,
+
+	    /**
+	     * Overrides the inline-styles of the `Overlay` component that is rendered behind the `Dialog`.
+	     */
+	    overlayStyle: _react2.default.PropTypes.object,
+
+	    /**
+	     * Determines whether the `Dialog` should be repositioned when it's contents are updated.
+	     */
+	    repositionOnUpdate: _react2.default.PropTypes.bool,
+
+	    /**
+	     * Override the inline-styles of the root element.
+	     */
+	    style: _react2.default.PropTypes.object,
+
+	    /**
+	     * The title to display on the `Dialog`. Could be number, string, element or an array containing these types.
+	     */
+	    title: _react2.default.PropTypes.node,
+
+	    /**
+	     * The `className` to add to the title's root container element.
+	     */
+	    titleClassName: _react2.default.PropTypes.string,
+
+	    /**
+	     * Overrides the inline-styles of the title's root container element.
+	     */
+	    titleStyle: _react2.default.PropTypes.object,
+
+	    /**
+	     * Changes the width of the `Dialog`.
+	     */
+	    width: (0, _deprecatedPropType2.default)(_react2.default.PropTypes.any, 'Use the contentStyle.')
+	  },
+
+	  getDefaultProps: function getDefaultProps() {
+	    return {
+	      autoDetectWindowHeight: true,
+	      autoScrollBodyContent: false,
+	      modal: false,
+	      repositionOnUpdate: true
+	    };
+	  },
+	  renderLayer: function renderLayer() {
+	    return _react2.default.createElement(DialogInline, this.props);
+	  },
+	  render: function render() {
+	    return _react2.default.createElement(_renderToLayer2.default, { render: this.renderLayer, open: true, useLayerForClickAway: false });
+	  }
+	});
+
+	exports.default = Dialog;
+	module.exports = exports['default'];
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ },
+/* 349 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _events = __webpack_require__(255);
+
+	var _events2 = _interopRequireDefault(_events);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = {
+	  componentDidMount: function componentDidMount() {
+	    var listeners = this.windowListeners;
+
+	    for (var eventName in listeners) {
+	      var callbackName = listeners[eventName];
+	      _events2.default.on(window, eventName, this[callbackName]);
+	    }
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    var listeners = this.windowListeners;
+
+	    for (var eventName in listeners) {
+	      var callbackName = listeners[eventName];
+	      _events2.default.off(window, eventName, this[callbackName]);
+	    }
+	  }
+	};
+	module.exports = exports['default'];
+
+/***/ },
+/* 350 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _contextPure = __webpack_require__(244);
+
+	var _contextPure2 = _interopRequireDefault(_contextPure);
+
+	var _transitions = __webpack_require__(246);
+
+	var _transitions2 = _interopRequireDefault(_transitions);
+
+	var _children = __webpack_require__(252);
+
+	var _children2 = _interopRequireDefault(_children);
+
+	var _colorManipulator = __webpack_require__(281);
+
+	var _colorManipulator2 = _interopRequireDefault(_colorManipulator);
+
+	var _styles = __webpack_require__(219);
+
+	var _typography = __webpack_require__(241);
+
+	var _typography2 = _interopRequireDefault(_typography);
+
+	var _enhancedButton = __webpack_require__(248);
+
+	var _enhancedButton2 = _interopRequireDefault(_enhancedButton);
+
+	var _flatButtonLabel = __webpack_require__(351);
+
+	var _flatButtonLabel2 = _interopRequireDefault(_flatButtonLabel);
+
+	var _getMuiTheme = __webpack_require__(263);
+
+	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+	function validateLabel(props, propName, componentName) {
+	  if (!props.children && !props.label) {
+	    return new Error('Required prop label or children was not ' + 'specified in ' + componentName + '.');
+	  }
+	}
+
+	var FlatButton = _react2.default.createClass({
+	  displayName: 'FlatButton',
+
+	  propTypes: {
+	    /**
+	     * Color of button when mouse is not hovering over it.
+	     */
+	    backgroundColor: _react2.default.PropTypes.string,
+
+	    /**
+	     * This is what will be displayed inside the button.
+	     * If a label is specified, the text within the label prop will
+	     * be displayed. Otherwise, the component will expect children
+	     * which will then be displayed. (In our example,
+	     * we are nesting an `<input type="file" />` and a `span`
+	     * that acts as our label to be displayed.) This only
+	     * applies to flat and raised buttons.
+	     */
+	    children: _react2.default.PropTypes.node,
+
+	    /**
+	     * Disables the button if set to true.
+	     */
+	    disabled: _react2.default.PropTypes.bool,
+
+	    /**
+	     * Color of button when mouse hovers over.
+	     */
+	    hoverColor: _react2.default.PropTypes.string,
+
+	    /**
+	     * URL to link to when button clicked if `linkButton` is set to true.
+	     */
+	    href: _react2.default.PropTypes.string,
+
+	    /**
+	     * Use this property to display an icon.
+	     */
+	    icon: _react2.default.PropTypes.node,
+
+	    /**
+	     * Label for the button.
+	     */
+	    label: validateLabel,
+
+	    /**
+	     * Place label before or after the passed children.
+	     */
+	    labelPosition: _react2.default.PropTypes.oneOf(['before', 'after']),
+
+	    /**
+	     * Override the inline-styles of the button's label element.
+	     */
+	    labelStyle: _react2.default.PropTypes.object,
+
+	    /**
+	     * Enables use of `href` property to provide a URL to link to if set to true.
+	     */
+	    linkButton: _react2.default.PropTypes.bool,
+
+	    /**
+	     * Called when element is focused by the keyboard.
+	     */
+	    onKeyboardFocus: _react2.default.PropTypes.func,
+
+	    /**
+	     * Called when the mouse enters the element.
+	     */
+	    onMouseEnter: _react2.default.PropTypes.func,
+
+	    /**
+	     * Called when the mouse leaves the element.
+	     */
+	    onMouseLeave: _react2.default.PropTypes.func,
+
+	    /**
+	     * Called when a touch event is started inside the element.
+	     */
+	    onTouchStart: _react2.default.PropTypes.func,
+
+	    /**
+	     * If true, colors button according to
+	     * primaryTextColor from the Theme.
+	     */
+	    primary: _react2.default.PropTypes.bool,
+
+	    /**
+	     * Color for the ripple after button is clicked.
+	     */
+	    rippleColor: _react2.default.PropTypes.string,
+
+	    /**
+	     * If true, colors button according to secondaryTextColor from the theme.
+	     * The primary prop has precendent if set to true.
+	     */
+	    secondary: _react2.default.PropTypes.bool,
+
+	    /**
+	     * Override the inline-styles of the root element.
+	     */
+	    style: _react2.default.PropTypes.object
+	  },
+
+	  contextTypes: {
+	    muiTheme: _react2.default.PropTypes.object
+	  },
+
+	  //for passing default theme context to children
+	  childContextTypes: {
+	    muiTheme: _react2.default.PropTypes.object
+	  },
+
+	  mixins: [_contextPure2.default],
+
+	  statics: {
+	    getRelevantContextKeys: function getRelevantContextKeys(muiTheme) {
+	      var buttonTheme = muiTheme.button;
+	      var flatButtonTheme = muiTheme.flatButton;
+
+	      return {
+	        buttonColor: flatButtonTheme.color,
+	        buttonFilterColor: flatButtonTheme.buttonFilterColor,
+	        buttonHeight: buttonTheme.height,
+	        buttonMinWidth: buttonTheme.minWidth,
+	        disabledTextColor: flatButtonTheme.disabledTextColor,
+	        primaryTextColor: flatButtonTheme.primaryTextColor,
+	        secondaryTextColor: flatButtonTheme.secondaryTextColor,
+	        textColor: flatButtonTheme.textColor,
+	        textTransform: flatButtonTheme.textTransform ? flatButtonTheme.textTransform : buttonTheme.textTransform ? buttonTheme.textTransform : 'uppercase'
+	      };
+	    },
+	    getChildrenClasses: function getChildrenClasses() {
+	      return [_enhancedButton2.default, _flatButtonLabel2.default];
+	    }
+	  },
+
+	  getDefaultProps: function getDefaultProps() {
+	    return {
+	      disabled: false,
+	      labelStyle: {},
+	      labelPosition: 'after',
+	      onKeyboardFocus: function onKeyboardFocus() {},
+	      onMouseEnter: function onMouseEnter() {},
+	      onMouseLeave: function onMouseLeave() {},
+	      onTouchStart: function onTouchStart() {},
+	      primary: false,
+	      secondary: false
+	    };
+	  },
+	  getInitialState: function getInitialState() {
+	    return {
+	      hovered: false,
+	      isKeyboardFocused: false,
+	      touch: false,
+	      muiTheme: this.context.muiTheme || (0, _getMuiTheme2.default)()
+	    };
+	  },
+	  getChildContext: function getChildContext() {
+	    return {
+	      muiTheme: this.state.muiTheme
+	    };
+	  },
+
+	  //to update theme inside state whenever a new theme is passed down
+	  //from the parent / owner using context
+	  componentWillReceiveProps: function componentWillReceiveProps(nextProps, nextContext) {
+	    var newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
+	    this.setState({ muiTheme: newMuiTheme });
+	  },
+	  _handleKeyboardFocus: function _handleKeyboardFocus(e, isKeyboardFocused) {
+	    this.setState({ isKeyboardFocused: isKeyboardFocused });
+	    this.props.onKeyboardFocus(e, isKeyboardFocused);
+	  },
+	  _handleMouseEnter: function _handleMouseEnter(e) {
+	    //Cancel hover styles for touch devices
+	    if (!this.state.touch) this.setState({ hovered: true });
+	    this.props.onMouseEnter(e);
+	  },
+	  _handleMouseLeave: function _handleMouseLeave(e) {
+	    this.setState({ hovered: false });
+	    this.props.onMouseLeave(e);
+	  },
+	  _handleTouchStart: function _handleTouchStart(e) {
+	    this.setState({ touch: true });
+	    this.props.onTouchStart(e);
+	  },
+	  render: function render() {
+	    var _props = this.props;
+	    var children = _props.children;
+	    var disabled = _props.disabled;
+	    var hoverColor = _props.hoverColor;
+	    var backgroundColor = _props.backgroundColor;
+	    var icon = _props.icon;
+	    var label = _props.label;
+	    var labelStyle = _props.labelStyle;
+	    var labelPosition = _props.labelPosition;
+	    var primary = _props.primary;
+	    var rippleColor = _props.rippleColor;
+	    var secondary = _props.secondary;
+	    var style = _props.style;
+
+	    var other = _objectWithoutProperties(_props, ['children', 'disabled', 'hoverColor', 'backgroundColor', 'icon', 'label', 'labelStyle', 'labelPosition', 'primary', 'rippleColor', 'secondary', 'style']);
+
+	    var _constructor$getRelev = this.constructor.getRelevantContextKeys(this.state.muiTheme);
+
+	    var buttonColor = _constructor$getRelev.buttonColor;
+	    var buttonHeight = _constructor$getRelev.buttonHeight;
+	    var buttonMinWidth = _constructor$getRelev.buttonMinWidth;
+	    var disabledTextColor = _constructor$getRelev.disabledTextColor;
+	    var buttonFilterColor = _constructor$getRelev.buttonFilterColor;
+	    var primaryTextColor = _constructor$getRelev.primaryTextColor;
+	    var secondaryTextColor = _constructor$getRelev.secondaryTextColor;
+	    var textColor = _constructor$getRelev.textColor;
+	    var textTransform = _constructor$getRelev.textTransform;
+
+	    var defaultTextColor = disabled ? disabledTextColor : primary ? primaryTextColor : secondary ? secondaryTextColor : textColor;
+
+	    var defaultHoverColor = _colorManipulator2.default.fade(buttonFilterColor, 0.2);
+	    var defaultRippleColor = buttonFilterColor;
+	    var buttonHoverColor = hoverColor || defaultHoverColor;
+	    var buttonRippleColor = rippleColor || defaultRippleColor;
+	    var buttonBackgroundColor = backgroundColor || buttonColor;
+	    var hovered = (this.state.hovered || this.state.isKeyboardFocused) && !disabled;
+
+	    var mergedRootStyles = (0, _styles.mergeStyles)({
+	      color: defaultTextColor,
+	      transition: _transitions2.default.easeOut(),
+	      fontSize: _typography2.default.fontStyleButtonFontSize,
+	      letterSpacing: 0,
+	      textTransform: textTransform,
+	      fontWeight: _typography2.default.fontWeightMedium,
+	      borderRadius: 2,
+	      userSelect: 'none',
+	      position: 'relative',
+	      overflow: 'hidden',
+	      backgroundColor: hovered ? buttonHoverColor : buttonBackgroundColor,
+	      lineHeight: buttonHeight + 'px',
+	      minWidth: buttonMinWidth,
+	      padding: 0,
+	      margin: 0
+	    }, style);
+
+	    var iconCloned = undefined;
+	    var labelStyleIcon = {};
+
+	    if (icon) {
+	      iconCloned = _react2.default.cloneElement(icon, {
+	        color: mergedRootStyles.color,
+	        style: {
+	          verticalAlign: 'middle',
+	          marginLeft: labelPosition === 'before' ? 0 : 12,
+	          marginRight: labelPosition === 'before' ? 12 : 0
+	        }
+	      });
+
+	      if (labelPosition === 'before') {
+	        labelStyleIcon.paddingRight = 8;
+	      } else {
+	        labelStyleIcon.paddingLeft = 8;
+	      }
+	    }
+
+	    var labelElement = label ? _react2.default.createElement(_flatButtonLabel2.default, { label: label, style: (0, _styles.mergeStyles)(labelStyleIcon, labelStyle) }) : undefined;
+
+	    // Place label before or after children.
+	    var childrenFragment = labelPosition === 'before' ? {
+	      labelElement: labelElement,
+	      iconCloned: iconCloned,
+	      children: children
+	    } : {
+	      children: children,
+	      iconCloned: iconCloned,
+	      labelElement: labelElement
+	    };
+	    var enhancedButtonChildren = _children2.default.create(childrenFragment);
+
+	    return _react2.default.createElement(
+	      _enhancedButton2.default,
+	      _extends({}, other, {
+	        disabled: disabled,
+	        focusRippleColor: buttonRippleColor,
+	        focusRippleOpacity: 0.3,
+	        onKeyboardFocus: this._handleKeyboardFocus,
+	        onMouseLeave: this._handleMouseLeave,
+	        onMouseEnter: this._handleMouseEnter,
+	        onTouchStart: this._handleTouchStart,
+	        style: mergedRootStyles,
+	        touchRippleColor: buttonRippleColor,
+	        touchRippleOpacity: 0.3
+	      }),
+	      enhancedButtonChildren
+	    );
+	  }
+	});
+
+	exports.default = FlatButton;
+	module.exports = exports['default'];
+
+/***/ },
+/* 351 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _contextPure = __webpack_require__(244);
+
+	var _contextPure2 = _interopRequireDefault(_contextPure);
+
+	var _stylePropable = __webpack_require__(218);
+
+	var _stylePropable2 = _interopRequireDefault(_stylePropable);
+
+	var _getMuiTheme = __webpack_require__(263);
+
+	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var FlatButtonLabel = _react2.default.createClass({
+	  displayName: 'FlatButtonLabel',
+
+	  propTypes: {
+	    label: _react2.default.PropTypes.node,
+
+	    /**
+	     * Override the inline-styles of the root element.
+	     */
+	    style: _react2.default.PropTypes.object
+	  },
+
+	  contextTypes: {
+	    muiTheme: _react2.default.PropTypes.object
+	  },
+
+	  //for passing default theme context to children
+	  childContextTypes: {
+	    muiTheme: _react2.default.PropTypes.object
+	  },
+
+	  mixins: [_contextPure2.default, _stylePropable2.default],
+
+	  statics: {
+	    getRelevantContextKeys: function getRelevantContextKeys(muiTheme) {
+	      return {
+	        spacingDesktopGutterLess: muiTheme.rawTheme.spacing.desktopGutterLess
+	      };
+	    }
+	  },
+
+	  getInitialState: function getInitialState() {
+	    return {
+	      muiTheme: this.context.muiTheme || (0, _getMuiTheme2.default)()
+	    };
+	  },
+	  getChildContext: function getChildContext() {
+	    return {
+	      muiTheme: this.state.muiTheme
+	    };
+	  },
+
+	  //to update theme inside state whenever a new theme is passed down
+	  //from the parent / owner using context
+	  componentWillReceiveProps: function componentWillReceiveProps(nextProps, nextContext) {
+	    var newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
+	    this.setState({ muiTheme: newMuiTheme });
+	  },
+
+	  render: function render() {
+	    var _props = this.props;
+	    var label = _props.label;
+	    var style = _props.style;
+
+	    var contextKeys = this.constructor.getRelevantContextKeys(this.state.muiTheme);
+
+	    var mergedRootStyles = this.mergeStyles({
+	      position: 'relative',
+	      paddingLeft: contextKeys.spacingDesktopGutterLess,
+	      paddingRight: contextKeys.spacingDesktopGutterLess
+	    }, style);
+
+	    return _react2.default.createElement(
+	      'span',
+	      { style: this.prepareStyles(mergedRootStyles) },
+	      label
+	    );
+	  }
+
+	});
+
+	exports.default = FlatButtonLabel;
+	module.exports = exports['default'];
+
+/***/ },
+/* 352 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(158);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _stylePropable = __webpack_require__(218);
+
+	var _stylePropable2 = _interopRequireDefault(_stylePropable);
+
+	var _transitions = __webpack_require__(246);
+
+	var _transitions2 = _interopRequireDefault(_transitions);
+
+	var _colors = __webpack_require__(242);
+
+	var _colors2 = _interopRequireDefault(_colors);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+	var Overlay = _react2.default.createClass({
+	  displayName: 'Overlay',
+
+	  propTypes: {
+	    autoLockScrolling: _react2.default.PropTypes.bool,
+	    show: _react2.default.PropTypes.bool.isRequired,
+
+	    /**
+	     * Override the inline-styles of the root element.
+	     */
+	    style: _react2.default.PropTypes.object,
+	    transitionEnabled: _react2.default.PropTypes.bool
+	  },
+
+	  contextTypes: {
+	    muiTheme: _react2.default.PropTypes.object
+	  },
+
+	  mixins: [_stylePropable2.default],
+
+	  getDefaultProps: function getDefaultProps() {
+	    return {
+	      autoLockScrolling: true,
+	      transitionEnabled: true,
+	      style: {}
+	    };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    if (this.props.show) {
+	      this._applyAutoLockScrolling(this.props);
+	    }
+	  },
+	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	    if (this.props.show !== nextProps.show) {
+	      this._applyAutoLockScrolling(nextProps);
+	    }
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    if (this.props.show === true) {
+	      this._allowScrolling();
+	    }
+	  },
+
+	  _originalBodyOverflow: '',
+
+	  setOpacity: function setOpacity(opacity) {
+	    var overlay = _reactDom2.default.findDOMNode(this);
+	    overlay.style.opacity = opacity;
+	  },
+	  getStyles: function getStyles() {
+	    return {
+	      root: {
+	        position: 'fixed',
+	        height: '100%',
+	        width: '100%',
+	        top: 0,
+	        left: '-100%',
+	        opacity: 0,
+	        backgroundColor: _colors2.default.lightBlack,
+	        WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)',
+
+	        // Two ways to promote overlay to its own render layer
+	        willChange: 'opacity',
+	        transform: 'translateZ(0)',
+
+	        transition: this.props.transitionEnabled && _transitions2.default.easeOut('0ms', 'left', '400ms') + ',' + _transitions2.default.easeOut('400ms', 'opacity')
+	      },
+	      rootWhenShown: {
+	        left: '0',
+	        opacity: 1,
+	        transition: this.props.transitionEnabled && _transitions2.default.easeOut('0ms', 'left') + ',' + _transitions2.default.easeOut('400ms', 'opacity')
+	      }
+	    };
+	  },
+	  _applyAutoLockScrolling: function _applyAutoLockScrolling(props) {
+	    if (props.autoLockScrolling) {
+	      if (props.show) {
+	        this._preventScrolling();
+	      } else {
+	        this._allowScrolling();
+	      }
+	    }
+	  },
+	  _preventScrolling: function _preventScrolling() {
+	    var body = document.getElementsByTagName('body')[0];
+	    this._originalBodyOverflow = body.style.overflow;
+
+	    body.style.overflow = 'hidden';
+	  },
+	  _allowScrolling: function _allowScrolling() {
+	    var body = document.getElementsByTagName('body')[0];
+	    body.style.overflow = this._originalBodyOverflow || '';
+	  },
+	  render: function render() {
+	    var _props = this.props;
+	    var show = _props.show;
+	    var style = _props.style;
+
+	    var other = _objectWithoutProperties(_props, ['show', 'style']);
+
+	    var styles = this.mergeStyles(this.getStyles().root, style, show && this.getStyles().rootWhenShown);
+
+	    return _react2.default.createElement('div', _extends({}, other, { style: this.prepareStyles(styles) }));
+	  }
+	});
+
+	exports.default = Overlay;
+	module.exports = exports['default'];
+
+/***/ },
+/* 353 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(158);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _dom = __webpack_require__(291);
+
+	var _dom2 = _interopRequireDefault(_dom);
+
+	var _getMuiTheme = __webpack_require__(263);
+
+	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	// heavily inspired by https://github.com/Khan/react-components/blob/master/js/layered-component-mixin.jsx
+	var RenderToLayer = _react2.default.createClass({
+	  displayName: 'RenderToLayer',
+
+	  propTypes: {
+	    componentClickAway: _react2.default.PropTypes.func,
+	    open: _react2.default.PropTypes.bool.isRequired,
+	    render: _react2.default.PropTypes.func.isRequired,
+	    useLayerForClickAway: _react2.default.PropTypes.bool
+	  },
+
+	  contextTypes: {
+	    muiTheme: _react2.default.PropTypes.object
+	  },
+
+	  //for passing default theme context to children
+	  childContextTypes: {
+	    muiTheme: _react2.default.PropTypes.object
+	  },
+
+	  getDefaultProps: function getDefaultProps() {
+	    return {
+	      useLayerForClickAway: true
+	    };
+	  },
+	  getInitialState: function getInitialState() {
+	    return {
+	      muiTheme: this.context.muiTheme || (0, _getMuiTheme2.default)()
+	    };
+	  },
+	  getChildContext: function getChildContext() {
+	    return {
+	      muiTheme: this.state.muiTheme
+	    };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this._renderLayer();
+	  },
+
+	  //to update theme inside state whenever a new theme is passed down
+	  //from the parent / owner using context
+	  componentWillReceiveProps: function componentWillReceiveProps(nextProps, nextContext) {
+	    var newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
+	    this.setState({
+	      muiTheme: newMuiTheme
+	    });
+	  },
+	  componentDidUpdate: function componentDidUpdate() {
+	    this._renderLayer();
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this._unrenderLayer();
+	  },
+	  onClickAway: function onClickAway(event) {
+	    if (event.defaultPrevented) {
+	      return;
+	    }
+
+	    if (!this.props.componentClickAway) {
+	      return;
+	    }
+
+	    if (!this.props.open) {
+	      return;
+	    }
+
+	    var el = this._layer;
+	    if (event.target !== el && event.target === window || document.documentElement.contains(event.target) && !_dom2.default.isDescendant(el, event.target)) {
+	      this.props.componentClickAway(event);
+	    }
+	  },
+	  getLayer: function getLayer() {
+	    return this._layer;
+	  },
+
+	  _unrenderLayer: function _unrenderLayer() {
+	    if (!this._layer) {
+	      return;
+	    }
+
+	    if (this.props.useLayerForClickAway) {
+	      this._layer.style.position = 'relative';
+	      this._layer.removeEventListener('touchstart', this.onClickAway);
+	      this._layer.removeEventListener('click', this.onClickAway);
+	    } else {
+	      window.removeEventListener('touchstart', this.onClickAway);
+	      window.removeEventListener('click', this.onClickAway);
+	    }
+
+	    _reactDom2.default.unmountComponentAtNode(this._layer);
+	    document.body.removeChild(this._layer);
+	    this._layer = null;
+	  },
+
+	  _renderLayer: function _renderLayer() {
+	    var _this = this;
+
+	    var _props = this.props;
+	    var open = _props.open;
+	    var render = _props.render;
+
+	    if (open) {
+	      if (!this._layer) {
+	        this._layer = document.createElement('div');
+	        document.body.appendChild(this._layer);
+
+	        if (this.props.useLayerForClickAway) {
+	          this._layer.addEventListener('touchstart', this.onClickAway);
+	          this._layer.addEventListener('click', this.onClickAway);
+	          this._layer.style.position = 'fixed';
+	          this._layer.style.top = 0;
+	          this._layer.style.bottom = 0;
+	          this._layer.style.left = 0;
+	          this._layer.style.right = 0;
+	          this._layer.style.zIndex = this.state.muiTheme.zIndex.layer;
+	        } else {
+	          setTimeout(function () {
+	            window.addEventListener('touchstart', _this.onClickAway);
+	            window.addEventListener('click', _this.onClickAway);
+	          }, 0);
+	        }
+	      }
+
+	      // By calling this method in componentDidMount() and
+	      // componentDidUpdate(), you're effectively creating a "wormhole" that
+	      // funnels React's hierarchical updates through to a DOM node on an
+	      // entirely different part of the page.
+
+	      var layerElement = render();
+
+	      if (layerElement === null) {
+	        this.layerElement = _reactDom2.default.unstable_renderSubtreeIntoContainer(this, null, this._layer);
+	      } else {
+	        this.layerElement = _reactDom2.default.unstable_renderSubtreeIntoContainer(this, layerElement, this._layer);
+	      }
+	    } else {
+	      this._unrenderLayer();
+	    }
+	  },
+	  render: function render() {
+	    return null;
+	  }
+	});
+
+	exports.default = RenderToLayer;
+	module.exports = exports['default'];
+
+/***/ },
+/* 354 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = deprecated;
+
+	var _warning = __webpack_require__(163);
+
+	var _warning2 = _interopRequireDefault(_warning);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function deprecated(propType, explanation) {
+	  return function validate(props, propName, componentName) {
+	    if (props[propName] != null) {
+	      process.env.NODE_ENV !== "production" ? (0, _warning2.default)(false, '"' + propName + '" property of "' + componentName + '" has been deprecated.\n' + explanation) : undefined;
+	    }
+
+	    return propType(props, propName, componentName);
+	  };
+	}
+	module.exports = exports['default'];
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ },
+/* 355 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -40598,11 +42409,11 @@
 
 	var _transitions2 = _interopRequireDefault(_transitions);
 
-	var _windowListenable = __webpack_require__(347);
+	var _windowListenable = __webpack_require__(349);
 
 	var _windowListenable2 = _interopRequireDefault(_windowListenable);
 
-	var _overlay = __webpack_require__(348);
+	var _overlay = __webpack_require__(352);
 
 	var _overlay2 = _interopRequireDefault(_overlay);
 
@@ -40610,7 +42421,7 @@
 
 	var _paper2 = _interopRequireDefault(_paper);
 
-	var _menu = __webpack_require__(349);
+	var _menu = __webpack_require__(356);
 
 	var _menu2 = _interopRequireDefault(_menu);
 
@@ -40622,7 +42433,7 @@
 
 	var _warning2 = _interopRequireDefault(_warning);
 
-	var _deprecatedPropType = __webpack_require__(360);
+	var _deprecatedPropType = __webpack_require__(354);
 
 	var _deprecatedPropType2 = _interopRequireDefault(_deprecatedPropType);
 
@@ -41128,188 +42939,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 347 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _events = __webpack_require__(255);
-
-	var _events2 = _interopRequireDefault(_events);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = {
-	  componentDidMount: function componentDidMount() {
-	    var listeners = this.windowListeners;
-
-	    for (var eventName in listeners) {
-	      var callbackName = listeners[eventName];
-	      _events2.default.on(window, eventName, this[callbackName]);
-	    }
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    var listeners = this.windowListeners;
-
-	    for (var eventName in listeners) {
-	      var callbackName = listeners[eventName];
-	      _events2.default.off(window, eventName, this[callbackName]);
-	    }
-	  }
-	};
-	module.exports = exports['default'];
-
-/***/ },
-/* 348 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(158);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _stylePropable = __webpack_require__(218);
-
-	var _stylePropable2 = _interopRequireDefault(_stylePropable);
-
-	var _transitions = __webpack_require__(246);
-
-	var _transitions2 = _interopRequireDefault(_transitions);
-
-	var _colors = __webpack_require__(242);
-
-	var _colors2 = _interopRequireDefault(_colors);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	var Overlay = _react2.default.createClass({
-	  displayName: 'Overlay',
-
-	  propTypes: {
-	    autoLockScrolling: _react2.default.PropTypes.bool,
-	    show: _react2.default.PropTypes.bool.isRequired,
-
-	    /**
-	     * Override the inline-styles of the root element.
-	     */
-	    style: _react2.default.PropTypes.object,
-	    transitionEnabled: _react2.default.PropTypes.bool
-	  },
-
-	  contextTypes: {
-	    muiTheme: _react2.default.PropTypes.object
-	  },
-
-	  mixins: [_stylePropable2.default],
-
-	  getDefaultProps: function getDefaultProps() {
-	    return {
-	      autoLockScrolling: true,
-	      transitionEnabled: true,
-	      style: {}
-	    };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    if (this.props.show) {
-	      this._applyAutoLockScrolling(this.props);
-	    }
-	  },
-	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	    if (this.props.show !== nextProps.show) {
-	      this._applyAutoLockScrolling(nextProps);
-	    }
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    if (this.props.show === true) {
-	      this._allowScrolling();
-	    }
-	  },
-
-	  _originalBodyOverflow: '',
-
-	  setOpacity: function setOpacity(opacity) {
-	    var overlay = _reactDom2.default.findDOMNode(this);
-	    overlay.style.opacity = opacity;
-	  },
-	  getStyles: function getStyles() {
-	    return {
-	      root: {
-	        position: 'fixed',
-	        height: '100%',
-	        width: '100%',
-	        top: 0,
-	        left: '-100%',
-	        opacity: 0,
-	        backgroundColor: _colors2.default.lightBlack,
-	        WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)',
-
-	        // Two ways to promote overlay to its own render layer
-	        willChange: 'opacity',
-	        transform: 'translateZ(0)',
-
-	        transition: this.props.transitionEnabled && _transitions2.default.easeOut('0ms', 'left', '400ms') + ',' + _transitions2.default.easeOut('400ms', 'opacity')
-	      },
-	      rootWhenShown: {
-	        left: '0',
-	        opacity: 1,
-	        transition: this.props.transitionEnabled && _transitions2.default.easeOut('0ms', 'left') + ',' + _transitions2.default.easeOut('400ms', 'opacity')
-	      }
-	    };
-	  },
-	  _applyAutoLockScrolling: function _applyAutoLockScrolling(props) {
-	    if (props.autoLockScrolling) {
-	      if (props.show) {
-	        this._preventScrolling();
-	      } else {
-	        this._allowScrolling();
-	      }
-	    }
-	  },
-	  _preventScrolling: function _preventScrolling() {
-	    var body = document.getElementsByTagName('body')[0];
-	    this._originalBodyOverflow = body.style.overflow;
-
-	    body.style.overflow = 'hidden';
-	  },
-	  _allowScrolling: function _allowScrolling() {
-	    var body = document.getElementsByTagName('body')[0];
-	    body.style.overflow = this._originalBodyOverflow || '';
-	  },
-	  render: function render() {
-	    var _props = this.props;
-	    var show = _props.show;
-	    var style = _props.style;
-
-	    var other = _objectWithoutProperties(_props, ['show', 'style']);
-
-	    var styles = this.mergeStyles(this.getStyles().root, style, show && this.getStyles().rootWhenShown);
-
-	    return _react2.default.createElement('div', _extends({}, other, { style: this.prepareStyles(styles) }));
-	  }
-	});
-
-	exports.default = Overlay;
-	module.exports = exports['default'];
-
-/***/ },
-/* 349 */
+/* 356 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -41328,11 +42958,11 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _cssEvent = __webpack_require__(350);
+	var _cssEvent = __webpack_require__(357);
 
 	var _cssEvent2 = _interopRequireDefault(_cssEvent);
 
-	var _keyLine = __webpack_require__(351);
+	var _keyLine = __webpack_require__(358);
 
 	var _keyLine2 = _interopRequireDefault(_keyLine);
 
@@ -41348,7 +42978,7 @@
 
 	var _transitions2 = _interopRequireDefault(_transitions);
 
-	var _clickAwayable = __webpack_require__(352);
+	var _clickAwayable = __webpack_require__(359);
 
 	var _clickAwayable2 = _interopRequireDefault(_clickAwayable);
 
@@ -41356,15 +42986,15 @@
 
 	var _paper2 = _interopRequireDefault(_paper);
 
-	var _menuItem2 = __webpack_require__(353);
+	var _menuItem2 = __webpack_require__(360);
 
 	var _menuItem3 = _interopRequireDefault(_menuItem2);
 
-	var _linkMenuItem = __webpack_require__(358);
+	var _linkMenuItem = __webpack_require__(365);
 
 	var _linkMenuItem2 = _interopRequireDefault(_linkMenuItem);
 
-	var _subheaderMenuItem = __webpack_require__(359);
+	var _subheaderMenuItem = __webpack_require__(366);
 
 	var _subheaderMenuItem2 = _interopRequireDefault(_subheaderMenuItem);
 
@@ -41968,7 +43598,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 350 */
+/* 357 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42030,7 +43660,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 351 */
+/* 358 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -42054,7 +43684,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 352 */
+/* 359 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42113,7 +43743,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 353 */
+/* 360 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -42136,7 +43766,7 @@
 
 	var _fontIcon2 = _interopRequireDefault(_fontIcon);
 
-	var _toggle = __webpack_require__(354);
+	var _toggle = __webpack_require__(361);
 
 	var _toggle2 = _interopRequireDefault(_toggle);
 
@@ -42383,7 +44013,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 354 */
+/* 361 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42410,7 +44040,7 @@
 
 	var _paper2 = _interopRequireDefault(_paper);
 
-	var _enhancedSwitch = __webpack_require__(355);
+	var _enhancedSwitch = __webpack_require__(362);
 
 	var _enhancedSwitch2 = _interopRequireDefault(_enhancedSwitch);
 
@@ -42656,7 +44286,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 355 */
+/* 362 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -42691,11 +44321,11 @@
 
 	var _uniqueId2 = _interopRequireDefault(_uniqueId);
 
-	var _windowListenable = __webpack_require__(347);
+	var _windowListenable = __webpack_require__(349);
 
 	var _windowListenable2 = _interopRequireDefault(_windowListenable);
 
-	var _clearfix = __webpack_require__(356);
+	var _clearfix = __webpack_require__(363);
 
 	var _clearfix2 = _interopRequireDefault(_clearfix);
 
@@ -43136,7 +44766,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 356 */
+/* 363 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43151,7 +44781,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _beforeAfterWrapper = __webpack_require__(357);
+	var _beforeAfterWrapper = __webpack_require__(364);
 
 	var _beforeAfterWrapper2 = _interopRequireDefault(_beforeAfterWrapper);
 
@@ -43203,7 +44833,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 357 */
+/* 364 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43357,7 +44987,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 358 */
+/* 365 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43504,7 +45134,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 359 */
+/* 366 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43620,36 +45250,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 360 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = deprecated;
-
-	var _warning = __webpack_require__(163);
-
-	var _warning2 = _interopRequireDefault(_warning);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function deprecated(propType, explanation) {
-	  return function validate(props, propName, componentName) {
-	    if (props[propName] != null) {
-	      process.env.NODE_ENV !== "production" ? (0, _warning2.default)(false, '"' + propName + '" property of "' + componentName + '" has been deprecated.\n' + explanation) : undefined;
-	    }
-
-	    return propType(props, propName, componentName);
-	  };
-	}
-	module.exports = exports['default'];
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
-
-/***/ },
-/* 361 */
+/* 367 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43680,11 +45281,11 @@
 
 	var _colors2 = _interopRequireDefault(_colors);
 
-	var _popover = __webpack_require__(362);
+	var _popover = __webpack_require__(368);
 
 	var _popover2 = _interopRequireDefault(_popover);
 
-	var _check = __webpack_require__(367);
+	var _check = __webpack_require__(372);
 
 	var _check2 = _interopRequireDefault(_check);
 
@@ -43696,7 +45297,7 @@
 
 	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
 
-	var _menu = __webpack_require__(368);
+	var _menu = __webpack_require__(373);
 
 	var _menu2 = _interopRequireDefault(_menu);
 
@@ -44004,7 +45605,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 362 */
+/* 368 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44023,11 +45624,11 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _windowListenable = __webpack_require__(347);
+	var _windowListenable = __webpack_require__(349);
 
 	var _windowListenable2 = _interopRequireDefault(_windowListenable);
 
-	var _renderToLayer = __webpack_require__(363);
+	var _renderToLayer = __webpack_require__(353);
 
 	var _renderToLayer2 = _interopRequireDefault(_renderToLayer);
 
@@ -44043,7 +45644,7 @@
 
 	var _paper2 = _interopRequireDefault(_paper);
 
-	var _lodash = __webpack_require__(364);
+	var _lodash = __webpack_require__(369);
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -44051,7 +45652,7 @@
 
 	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
 
-	var _popoverDefaultAnimation = __webpack_require__(366);
+	var _popoverDefaultAnimation = __webpack_require__(371);
 
 	var _popoverDefaultAnimation2 = _interopRequireDefault(_popoverDefaultAnimation);
 
@@ -44437,182 +46038,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 363 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(158);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _dom = __webpack_require__(291);
-
-	var _dom2 = _interopRequireDefault(_dom);
-
-	var _getMuiTheme = __webpack_require__(263);
-
-	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	// heavily inspired by https://github.com/Khan/react-components/blob/master/js/layered-component-mixin.jsx
-	var RenderToLayer = _react2.default.createClass({
-	  displayName: 'RenderToLayer',
-
-	  propTypes: {
-	    componentClickAway: _react2.default.PropTypes.func,
-	    open: _react2.default.PropTypes.bool.isRequired,
-	    render: _react2.default.PropTypes.func.isRequired,
-	    useLayerForClickAway: _react2.default.PropTypes.bool
-	  },
-
-	  contextTypes: {
-	    muiTheme: _react2.default.PropTypes.object
-	  },
-
-	  //for passing default theme context to children
-	  childContextTypes: {
-	    muiTheme: _react2.default.PropTypes.object
-	  },
-
-	  getDefaultProps: function getDefaultProps() {
-	    return {
-	      useLayerForClickAway: true
-	    };
-	  },
-	  getInitialState: function getInitialState() {
-	    return {
-	      muiTheme: this.context.muiTheme || (0, _getMuiTheme2.default)()
-	    };
-	  },
-	  getChildContext: function getChildContext() {
-	    return {
-	      muiTheme: this.state.muiTheme
-	    };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this._renderLayer();
-	  },
-
-	  //to update theme inside state whenever a new theme is passed down
-	  //from the parent / owner using context
-	  componentWillReceiveProps: function componentWillReceiveProps(nextProps, nextContext) {
-	    var newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-	    this.setState({
-	      muiTheme: newMuiTheme
-	    });
-	  },
-	  componentDidUpdate: function componentDidUpdate() {
-	    this._renderLayer();
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this._unrenderLayer();
-	  },
-	  onClickAway: function onClickAway(event) {
-	    if (event.defaultPrevented) {
-	      return;
-	    }
-
-	    if (!this.props.componentClickAway) {
-	      return;
-	    }
-
-	    if (!this.props.open) {
-	      return;
-	    }
-
-	    var el = this._layer;
-	    if (event.target !== el && event.target === window || document.documentElement.contains(event.target) && !_dom2.default.isDescendant(el, event.target)) {
-	      this.props.componentClickAway(event);
-	    }
-	  },
-	  getLayer: function getLayer() {
-	    return this._layer;
-	  },
-
-	  _unrenderLayer: function _unrenderLayer() {
-	    if (!this._layer) {
-	      return;
-	    }
-
-	    if (this.props.useLayerForClickAway) {
-	      this._layer.style.position = 'relative';
-	      this._layer.removeEventListener('touchstart', this.onClickAway);
-	      this._layer.removeEventListener('click', this.onClickAway);
-	    } else {
-	      window.removeEventListener('touchstart', this.onClickAway);
-	      window.removeEventListener('click', this.onClickAway);
-	    }
-
-	    _reactDom2.default.unmountComponentAtNode(this._layer);
-	    document.body.removeChild(this._layer);
-	    this._layer = null;
-	  },
-
-	  _renderLayer: function _renderLayer() {
-	    var _this = this;
-
-	    var _props = this.props;
-	    var open = _props.open;
-	    var render = _props.render;
-
-	    if (open) {
-	      if (!this._layer) {
-	        this._layer = document.createElement('div');
-	        document.body.appendChild(this._layer);
-
-	        if (this.props.useLayerForClickAway) {
-	          this._layer.addEventListener('touchstart', this.onClickAway);
-	          this._layer.addEventListener('click', this.onClickAway);
-	          this._layer.style.position = 'fixed';
-	          this._layer.style.top = 0;
-	          this._layer.style.bottom = 0;
-	          this._layer.style.left = 0;
-	          this._layer.style.right = 0;
-	          this._layer.style.zIndex = this.state.muiTheme.zIndex.layer;
-	        } else {
-	          setTimeout(function () {
-	            window.addEventListener('touchstart', _this.onClickAway);
-	            window.addEventListener('click', _this.onClickAway);
-	          }, 0);
-	        }
-	      }
-
-	      // By calling this method in componentDidMount() and
-	      // componentDidUpdate(), you're effectively creating a "wormhole" that
-	      // funnels React's hierarchical updates through to a DOM node on an
-	      // entirely different part of the page.
-
-	      var layerElement = render();
-
-	      if (layerElement === null) {
-	        this.layerElement = _reactDom2.default.unstable_renderSubtreeIntoContainer(this, null, this._layer);
-	      } else {
-	        this.layerElement = _reactDom2.default.unstable_renderSubtreeIntoContainer(this, layerElement, this._layer);
-	      }
-	    } else {
-	      this._unrenderLayer();
-	    }
-	  },
-	  render: function render() {
-	    return null;
-	  }
-	});
-
-	exports.default = RenderToLayer;
-	module.exports = exports['default'];
-
-/***/ },
-/* 364 */
+/* 369 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -44623,7 +46049,7 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var debounce = __webpack_require__(365);
+	var debounce = __webpack_require__(370);
 
 	/** Used as the `TypeError` message for "Functions" methods. */
 	var FUNC_ERROR_TEXT = 'Expected a function';
@@ -44714,7 +46140,7 @@
 
 
 /***/ },
-/* 365 */
+/* 370 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -44954,7 +46380,7 @@
 
 
 /***/ },
-/* 366 */
+/* 371 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45130,7 +46556,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 367 */
+/* 372 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45171,7 +46597,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 368 */
+/* 373 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45198,7 +46624,7 @@
 
 	var _stylePropable2 = _interopRequireDefault(_stylePropable);
 
-	var _clickAwayable = __webpack_require__(352);
+	var _clickAwayable = __webpack_require__(359);
 
 	var _clickAwayable2 = _interopRequireDefault(_clickAwayable);
 
@@ -45786,7 +47212,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 369 */
+/* 374 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45821,7 +47247,7 @@
 	        primary1Color: _colors2.default.red500,
 	        primary2Color: _colors2.default.red700,
 	        primary3Color: _colors2.default.lightBlack,
-	        accent1Color: _colors2.default.yellow500,
+	        accent1Color: _colors2.default.red700,
 	        accent2Color: _colors2.default.grey100,
 	        accent3Color: _colors2.default.grey500,
 	        textColor: _colors2.default.darkBlack,
@@ -45834,23 +47260,23 @@
 	};
 
 /***/ },
-/* 370 */
+/* 375 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var defaultClickRejectionStrategy = __webpack_require__(371);
+	var defaultClickRejectionStrategy = __webpack_require__(376);
 
 	module.exports = function injectTapEventPlugin (strategyOverrides) {
 	  strategyOverrides = strategyOverrides || {}
 	  var shouldRejectClick = strategyOverrides.shouldRejectClick || defaultClickRejectionStrategy;
 
 	  __webpack_require__(31).injection.injectEventPluginsByName({
-	    "TapEventPlugin":       __webpack_require__(372)(shouldRejectClick)
+	    "TapEventPlugin":       __webpack_require__(377)(shouldRejectClick)
 	  });
 	};
 
 
 /***/ },
-/* 371 */
+/* 376 */
 /***/ function(module, exports) {
 
 	module.exports = function(lastTouchEvent, clickTimestamp) {
@@ -45861,7 +47287,7 @@
 
 
 /***/ },
-/* 372 */
+/* 377 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45889,10 +47315,10 @@
 	var EventPluginUtils = __webpack_require__(33);
 	var EventPropagators = __webpack_require__(73);
 	var SyntheticUIEvent = __webpack_require__(87);
-	var TouchEventUtils = __webpack_require__(373);
+	var TouchEventUtils = __webpack_require__(378);
 	var ViewportMetrics = __webpack_require__(38);
 
-	var keyOf = __webpack_require__(374);
+	var keyOf = __webpack_require__(379);
 	var topLevelTypes = EventConstants.topLevelTypes;
 
 	var isStartish = EventPluginUtils.isStartish;
@@ -46038,7 +47464,7 @@
 
 
 /***/ },
-/* 373 */
+/* 378 */
 /***/ function(module, exports) {
 
 	/**
@@ -46086,7 +47512,7 @@
 
 
 /***/ },
-/* 374 */
+/* 379 */
 /***/ function(module, exports) {
 
 	/**
