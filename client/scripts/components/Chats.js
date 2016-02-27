@@ -1,5 +1,4 @@
 import React from "react";
-import AppBar from "material-ui/lib/app-bar";
 import Avatar from "material-ui/lib/avatar";
 import List from "material-ui/lib/lists/list";
 import ListItem from "material-ui/lib/lists/list-item";
@@ -15,7 +14,6 @@ export default React.createClass({
     render() {
         return (
             <div>
-                <AppBar title="Game of Spots"/>
                 <List subheader="Available spots">
                     <ListItem
                         primaryText="Brendan Lim"
