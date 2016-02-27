@@ -33,8 +33,9 @@ export default React.createClass({
         this.setState({open: !this.state.open});
     },
 
-    handleGoToHome() {
+    handleGoTo(route) {
         this.setState({open: !this.state.open});
+        this.refs.router.router.push(route);
     },
 
     render() {
@@ -42,10 +43,10 @@ export default React.createClass({
             <div className="app">
                 <AppBar title="Game of Spots" onTouchTap={this.handleToggle} onLeftIconButtonTouchTap={this.handleToggle}/>
                 <LeftNav docked={false} width={200} open={this.state.open} onRequestChange={open => this.setState({open})}>
-                    <MenuItem onTouchTap={this.handleGoToHome}>Chats</MenuItem>
-                    <MenuItem onTouchTap={this.handleToggle}>About</MenuItem>
+                    <MenuItem onTouchTap={this.handleGoTo.bind(this, '/')}>Chats</MenuItem>
+                    <MenuItem onTouchTap={this.handleGoTo.bind(this, '/about')}>About</MenuItem>
                 </LeftNav>
-                <Router history={hashHistory}>
+                <Router ref="router" history={hashHistory}>
                     <Route path="/" component={Chats}/>
                     <Route path="/chats/:chatId" component={Chat}/>
                     <Route path="/chats/:chatId/question/:questionId" component={Answer}/>

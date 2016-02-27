@@ -58,7 +58,7 @@
 
 	var _App2 = _interopRequireDefault(_App);
 
-	var _reactTapEventPlugin = __webpack_require__(372);
+	var _reactTapEventPlugin = __webpack_require__(368);
 
 	var _reactTapEventPlugin2 = _interopRequireDefault(_reactTapEventPlugin);
 
@@ -19710,17 +19710,13 @@
 
 	var _Answer2 = _interopRequireDefault(_Answer);
 
-	var _leftNav = __webpack_require__(348);
+	var _leftNav = __webpack_require__(345);
 
 	var _leftNav2 = _interopRequireDefault(_leftNav);
 
-	var _menuItem = __webpack_require__(363);
+	var _menuItem = __webpack_require__(360);
 
 	var _menuItem2 = _interopRequireDefault(_menuItem);
-
-	var _pinDrop = __webpack_require__(371);
-
-	var _pinDrop2 = _interopRequireDefault(_pinDrop);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -19734,8 +19730,9 @@
 	    handleToggle: function handleToggle() {
 	        this.setState({ open: !this.state.open });
 	    },
-	    handleGoToHome: function handleGoToHome() {
+	    handleGoTo: function handleGoTo(route) {
 	        this.setState({ open: !this.state.open });
+	        this.refs.router.router.push(route);
 	    },
 	    render: function render() {
 	        var _this = this;
@@ -19751,18 +19748,18 @@
 	                    } },
 	                _react2.default.createElement(
 	                    _menuItem2.default,
-	                    { onTouchTap: this.handleGoToHome },
+	                    { onTouchTap: this.handleGoTo.bind(this, '/') },
 	                    "Chats"
 	                ),
 	                _react2.default.createElement(
 	                    _menuItem2.default,
-	                    { onTouchTap: this.handleToggle },
+	                    { onTouchTap: this.handleGoTo.bind(this, '/about') },
 	                    "About"
 	                )
 	            ),
 	            _react2.default.createElement(
 	                _reactRouter.Router,
-	                { history: _reactRouter.hashHistory },
+	                { ref: "router", history: _reactRouter.hashHistory },
 	                _react2.default.createElement(_reactRouter.Route, { path: "/", component: _Chats2.default }),
 	                _react2.default.createElement(_reactRouter.Route, { path: "/chats/:chatId", component: _Chat2.default }),
 	                _react2.default.createElement(_reactRouter.Route, { path: "/chats/:chatId/question/:questionId", component: _Answer2.default }),
@@ -33258,23 +33255,21 @@
 	            loading: true
 	        };
 	    },
-	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	        this.setState({ loading: true });
-	    },
-	    componentDidMount: function componentDidMount() {
+	    fetchData: function fetchData() {
 	        var _this = this;
 
 	        (0, _chats2.default)().all().then(function (response) {
-	            function toListItems(response) {
-	                return Object.keys(response).map(function (item) {
-	                    return response[item];
-	                });
-	            }
-
-	            _this.setState({ results: toListItems(response), loading: false });
+	            _this.setState({ results: response, loading: false });
 	        }).catch(function (error) {
 	            console.log(error);
 	        });
+	    },
+	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	        this.setState({ loading: true });
+	        this.fetchData();
+	    },
+	    componentDidMount: function componentDidMount() {
+	        this.fetchData();
 	    },
 
 
@@ -39593,7 +39588,7 @@
 /* 341 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -39603,10 +39598,6 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _paper = __webpack_require__(297);
-
-	var _paper2 = _interopRequireDefault(_paper);
-
 	var _textField = __webpack_require__(316);
 
 	var _textField2 = _interopRequireDefault(_textField);
@@ -39614,14 +39605,6 @@
 	var _raisedButton = __webpack_require__(342);
 
 	var _raisedButton2 = _interopRequireDefault(_raisedButton);
-
-	var _flatButton = __webpack_require__(343);
-
-	var _flatButton2 = _interopRequireDefault(_flatButton);
-
-	var _divider = __webpack_require__(324);
-
-	var _divider2 = _interopRequireDefault(_divider);
 
 	var _colors = __webpack_require__(242);
 
@@ -39631,11 +39614,7 @@
 
 	var _card2 = _interopRequireDefault(_card);
 
-	var _cardActions = __webpack_require__(345);
-
-	var _cardActions2 = _interopRequireDefault(_cardActions);
-
-	var _cardHeader = __webpack_require__(346);
+	var _cardHeader = __webpack_require__(343);
 
 	var _cardHeader2 = _interopRequireDefault(_cardHeader);
 
@@ -39647,7 +39626,7 @@
 
 	var _cardTitle2 = _interopRequireDefault(_cardTitle);
 
-	var _cardText = __webpack_require__(347);
+	var _cardText = __webpack_require__(344);
 
 	var _cardText2 = _interopRequireDefault(_cardText);
 
@@ -39706,61 +39685,61 @@
 	        router: _react2.default.PropTypes.object
 	    },
 	    backToChat: function backToChat(chatId, event) {
-	        this.context.router.push('/chats/' + chatId);
+	        this.context.router.push("/chats/" + chatId);
 	    },
 	    render: function render() {
 	        return _react2.default.createElement(
-	            'div',
-	            { className: 'app-chat' },
+	            "div",
+	            { className: "app-chat" },
 	            _react2.default.createElement(
 	                _card2.default,
 	                null,
 	                _react2.default.createElement(
 	                    _cardMedia2.default,
 	                    {
-	                        overlay: _react2.default.createElement(_cardTitle2.default, { title: 'Multitap PiwPaw', subtitle: '0.2km away from you' }),
+	                        overlay: _react2.default.createElement(_cardTitle2.default, { title: "Multitap PiwPaw", subtitle: "0.2km away from you" }),
 	                        style: customStyles.cardMediaPhotoWrapper
 	                    },
-	                    _react2.default.createElement('img', { src: 'http://lorempixel.com/600/337/nature/' })
+	                    _react2.default.createElement("img", { src: "http://lorempixel.com/600/337/nature/" })
 	                ),
 	                _react2.default.createElement(_cardHeader2.default, {
-	                    avatar: 'http://lorempixel.com/100/100/nature/',
+	                    avatar: "http://lorempixel.com/100/100/nature/",
 	                    style: customStyles.cardHeader
 	                }),
 	                _react2.default.createElement(
 	                    _cardText2.default,
 	                    { style: customStyles.cardTextAuthor },
 	                    _react2.default.createElement(
-	                        'div',
+	                        "div",
 	                        { style: customStyles.cardTextAuthorName },
-	                        'Stevie Wonder'
+	                        "Stevie Wonder"
 	                    ),
 	                    _react2.default.createElement(
-	                        'div',
+	                        "div",
 	                        { style: customStyles.cardTextAuthorSubtitle },
-	                        'asked...'
+	                        "asked..."
 	                    )
 	                ),
 	                _react2.default.createElement(
 	                    _cardText2.default,
 	                    { style: customStyles.cardTextQuestion },
-	                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mattis pretium massa. Aliquam erat volutpat. Nulla facilisi?'
+	                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mattis pretium massa. Aliquam erat volutpat. Nulla facilisi?"
 	                )
 	            ),
 	            _react2.default.createElement(
-	                'div',
+	                "div",
 	                { style: customStyles.defaultPadding },
 	                _react2.default.createElement(_textField2.default, {
-	                    hintText: 'Your answer',
+	                    hintText: "Your answer",
 	                    fullWidth: true,
 	                    style: customStyles.questionInputStyle
 	                }),
 	                _react2.default.createElement(_raisedButton2.default, {
-	                    label: 'Send!', secondary: true,
+	                    label: "Send!", secondary: true,
 	                    fullWidth: true
 	                }),
 	                _react2.default.createElement(_raisedButton2.default, {
-	                    label: 'I am not there / I don\'t know',
+	                    label: "I am not there / I don't know",
 	                    fullWidth: true,
 	                    style: customStyles.topMarginSmall,
 	                    onTouchTap: this.backToChat.bind(this, 1),
@@ -40235,565 +40214,6 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _contextPure = __webpack_require__(244);
-
-	var _contextPure2 = _interopRequireDefault(_contextPure);
-
-	var _transitions = __webpack_require__(246);
-
-	var _transitions2 = _interopRequireDefault(_transitions);
-
-	var _children = __webpack_require__(252);
-
-	var _children2 = _interopRequireDefault(_children);
-
-	var _colorManipulator = __webpack_require__(281);
-
-	var _colorManipulator2 = _interopRequireDefault(_colorManipulator);
-
-	var _styles = __webpack_require__(219);
-
-	var _typography = __webpack_require__(241);
-
-	var _typography2 = _interopRequireDefault(_typography);
-
-	var _enhancedButton = __webpack_require__(248);
-
-	var _enhancedButton2 = _interopRequireDefault(_enhancedButton);
-
-	var _flatButtonLabel = __webpack_require__(344);
-
-	var _flatButtonLabel2 = _interopRequireDefault(_flatButtonLabel);
-
-	var _getMuiTheme = __webpack_require__(263);
-
-	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	function validateLabel(props, propName, componentName) {
-	  if (!props.children && !props.label) {
-	    return new Error('Required prop label or children was not ' + 'specified in ' + componentName + '.');
-	  }
-	}
-
-	var FlatButton = _react2.default.createClass({
-	  displayName: 'FlatButton',
-
-	  propTypes: {
-	    /**
-	     * Color of button when mouse is not hovering over it.
-	     */
-	    backgroundColor: _react2.default.PropTypes.string,
-
-	    /**
-	     * This is what will be displayed inside the button.
-	     * If a label is specified, the text within the label prop will
-	     * be displayed. Otherwise, the component will expect children
-	     * which will then be displayed. (In our example,
-	     * we are nesting an `<input type="file" />` and a `span`
-	     * that acts as our label to be displayed.) This only
-	     * applies to flat and raised buttons.
-	     */
-	    children: _react2.default.PropTypes.node,
-
-	    /**
-	     * Disables the button if set to true.
-	     */
-	    disabled: _react2.default.PropTypes.bool,
-
-	    /**
-	     * Color of button when mouse hovers over.
-	     */
-	    hoverColor: _react2.default.PropTypes.string,
-
-	    /**
-	     * URL to link to when button clicked if `linkButton` is set to true.
-	     */
-	    href: _react2.default.PropTypes.string,
-
-	    /**
-	     * Use this property to display an icon.
-	     */
-	    icon: _react2.default.PropTypes.node,
-
-	    /**
-	     * Label for the button.
-	     */
-	    label: validateLabel,
-
-	    /**
-	     * Place label before or after the passed children.
-	     */
-	    labelPosition: _react2.default.PropTypes.oneOf(['before', 'after']),
-
-	    /**
-	     * Override the inline-styles of the button's label element.
-	     */
-	    labelStyle: _react2.default.PropTypes.object,
-
-	    /**
-	     * Enables use of `href` property to provide a URL to link to if set to true.
-	     */
-	    linkButton: _react2.default.PropTypes.bool,
-
-	    /**
-	     * Called when element is focused by the keyboard.
-	     */
-	    onKeyboardFocus: _react2.default.PropTypes.func,
-
-	    /**
-	     * Called when the mouse enters the element.
-	     */
-	    onMouseEnter: _react2.default.PropTypes.func,
-
-	    /**
-	     * Called when the mouse leaves the element.
-	     */
-	    onMouseLeave: _react2.default.PropTypes.func,
-
-	    /**
-	     * Called when a touch event is started inside the element.
-	     */
-	    onTouchStart: _react2.default.PropTypes.func,
-
-	    /**
-	     * If true, colors button according to
-	     * primaryTextColor from the Theme.
-	     */
-	    primary: _react2.default.PropTypes.bool,
-
-	    /**
-	     * Color for the ripple after button is clicked.
-	     */
-	    rippleColor: _react2.default.PropTypes.string,
-
-	    /**
-	     * If true, colors button according to secondaryTextColor from the theme.
-	     * The primary prop has precendent if set to true.
-	     */
-	    secondary: _react2.default.PropTypes.bool,
-
-	    /**
-	     * Override the inline-styles of the root element.
-	     */
-	    style: _react2.default.PropTypes.object
-	  },
-
-	  contextTypes: {
-	    muiTheme: _react2.default.PropTypes.object
-	  },
-
-	  //for passing default theme context to children
-	  childContextTypes: {
-	    muiTheme: _react2.default.PropTypes.object
-	  },
-
-	  mixins: [_contextPure2.default],
-
-	  statics: {
-	    getRelevantContextKeys: function getRelevantContextKeys(muiTheme) {
-	      var buttonTheme = muiTheme.button;
-	      var flatButtonTheme = muiTheme.flatButton;
-
-	      return {
-	        buttonColor: flatButtonTheme.color,
-	        buttonFilterColor: flatButtonTheme.buttonFilterColor,
-	        buttonHeight: buttonTheme.height,
-	        buttonMinWidth: buttonTheme.minWidth,
-	        disabledTextColor: flatButtonTheme.disabledTextColor,
-	        primaryTextColor: flatButtonTheme.primaryTextColor,
-	        secondaryTextColor: flatButtonTheme.secondaryTextColor,
-	        textColor: flatButtonTheme.textColor,
-	        textTransform: flatButtonTheme.textTransform ? flatButtonTheme.textTransform : buttonTheme.textTransform ? buttonTheme.textTransform : 'uppercase'
-	      };
-	    },
-	    getChildrenClasses: function getChildrenClasses() {
-	      return [_enhancedButton2.default, _flatButtonLabel2.default];
-	    }
-	  },
-
-	  getDefaultProps: function getDefaultProps() {
-	    return {
-	      disabled: false,
-	      labelStyle: {},
-	      labelPosition: 'after',
-	      onKeyboardFocus: function onKeyboardFocus() {},
-	      onMouseEnter: function onMouseEnter() {},
-	      onMouseLeave: function onMouseLeave() {},
-	      onTouchStart: function onTouchStart() {},
-	      primary: false,
-	      secondary: false
-	    };
-	  },
-	  getInitialState: function getInitialState() {
-	    return {
-	      hovered: false,
-	      isKeyboardFocused: false,
-	      touch: false,
-	      muiTheme: this.context.muiTheme || (0, _getMuiTheme2.default)()
-	    };
-	  },
-	  getChildContext: function getChildContext() {
-	    return {
-	      muiTheme: this.state.muiTheme
-	    };
-	  },
-
-	  //to update theme inside state whenever a new theme is passed down
-	  //from the parent / owner using context
-	  componentWillReceiveProps: function componentWillReceiveProps(nextProps, nextContext) {
-	    var newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-	    this.setState({ muiTheme: newMuiTheme });
-	  },
-	  _handleKeyboardFocus: function _handleKeyboardFocus(e, isKeyboardFocused) {
-	    this.setState({ isKeyboardFocused: isKeyboardFocused });
-	    this.props.onKeyboardFocus(e, isKeyboardFocused);
-	  },
-	  _handleMouseEnter: function _handleMouseEnter(e) {
-	    //Cancel hover styles for touch devices
-	    if (!this.state.touch) this.setState({ hovered: true });
-	    this.props.onMouseEnter(e);
-	  },
-	  _handleMouseLeave: function _handleMouseLeave(e) {
-	    this.setState({ hovered: false });
-	    this.props.onMouseLeave(e);
-	  },
-	  _handleTouchStart: function _handleTouchStart(e) {
-	    this.setState({ touch: true });
-	    this.props.onTouchStart(e);
-	  },
-	  render: function render() {
-	    var _props = this.props;
-	    var children = _props.children;
-	    var disabled = _props.disabled;
-	    var hoverColor = _props.hoverColor;
-	    var backgroundColor = _props.backgroundColor;
-	    var icon = _props.icon;
-	    var label = _props.label;
-	    var labelStyle = _props.labelStyle;
-	    var labelPosition = _props.labelPosition;
-	    var primary = _props.primary;
-	    var rippleColor = _props.rippleColor;
-	    var secondary = _props.secondary;
-	    var style = _props.style;
-
-	    var other = _objectWithoutProperties(_props, ['children', 'disabled', 'hoverColor', 'backgroundColor', 'icon', 'label', 'labelStyle', 'labelPosition', 'primary', 'rippleColor', 'secondary', 'style']);
-
-	    var _constructor$getRelev = this.constructor.getRelevantContextKeys(this.state.muiTheme);
-
-	    var buttonColor = _constructor$getRelev.buttonColor;
-	    var buttonHeight = _constructor$getRelev.buttonHeight;
-	    var buttonMinWidth = _constructor$getRelev.buttonMinWidth;
-	    var disabledTextColor = _constructor$getRelev.disabledTextColor;
-	    var buttonFilterColor = _constructor$getRelev.buttonFilterColor;
-	    var primaryTextColor = _constructor$getRelev.primaryTextColor;
-	    var secondaryTextColor = _constructor$getRelev.secondaryTextColor;
-	    var textColor = _constructor$getRelev.textColor;
-	    var textTransform = _constructor$getRelev.textTransform;
-
-	    var defaultTextColor = disabled ? disabledTextColor : primary ? primaryTextColor : secondary ? secondaryTextColor : textColor;
-
-	    var defaultHoverColor = _colorManipulator2.default.fade(buttonFilterColor, 0.2);
-	    var defaultRippleColor = buttonFilterColor;
-	    var buttonHoverColor = hoverColor || defaultHoverColor;
-	    var buttonRippleColor = rippleColor || defaultRippleColor;
-	    var buttonBackgroundColor = backgroundColor || buttonColor;
-	    var hovered = (this.state.hovered || this.state.isKeyboardFocused) && !disabled;
-
-	    var mergedRootStyles = (0, _styles.mergeStyles)({
-	      color: defaultTextColor,
-	      transition: _transitions2.default.easeOut(),
-	      fontSize: _typography2.default.fontStyleButtonFontSize,
-	      letterSpacing: 0,
-	      textTransform: textTransform,
-	      fontWeight: _typography2.default.fontWeightMedium,
-	      borderRadius: 2,
-	      userSelect: 'none',
-	      position: 'relative',
-	      overflow: 'hidden',
-	      backgroundColor: hovered ? buttonHoverColor : buttonBackgroundColor,
-	      lineHeight: buttonHeight + 'px',
-	      minWidth: buttonMinWidth,
-	      padding: 0,
-	      margin: 0
-	    }, style);
-
-	    var iconCloned = undefined;
-	    var labelStyleIcon = {};
-
-	    if (icon) {
-	      iconCloned = _react2.default.cloneElement(icon, {
-	        color: mergedRootStyles.color,
-	        style: {
-	          verticalAlign: 'middle',
-	          marginLeft: labelPosition === 'before' ? 0 : 12,
-	          marginRight: labelPosition === 'before' ? 12 : 0
-	        }
-	      });
-
-	      if (labelPosition === 'before') {
-	        labelStyleIcon.paddingRight = 8;
-	      } else {
-	        labelStyleIcon.paddingLeft = 8;
-	      }
-	    }
-
-	    var labelElement = label ? _react2.default.createElement(_flatButtonLabel2.default, { label: label, style: (0, _styles.mergeStyles)(labelStyleIcon, labelStyle) }) : undefined;
-
-	    // Place label before or after children.
-	    var childrenFragment = labelPosition === 'before' ? {
-	      labelElement: labelElement,
-	      iconCloned: iconCloned,
-	      children: children
-	    } : {
-	      children: children,
-	      iconCloned: iconCloned,
-	      labelElement: labelElement
-	    };
-	    var enhancedButtonChildren = _children2.default.create(childrenFragment);
-
-	    return _react2.default.createElement(
-	      _enhancedButton2.default,
-	      _extends({}, other, {
-	        disabled: disabled,
-	        focusRippleColor: buttonRippleColor,
-	        focusRippleOpacity: 0.3,
-	        onKeyboardFocus: this._handleKeyboardFocus,
-	        onMouseLeave: this._handleMouseLeave,
-	        onMouseEnter: this._handleMouseEnter,
-	        onTouchStart: this._handleTouchStart,
-	        style: mergedRootStyles,
-	        touchRippleColor: buttonRippleColor,
-	        touchRippleOpacity: 0.3
-	      }),
-	      enhancedButtonChildren
-	    );
-	  }
-	});
-
-	exports.default = FlatButton;
-	module.exports = exports['default'];
-
-/***/ },
-/* 344 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _contextPure = __webpack_require__(244);
-
-	var _contextPure2 = _interopRequireDefault(_contextPure);
-
-	var _stylePropable = __webpack_require__(218);
-
-	var _stylePropable2 = _interopRequireDefault(_stylePropable);
-
-	var _getMuiTheme = __webpack_require__(263);
-
-	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var FlatButtonLabel = _react2.default.createClass({
-	  displayName: 'FlatButtonLabel',
-
-	  propTypes: {
-	    label: _react2.default.PropTypes.node,
-
-	    /**
-	     * Override the inline-styles of the root element.
-	     */
-	    style: _react2.default.PropTypes.object
-	  },
-
-	  contextTypes: {
-	    muiTheme: _react2.default.PropTypes.object
-	  },
-
-	  //for passing default theme context to children
-	  childContextTypes: {
-	    muiTheme: _react2.default.PropTypes.object
-	  },
-
-	  mixins: [_contextPure2.default, _stylePropable2.default],
-
-	  statics: {
-	    getRelevantContextKeys: function getRelevantContextKeys(muiTheme) {
-	      return {
-	        spacingDesktopGutterLess: muiTheme.rawTheme.spacing.desktopGutterLess
-	      };
-	    }
-	  },
-
-	  getInitialState: function getInitialState() {
-	    return {
-	      muiTheme: this.context.muiTheme || (0, _getMuiTheme2.default)()
-	    };
-	  },
-	  getChildContext: function getChildContext() {
-	    return {
-	      muiTheme: this.state.muiTheme
-	    };
-	  },
-
-	  //to update theme inside state whenever a new theme is passed down
-	  //from the parent / owner using context
-	  componentWillReceiveProps: function componentWillReceiveProps(nextProps, nextContext) {
-	    var newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-	    this.setState({ muiTheme: newMuiTheme });
-	  },
-
-	  render: function render() {
-	    var _props = this.props;
-	    var label = _props.label;
-	    var style = _props.style;
-
-	    var contextKeys = this.constructor.getRelevantContextKeys(this.state.muiTheme);
-
-	    var mergedRootStyles = this.mergeStyles({
-	      position: 'relative',
-	      paddingLeft: contextKeys.spacingDesktopGutterLess,
-	      paddingRight: contextKeys.spacingDesktopGutterLess
-	    }, style);
-
-	    return _react2.default.createElement(
-	      'span',
-	      { style: this.prepareStyles(mergedRootStyles) },
-	      label
-	    );
-	  }
-
-	});
-
-	exports.default = FlatButtonLabel;
-	module.exports = exports['default'];
-
-/***/ },
-/* 345 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _stylePropable = __webpack_require__(218);
-
-	var _stylePropable2 = _interopRequireDefault(_stylePropable);
-
-	var _getMuiTheme = __webpack_require__(263);
-
-	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var CardActions = _react2.default.createClass({
-	  displayName: 'CardActions',
-
-	  propTypes: {
-	    actAsExpander: _react2.default.PropTypes.bool,
-	    children: _react2.default.PropTypes.node,
-	    expandable: _react2.default.PropTypes.bool,
-	    showExpandableButton: _react2.default.PropTypes.bool,
-
-	    /**
-	     * Override the inline-styles of the root element.
-	     */
-	    style: _react2.default.PropTypes.object
-	  },
-
-	  contextTypes: {
-	    muiTheme: _react2.default.PropTypes.object
-	  },
-
-	  //for passing default theme context to children
-	  childContextTypes: {
-	    muiTheme: _react2.default.PropTypes.object
-	  },
-
-	  mixins: [_stylePropable2.default],
-
-	  getInitialState: function getInitialState() {
-	    return {
-	      muiTheme: this.context.muiTheme || (0, _getMuiTheme2.default)()
-	    };
-	  },
-	  getChildContext: function getChildContext() {
-	    return {
-	      muiTheme: this.state.muiTheme
-	    };
-	  },
-
-	  //to update theme inside state whenever a new theme is passed down
-	  //from the parent / owner using context
-	  componentWillReceiveProps: function componentWillReceiveProps(nextProps, nextContext) {
-	    var newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-	    this.setState({ muiTheme: newMuiTheme });
-	  },
-	  getStyles: function getStyles() {
-	    return {
-	      root: {
-	        padding: 8,
-	        position: 'relative'
-	      }
-	    };
-	  },
-	  render: function render() {
-	    var _this = this;
-
-	    var styles = this.getStyles();
-
-	    var children = _react2.default.Children.map(this.props.children, function (child) {
-	      return _react2.default.cloneElement(child, {
-	        style: _this.mergeStyles({ marginRight: 8 }, child.props.style)
-	      });
-	    });
-
-	    return _react2.default.createElement(
-	      'div',
-	      _extends({}, this.props, { style: this.prepareStyles(styles.root, this.props.style) }),
-	      children
-	    );
-	  }
-	});
-
-	exports.default = CardActions;
-	module.exports = exports['default'];
-
-/***/ },
-/* 346 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
 	var _styles = __webpack_require__(332);
 
 	var _styles2 = _interopRequireDefault(_styles);
@@ -40940,7 +40360,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 347 */
+/* 344 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41034,7 +40454,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 348 */
+/* 345 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -41067,11 +40487,11 @@
 
 	var _transitions2 = _interopRequireDefault(_transitions);
 
-	var _windowListenable = __webpack_require__(349);
+	var _windowListenable = __webpack_require__(346);
 
 	var _windowListenable2 = _interopRequireDefault(_windowListenable);
 
-	var _overlay = __webpack_require__(350);
+	var _overlay = __webpack_require__(347);
 
 	var _overlay2 = _interopRequireDefault(_overlay);
 
@@ -41079,7 +40499,7 @@
 
 	var _paper2 = _interopRequireDefault(_paper);
 
-	var _menu = __webpack_require__(351);
+	var _menu = __webpack_require__(348);
 
 	var _menu2 = _interopRequireDefault(_menu);
 
@@ -41091,7 +40511,7 @@
 
 	var _warning2 = _interopRequireDefault(_warning);
 
-	var _deprecatedPropType = __webpack_require__(362);
+	var _deprecatedPropType = __webpack_require__(359);
 
 	var _deprecatedPropType2 = _interopRequireDefault(_deprecatedPropType);
 
@@ -41597,7 +41017,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 349 */
+/* 346 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41633,7 +41053,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 350 */
+/* 347 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41778,7 +41198,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 351 */
+/* 348 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -41797,11 +41217,11 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _cssEvent = __webpack_require__(352);
+	var _cssEvent = __webpack_require__(349);
 
 	var _cssEvent2 = _interopRequireDefault(_cssEvent);
 
-	var _keyLine = __webpack_require__(353);
+	var _keyLine = __webpack_require__(350);
 
 	var _keyLine2 = _interopRequireDefault(_keyLine);
 
@@ -41817,7 +41237,7 @@
 
 	var _transitions2 = _interopRequireDefault(_transitions);
 
-	var _clickAwayable = __webpack_require__(354);
+	var _clickAwayable = __webpack_require__(351);
 
 	var _clickAwayable2 = _interopRequireDefault(_clickAwayable);
 
@@ -41825,15 +41245,15 @@
 
 	var _paper2 = _interopRequireDefault(_paper);
 
-	var _menuItem2 = __webpack_require__(355);
+	var _menuItem2 = __webpack_require__(352);
 
 	var _menuItem3 = _interopRequireDefault(_menuItem2);
 
-	var _linkMenuItem = __webpack_require__(360);
+	var _linkMenuItem = __webpack_require__(357);
 
 	var _linkMenuItem2 = _interopRequireDefault(_linkMenuItem);
 
-	var _subheaderMenuItem = __webpack_require__(361);
+	var _subheaderMenuItem = __webpack_require__(358);
 
 	var _subheaderMenuItem2 = _interopRequireDefault(_subheaderMenuItem);
 
@@ -42437,7 +41857,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 352 */
+/* 349 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42499,7 +41919,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 353 */
+/* 350 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -42523,7 +41943,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 354 */
+/* 351 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42582,7 +42002,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 355 */
+/* 352 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -42605,7 +42025,7 @@
 
 	var _fontIcon2 = _interopRequireDefault(_fontIcon);
 
-	var _toggle = __webpack_require__(356);
+	var _toggle = __webpack_require__(353);
 
 	var _toggle2 = _interopRequireDefault(_toggle);
 
@@ -42852,7 +42272,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 356 */
+/* 353 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42879,7 +42299,7 @@
 
 	var _paper2 = _interopRequireDefault(_paper);
 
-	var _enhancedSwitch = __webpack_require__(357);
+	var _enhancedSwitch = __webpack_require__(354);
 
 	var _enhancedSwitch2 = _interopRequireDefault(_enhancedSwitch);
 
@@ -43125,7 +42545,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 357 */
+/* 354 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -43160,11 +42580,11 @@
 
 	var _uniqueId2 = _interopRequireDefault(_uniqueId);
 
-	var _windowListenable = __webpack_require__(349);
+	var _windowListenable = __webpack_require__(346);
 
 	var _windowListenable2 = _interopRequireDefault(_windowListenable);
 
-	var _clearfix = __webpack_require__(358);
+	var _clearfix = __webpack_require__(355);
 
 	var _clearfix2 = _interopRequireDefault(_clearfix);
 
@@ -43605,7 +43025,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 358 */
+/* 355 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43620,7 +43040,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _beforeAfterWrapper = __webpack_require__(359);
+	var _beforeAfterWrapper = __webpack_require__(356);
 
 	var _beforeAfterWrapper2 = _interopRequireDefault(_beforeAfterWrapper);
 
@@ -43672,7 +43092,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 359 */
+/* 356 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43826,7 +43246,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 360 */
+/* 357 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43973,7 +43393,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 361 */
+/* 358 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44089,7 +43509,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 362 */
+/* 359 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -44118,7 +43538,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 363 */
+/* 360 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44149,11 +43569,11 @@
 
 	var _colors2 = _interopRequireDefault(_colors);
 
-	var _popover = __webpack_require__(364);
+	var _popover = __webpack_require__(361);
 
 	var _popover2 = _interopRequireDefault(_popover);
 
-	var _check = __webpack_require__(369);
+	var _check = __webpack_require__(366);
 
 	var _check2 = _interopRequireDefault(_check);
 
@@ -44165,7 +43585,7 @@
 
 	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
 
-	var _menu = __webpack_require__(370);
+	var _menu = __webpack_require__(367);
 
 	var _menu2 = _interopRequireDefault(_menu);
 
@@ -44473,7 +43893,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 364 */
+/* 361 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44492,11 +43912,11 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _windowListenable = __webpack_require__(349);
+	var _windowListenable = __webpack_require__(346);
 
 	var _windowListenable2 = _interopRequireDefault(_windowListenable);
 
-	var _renderToLayer = __webpack_require__(365);
+	var _renderToLayer = __webpack_require__(362);
 
 	var _renderToLayer2 = _interopRequireDefault(_renderToLayer);
 
@@ -44512,7 +43932,7 @@
 
 	var _paper2 = _interopRequireDefault(_paper);
 
-	var _lodash = __webpack_require__(366);
+	var _lodash = __webpack_require__(363);
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -44520,7 +43940,7 @@
 
 	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
 
-	var _popoverDefaultAnimation = __webpack_require__(368);
+	var _popoverDefaultAnimation = __webpack_require__(365);
 
 	var _popoverDefaultAnimation2 = _interopRequireDefault(_popoverDefaultAnimation);
 
@@ -44906,7 +44326,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 365 */
+/* 362 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45081,7 +44501,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 366 */
+/* 363 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45092,7 +44512,7 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var debounce = __webpack_require__(367);
+	var debounce = __webpack_require__(364);
 
 	/** Used as the `TypeError` message for "Functions" methods. */
 	var FUNC_ERROR_TEXT = 'Expected a function';
@@ -45183,7 +44603,7 @@
 
 
 /***/ },
-/* 367 */
+/* 364 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45423,7 +44843,7 @@
 
 
 /***/ },
-/* 368 */
+/* 365 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45599,7 +45019,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 369 */
+/* 366 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45640,7 +45060,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 370 */
+/* 367 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45667,7 +45087,7 @@
 
 	var _stylePropable2 = _interopRequireDefault(_stylePropable);
 
-	var _clickAwayable = __webpack_require__(354);
+	var _clickAwayable = __webpack_require__(351);
 
 	var _clickAwayable2 = _interopRequireDefault(_clickAwayable);
 
@@ -46255,64 +45675,23 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 371 */
+/* 368 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactAddonsPureRenderMixin = __webpack_require__(249);
-
-	var _reactAddonsPureRenderMixin2 = _interopRequireDefault(_reactAddonsPureRenderMixin);
-
-	var _svgIcon = __webpack_require__(296);
-
-	var _svgIcon2 = _interopRequireDefault(_svgIcon);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var MapsPinDrop = _react2.default.createClass({
-	  displayName: 'MapsPinDrop',
-
-	  mixins: [_reactAddonsPureRenderMixin2.default],
-
-	  render: function render() {
-	    return _react2.default.createElement(
-	      _svgIcon2.default,
-	      this.props,
-	      _react2.default.createElement('path', { d: 'M18 8c0-3.31-2.69-6-6-6S6 4.69 6 8c0 4.5 6 11 6 11s6-6.5 6-11zm-8 0c0-1.1.9-2 2-2s2 .9 2 2-.89 2-2 2c-1.1 0-2-.9-2-2zM5 20v2h14v-2H5z' })
-	    );
-	  }
-	});
-
-	exports.default = MapsPinDrop;
-	module.exports = exports['default'];
-
-/***/ },
-/* 372 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var defaultClickRejectionStrategy = __webpack_require__(373);
+	var defaultClickRejectionStrategy = __webpack_require__(369);
 
 	module.exports = function injectTapEventPlugin (strategyOverrides) {
 	  strategyOverrides = strategyOverrides || {}
 	  var shouldRejectClick = strategyOverrides.shouldRejectClick || defaultClickRejectionStrategy;
 
 	  __webpack_require__(31).injection.injectEventPluginsByName({
-	    "TapEventPlugin":       __webpack_require__(374)(shouldRejectClick)
+	    "TapEventPlugin":       __webpack_require__(370)(shouldRejectClick)
 	  });
 	};
 
 
 /***/ },
-/* 373 */
+/* 369 */
 /***/ function(module, exports) {
 
 	module.exports = function(lastTouchEvent, clickTimestamp) {
@@ -46323,7 +45702,7 @@
 
 
 /***/ },
-/* 374 */
+/* 370 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -46351,10 +45730,10 @@
 	var EventPluginUtils = __webpack_require__(33);
 	var EventPropagators = __webpack_require__(73);
 	var SyntheticUIEvent = __webpack_require__(87);
-	var TouchEventUtils = __webpack_require__(375);
+	var TouchEventUtils = __webpack_require__(371);
 	var ViewportMetrics = __webpack_require__(38);
 
-	var keyOf = __webpack_require__(376);
+	var keyOf = __webpack_require__(372);
 	var topLevelTypes = EventConstants.topLevelTypes;
 
 	var isStartish = EventPluginUtils.isStartish;
@@ -46500,7 +45879,7 @@
 
 
 /***/ },
-/* 375 */
+/* 371 */
 /***/ function(module, exports) {
 
 	/**
@@ -46548,7 +45927,7 @@
 
 
 /***/ },
-/* 376 */
+/* 372 */
 /***/ function(module, exports) {
 
 	/**

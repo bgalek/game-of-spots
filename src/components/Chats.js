@@ -24,22 +24,21 @@ export default React.createClass({
         }
     },
 
-    componentWillReceiveProps(nextProps){
-        this.setState({loading: true});
-    },
-
-    componentDidMount() {
+    fetchData() {
         chats().all().then(response => {
-            function toListItems(response) {
-                return Object.keys(response).map(item => {
-                    return response[item];
-                });
-            }
-
-            this.setState({results: toListItems(response), loading: false})
+            this.setState({results: response, loading: false});
         }).catch(error => {
             console.log(error);
         })
+    },
+
+    componentWillReceiveProps(nextProps){
+        this.setState({loading: true});
+        this.fetchData();
+    },
+
+    componentDidMount() {
+        this.fetchData();
     },
 
     contextTypes: {
