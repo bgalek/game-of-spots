@@ -19694,7 +19694,7 @@
 
 	var _Chats2 = _interopRequireDefault(_Chats);
 
-	var _Chat = __webpack_require__(311);
+	var _Chat = __webpack_require__(320);
 
 	var _Chat2 = _interopRequireDefault(_Chat);
 
@@ -19710,13 +19710,21 @@
 
 	var _Answer2 = _interopRequireDefault(_Answer);
 
-	var _leftNav = __webpack_require__(345);
+	var _leftNav = __webpack_require__(344);
 
 	var _leftNav2 = _interopRequireDefault(_leftNav);
 
-	var _menuItem = __webpack_require__(360);
+	var _menuItem = __webpack_require__(359);
 
 	var _menuItem2 = _interopRequireDefault(_menuItem);
+
+	var _themeManager = __webpack_require__(332);
+
+	var _themeManager2 = _interopRequireDefault(_themeManager);
+
+	var _CustomTheme = __webpack_require__(367);
+
+	var _CustomTheme2 = _interopRequireDefault(_CustomTheme);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -19727,6 +19735,15 @@
 	        return { open: false };
 	    },
 
+	    childContextTypes: {
+	        muiTheme: _react2.default.PropTypes.object
+	    },
+
+	    getChildContext: function getChildContext() {
+	        return {
+	            muiTheme: _themeManager2.default.getMuiTheme(_CustomTheme2.default)
+	        };
+	    },
 	    handleToggle: function handleToggle() {
 	        this.setState({ open: !this.state.open });
 	    },
@@ -33240,7 +33257,11 @@
 
 	var _refreshIndicator2 = _interopRequireDefault(_refreshIndicator);
 
-	var _chats = __webpack_require__(307);
+	var _SearchBox = __webpack_require__(307);
+
+	var _SearchBox2 = _interopRequireDefault(_SearchBox);
+
+	var _chats = __webpack_require__(316);
 
 	var _chats2 = _interopRequireDefault(_chats);
 
@@ -33255,21 +33276,25 @@
 	            loading: true
 	        };
 	    },
-	    fetchData: function fetchData() {
+	    handleRefresh: function handleRefresh(query) {
 	        var _this = this;
 
-	        (0, _chats2.default)().all().then(function (response) {
-	            _this.setState({ results: response, loading: false });
-	        }).catch(function (error) {
-	            console.log(error);
-	        });
-	    },
-	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	        this.setState({ loading: true });
-	        this.fetchData();
+	        if (typeof query !== "undefined") {
+	            (0, _chats2.default)().withPartialName(query).then(function (response) {
+	                _this.setState({ results: response, loading: false });
+	            }).catch(function (error) {
+	                console.log(error);
+	            });
+	        } else {
+	            (0, _chats2.default)().all().then(function (response) {
+	                _this.setState({ results: response, loading: false });
+	            }).catch(function (error) {
+	                console.log(error);
+	            });
+	        }
 	    },
 	    componentDidMount: function componentDidMount() {
-	        this.fetchData();
+	        this.handleRefresh();
 	    },
 
 
@@ -33319,9 +33344,14 @@
 	        });
 
 	        return _react2.default.createElement(
-	            _list2.default,
-	            { subheader: "Available spots" },
-	            results
+	            "div",
+	            null,
+	            _react2.default.createElement(_SearchBox2.default, { onSubmit: this.handleRefresh }),
+	            _react2.default.createElement(
+	                _list2.default,
+	                { subheader: "Available spots" },
+	                results
+	            )
 	        );
 	    }
 	});
@@ -34936,17 +34966,1228 @@
 	    value: true
 	});
 
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _textField = __webpack_require__(308);
+
+	var _textField2 = _interopRequireDefault(_textField);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var customStyles = {
+	    defaultPadding: {
+	        padding: '15',
+	        paddingBottom: '0'
+	    }
+	};
+
+	exports.default = _react2.default.createClass({
+	    displayName: 'SearchBox',
+
+	    getInitialState: function getInitialState() {
+	        return {
+	            value: ''
+	        };
+	    },
+	    handleChange: function handleChange(event) {
+	        this.setState({
+	            value: event.target.value
+	        });
+	    },
+	    handleSearch: function handleSearch(event) {
+	        event.preventDefault();
+	        this.props.onSubmit(this.state.value);
+	    },
+	    render: function render() {
+	        return _react2.default.createElement(
+	            "form",
+	            { style: customStyles.defaultPadding, onSubmit: this.handleSearch },
+	            _react2.default.createElement(_textField2.default, { hintText: "Find a spot", value: this.state.value, onChange: this.handleChange, fullWidth: true })
+	        );
+	    }
+	});
+
+/***/ },
+/* 308 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _TextField = __webpack_require__(309);
+
+	var _TextField2 = _interopRequireDefault(_TextField);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _TextField2.default;
+	module.exports = exports['default'];
+
+/***/ },
+/* 309 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _TextField = __webpack_require__(310);
+
+	var _TextField2 = _interopRequireDefault(_TextField);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _TextField2.default;
+	module.exports = exports['default'];
+
+/***/ },
+/* 310 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(158);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _colorManipulator = __webpack_require__(281);
+
+	var _colorManipulator2 = _interopRequireDefault(_colorManipulator);
+
+	var _stylePropable = __webpack_require__(218);
+
+	var _stylePropable2 = _interopRequireDefault(_stylePropable);
+
+	var _transitions = __webpack_require__(246);
+
+	var _transitions2 = _interopRequireDefault(_transitions);
+
+	var _uniqueId = __webpack_require__(311);
+
+	var _uniqueId2 = _interopRequireDefault(_uniqueId);
+
+	var _enhancedTextarea = __webpack_require__(312);
+
+	var _enhancedTextarea2 = _interopRequireDefault(_enhancedTextarea);
+
+	var _getMuiTheme = __webpack_require__(263);
+
+	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
+
+	var _contextPure = __webpack_require__(244);
+
+	var _contextPure2 = _interopRequireDefault(_contextPure);
+
+	var _TextFieldHint = __webpack_require__(313);
+
+	var _TextFieldHint2 = _interopRequireDefault(_TextFieldHint);
+
+	var _TextFieldLabel = __webpack_require__(314);
+
+	var _TextFieldLabel2 = _interopRequireDefault(_TextFieldLabel);
+
+	var _TextFieldUnderline = __webpack_require__(315);
+
+	var _TextFieldUnderline2 = _interopRequireDefault(_TextFieldUnderline);
+
+	var _warning = __webpack_require__(163);
+
+	var _warning2 = _interopRequireDefault(_warning);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+	/**
+	 * Check if a value is valid to be displayed inside an input.
+	 *
+	 * @param The value to check.
+	 * @returns True if the string provided is valid, false otherwise.
+	 */
+	function isValid(value) {
+	  return Boolean(value || value === 0);
+	}
+
+	var TextField = _react2.default.createClass({
+	  displayName: 'TextField',
+
+	  propTypes: {
+	    children: _react2.default.PropTypes.node,
+
+	    /**
+	     * The css class name of the root element.
+	     */
+	    className: _react2.default.PropTypes.string,
+
+	    /**
+	     * The text string to use for the default value.
+	     */
+	    defaultValue: _react2.default.PropTypes.any,
+
+	    /**
+	     * Disables the text field if set to true.
+	     */
+	    disabled: _react2.default.PropTypes.bool,
+
+	    /**
+	     * The style object to use to override error styles.
+	     */
+	    errorStyle: _react2.default.PropTypes.object,
+
+	    /**
+	     * The error content to display.
+	     */
+	    errorText: _react2.default.PropTypes.node,
+
+	    /**
+	     * The style object to use to override floating label styles.
+	     */
+	    floatingLabelStyle: _react2.default.PropTypes.object,
+
+	    /**
+	     * The content to use for the floating label element.
+	     */
+	    floatingLabelText: _react2.default.PropTypes.node,
+
+	    /**
+	     * If true, the field receives the property width 100%.
+	     */
+	    fullWidth: _react2.default.PropTypes.bool,
+
+	    /**
+	     * Override the inline-styles of the TextField's hint text element.
+	     */
+	    hintStyle: _react2.default.PropTypes.object,
+
+	    /**
+	     * The hint content to display.
+	     */
+	    hintText: _react2.default.PropTypes.node,
+
+	    /**
+	     * The id prop for the text field.
+	     */
+	    id: _react2.default.PropTypes.string,
+
+	    /**
+	     * Override the inline-styles of the TextField's input element.
+	     */
+	    inputStyle: _react2.default.PropTypes.object,
+
+	    /**
+	     * If true, a textarea element will be rendered.
+	     * The textarea also grows and shrinks according to the number of lines.
+	     */
+	    multiLine: _react2.default.PropTypes.bool,
+
+	    /**
+	     * Callback function that is fired when the textfield loses focus.
+	     */
+	    onBlur: _react2.default.PropTypes.func,
+
+	    /**
+	     * Callback function that is fired when the textfield's value changes.
+	     */
+	    onChange: _react2.default.PropTypes.func,
+
+	    /**
+	     * The function to call when the user presses the Enter key.
+	     */
+	    onEnterKeyDown: _react2.default.PropTypes.func,
+
+	    /**
+	     * Callback function that is fired when the textfield gains focus.
+	     */
+	    onFocus: _react2.default.PropTypes.func,
+
+	    /**
+	     * Callback function fired when key is pressed down.
+	     */
+	    onKeyDown: _react2.default.PropTypes.func,
+
+	    /**
+	     * Number of rows to display when multiLine option is set to true.
+	     */
+	    rows: _react2.default.PropTypes.number,
+
+	    /**
+	     * Maximum number of rows to display when
+	     * multiLine option is set to true.
+	     */
+	    rowsMax: _react2.default.PropTypes.number,
+
+	    /**
+	     * Override the inline-styles of the root element.
+	     */
+	    style: _react2.default.PropTypes.object,
+
+	    /**
+	     * Specifies the type of input to display
+	     * such as "password" or "text".
+	     */
+	    type: _react2.default.PropTypes.string,
+
+	    /**
+	     * Override the inline-styles of the
+	     * TextField's underline element when disabled.
+	     */
+	    underlineDisabledStyle: _react2.default.PropTypes.object,
+
+	    /**
+	     * Override the inline-styles of the TextField's
+	     * underline element when focussed.
+	     */
+	    underlineFocusStyle: _react2.default.PropTypes.object,
+
+	    /**
+	     * If true, shows the underline for the text field.
+	     */
+	    underlineShow: _react2.default.PropTypes.bool,
+
+	    /**
+	     * Override the inline-styles of the TextField's underline element.
+	     */
+	    underlineStyle: _react2.default.PropTypes.object,
+
+	    /**
+	     * The value of the text field.
+	     */
+	    value: _react2.default.PropTypes.any
+	  },
+
+	  contextTypes: {
+	    muiTheme: _react2.default.PropTypes.object
+	  },
+
+	  //for passing default theme context to children
+	  childContextTypes: {
+	    muiTheme: _react2.default.PropTypes.object
+	  },
+
+	  mixins: [_contextPure2.default, _stylePropable2.default],
+
+	  statics: {
+	    getRelevantContextKeys: function getRelevantContextKeys(muiTheme) {
+	      var textFieldTheme = muiTheme.textField;
+
+	      return {
+	        floatingLabelColor: textFieldTheme.floatingLabelColor,
+	        focusColor: textFieldTheme.focusColor,
+	        textColor: textFieldTheme.textColor,
+	        disabledTextColor: textFieldTheme.disabledTextColor,
+	        backgroundColor: textFieldTheme.backgroundColor,
+	        hintColor: textFieldTheme.hintColor,
+	        errorColor: textFieldTheme.errorColor
+	      };
+	    },
+	    getChildrenClasses: function getChildrenClasses() {
+	      return [_enhancedTextarea2.default];
+	    }
+	  },
+
+	  getDefaultProps: function getDefaultProps() {
+	    return {
+	      disabled: false,
+	      multiLine: false,
+	      fullWidth: false,
+	      type: 'text',
+	      underlineShow: true,
+	      rows: 1
+	    };
+	  },
+	  getInitialState: function getInitialState() {
+	    var props = this.props.children ? this.props.children.props : this.props;
+
+	    return {
+	      isFocused: false,
+	      errorText: this.props.errorText,
+	      hasValue: isValid(props.value) || isValid(props.defaultValue) || props.valueLink && isValid(props.valueLink.value),
+	      muiTheme: this.context.muiTheme || (0, _getMuiTheme2.default)()
+	    };
+	  },
+	  getChildContext: function getChildContext() {
+	    return {
+	      muiTheme: this.state.muiTheme
+	    };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this._uniqueId = _uniqueId2.default.generate();
+	  },
+	  componentWillReceiveProps: function componentWillReceiveProps(nextProps, nextContext) {
+	    var newState = {};
+	    newState.muiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
+
+	    newState.errorText = nextProps.errorText;
+	    if (nextProps.children && nextProps.children.props) {
+	      nextProps = nextProps.children.props;
+	    }
+
+	    var hasValueLinkProp = nextProps.hasOwnProperty('valueLink');
+	    var hasValueProp = nextProps.hasOwnProperty('value');
+	    var hasNewDefaultValue = nextProps.defaultValue !== this.props.defaultValue;
+
+	    if (hasValueLinkProp) {
+	      newState.hasValue = isValid(nextProps.valueLink.value);
+	    } else if (hasValueProp) {
+	      newState.hasValue = isValid(nextProps.value);
+	    } else if (hasNewDefaultValue) {
+	      newState.hasValue = isValid(nextProps.defaultValue);
+	    }
+
+	    if (newState) this.setState(newState);
+	  },
+	  getStyles: function getStyles() {
+	    var props = this.props;
+
+	    var _constructor$getRelev = this.constructor.getRelevantContextKeys(this.state.muiTheme);
+
+	    var floatingLabelColor = _constructor$getRelev.floatingLabelColor;
+	    var focusColor = _constructor$getRelev.focusColor;
+	    var textColor = _constructor$getRelev.textColor;
+	    var disabledTextColor = _constructor$getRelev.disabledTextColor;
+	    var backgroundColor = _constructor$getRelev.backgroundColor;
+	    var hintColor = _constructor$getRelev.hintColor;
+	    var errorColor = _constructor$getRelev.errorColor;
+
+	    var styles = {
+	      root: {
+	        fontSize: 16,
+	        lineHeight: '24px',
+	        width: props.fullWidth ? '100%' : 256,
+	        height: (props.rows - 1) * 24 + (props.floatingLabelText ? 72 : 48),
+	        display: 'inline-block',
+	        position: 'relative',
+	        backgroundColor: backgroundColor,
+	        fontFamily: this.state.muiTheme.rawTheme.fontFamily,
+	        transition: _transitions2.default.easeOut('200ms', 'height')
+	      },
+	      error: {
+	        position: 'relative',
+	        bottom: 2,
+	        fontSize: 12,
+	        lineHeight: '12px',
+	        color: errorColor,
+	        transition: _transitions2.default.easeOut()
+	      },
+	      floatingLabel: {
+	        color: hintColor
+	      },
+	      input: {
+	        tapHighlightColor: 'rgba(0,0,0,0)',
+	        padding: 0,
+	        position: 'relative',
+	        width: '100%',
+	        height: '100%',
+	        border: 'none',
+	        outline: 'none',
+	        backgroundColor: 'transparent',
+	        color: props.disabled ? disabledTextColor : textColor,
+	        font: 'inherit'
+	      }
+	    };
+
+	    styles.error = this.mergeStyles(styles.error, props.errorStyle);
+
+	    styles.textarea = this.mergeStyles(styles.input, {
+	      marginTop: props.floatingLabelText ? 36 : 12,
+	      marginBottom: props.floatingLabelText ? -36 : -12,
+	      boxSizing: 'border-box',
+	      font: 'inherit'
+	    });
+
+	    if (this.state.isFocused) {
+	      styles.floatingLabel.color = focusColor;
+	    }
+
+	    if (this.state.hasValue) {
+	      styles.floatingLabel.color = _colorManipulator2.default.fade(props.disabled ? disabledTextColor : floatingLabelColor, 0.5);
+	    }
+
+	    if (props.floatingLabelText) {
+	      styles.input.boxSizing = 'border-box';
+
+	      if (!props.multiLine) {
+	        styles.input.marginTop = 14;
+	      }
+
+	      if (this.state.errorText) {
+	        styles.error.bottom = !props.multiLine ? styles.error.fontSize + 3 : 3;
+	      }
+	    }
+
+	    if (this.state.errorText) {
+	      if (this.state.isFocused) {
+	        styles.floatingLabel.color = styles.error.color;
+	      }
+	    }
+
+	    return styles;
+	  },
+	  blur: function blur() {
+	    if (this.isMounted()) this._getInputNode().blur();
+	  },
+	  clearValue: function clearValue() {
+	    this.setValue('');
+	  },
+	  focus: function focus() {
+	    if (this.isMounted()) this._getInputNode().focus();
+	  },
+	  getValue: function getValue() {
+	    return this.isMounted() ? this._getInputNode().value : undefined;
+	  },
+	  setErrorText: function setErrorText(newErrorText) {
+	    process.env.NODE_ENV !== "production" ? (0, _warning2.default)(false, 'setErrorText() method is deprecated. Use the errorText property instead.') : undefined;
+
+	    if (this.isMounted()) {
+	      this.setState({ errorText: newErrorText });
+	    }
+	  },
+	  setValue: function setValue(newValue) {
+	    process.env.NODE_ENV !== "production" ? (0, _warning2.default)(false, 'setValue() method is deprecated. Use the defaultValue property instead.\n      Or use the TextField as a controlled component with the value property.') : undefined;
+
+	    if (this.isMounted()) {
+	      if (this.props.multiLine) {
+	        this.refs.input.setValue(newValue);
+	      } else {
+	        this._getInputNode().value = newValue;
+	      }
+
+	      this.setState({ hasValue: isValid(newValue) });
+	    }
+	  },
+	  _getInputNode: function _getInputNode() {
+	    return this.props.children || this.props.multiLine ? this.refs.input.getInputNode() : _reactDom2.default.findDOMNode(this.refs.input);
+	  },
+	  _handleInputBlur: function _handleInputBlur(e) {
+	    this.setState({ isFocused: false });
+	    if (this.props.onBlur) this.props.onBlur(e);
+	  },
+	  _handleInputChange: function _handleInputChange(e) {
+	    this.setState({ hasValue: isValid(e.target.value) });
+	    if (this.props.onChange) this.props.onChange(e);
+	  },
+	  _handleInputFocus: function _handleInputFocus(e) {
+	    if (this.props.disabled) return;
+	    this.setState({ isFocused: true });
+	    if (this.props.onFocus) this.props.onFocus(e);
+	  },
+	  _handleInputKeyDown: function _handleInputKeyDown(e) {
+	    if (e.keyCode === 13 && this.props.onEnterKeyDown) this.props.onEnterKeyDown(e);
+	    if (this.props.onKeyDown) this.props.onKeyDown(e);
+	  },
+	  _handleTextAreaHeightChange: function _handleTextAreaHeightChange(e, height) {
+	    var newHeight = height + 24;
+	    if (this.props.floatingLabelText) newHeight += 24;
+	    _reactDom2.default.findDOMNode(this).style.height = newHeight + 'px';
+	  },
+	  _isControlled: function _isControlled() {
+	    return this.props.hasOwnProperty('value') || this.props.hasOwnProperty('valueLink');
+	  },
+	  render: function render() {
+	    var _props = this.props;
+	    var className = _props.className;
+	    var disabled = _props.disabled;
+	    var errorStyle = _props.errorStyle;
+	    var errorText = _props.errorText;
+	    var floatingLabelText = _props.floatingLabelText;
+	    var fullWidth = _props.fullWidth;
+	    var hintText = _props.hintText;
+	    var hintStyle = _props.hintStyle;
+	    var id = _props.id;
+	    var multiLine = _props.multiLine;
+	    var onBlur = _props.onBlur;
+	    var onChange = _props.onChange;
+	    var onFocus = _props.onFocus;
+	    var style = _props.style;
+	    var type = _props.type;
+	    var underlineDisabledStyle = _props.underlineDisabledStyle;
+	    var underlineFocusStyle = _props.underlineFocusStyle;
+	    var underlineShow = _props.underlineShow;
+	    var underlineStyle = _props.underlineStyle;
+	    var rows = _props.rows;
+	    var rowsMax = _props.rowsMax;
+
+	    var other = _objectWithoutProperties(_props, ['className', 'disabled', 'errorStyle', 'errorText', 'floatingLabelText', 'fullWidth', 'hintText', 'hintStyle', 'id', 'multiLine', 'onBlur', 'onChange', 'onFocus', 'style', 'type', 'underlineDisabledStyle', 'underlineFocusStyle', 'underlineShow', 'underlineStyle', 'rows', 'rowsMax']);
+
+	    var styles = this.getStyles();
+
+	    var inputId = id || this._uniqueId;
+
+	    var errorTextElement = this.state.errorText ? _react2.default.createElement(
+	      'div',
+	      { style: this.prepareStyles(styles.error) },
+	      this.state.errorText
+	    ) : null;
+
+	    var floatingLabelTextElement = floatingLabelText ? _react2.default.createElement(
+	      _TextFieldLabel2.default,
+	      {
+	        muiTheme: this.state.muiTheme,
+	        style: this.mergeStyles(styles.floatingLabel, this.props.floatingLabelStyle),
+	        htmlFor: inputId,
+	        shrink: this.state.hasValue || this.state.isFocused,
+	        disabled: disabled,
+	        onTouchTap: this.focus
+	      },
+	      floatingLabelText
+	    ) : null;
+
+	    var inputProps = undefined;
+	    var inputElement = undefined;
+
+	    inputProps = {
+	      id: inputId,
+	      ref: 'input',
+	      onBlur: this._handleInputBlur,
+	      onFocus: this._handleInputFocus,
+	      disabled: this.props.disabled,
+	      onKeyDown: this._handleInputKeyDown
+	    };
+	    var inputStyle = this.mergeStyles(styles.input, this.props.inputStyle);
+
+	    if (!this.props.hasOwnProperty('valueLink')) {
+	      inputProps.onChange = this._handleInputChange;
+	    }
+
+	    if (this.props.children) {
+	      inputElement = _react2.default.cloneElement(this.props.children, _extends({}, inputProps, this.props.children.props, {
+	        style: this.mergeStyles(inputStyle, this.props.children.props.style)
+	      }));
+	    } else {
+	      inputElement = multiLine ? _react2.default.createElement(_enhancedTextarea2.default, _extends({}, other, inputProps, {
+	        style: inputStyle,
+	        rows: rows,
+	        rowsMax: rowsMax,
+	        onHeightChange: this._handleTextAreaHeightChange,
+	        textareaStyle: styles.textarea
+	      })) : _react2.default.createElement('input', _extends({}, other, inputProps, {
+	        style: this.prepareStyles(inputStyle),
+	        type: type
+	      }));
+	    }
+
+	    return _react2.default.createElement(
+	      'div',
+	      { className: className, style: this.prepareStyles(styles.root, this.props.style) },
+	      floatingLabelTextElement,
+	      hintText ? _react2.default.createElement(_TextFieldHint2.default, {
+	        muiTheme: this.state.muiTheme,
+	        show: !(this.state.hasValue || floatingLabelText && !this.state.isFocused),
+	        style: hintStyle,
+	        text: hintText
+	      }) : null,
+	      inputElement,
+	      underlineShow ? _react2.default.createElement(_TextFieldUnderline2.default, {
+	        disabled: disabled,
+	        disabledStyle: underlineDisabledStyle,
+	        error: this.state.errorText ? true : false,
+	        errorStyle: errorStyle,
+	        focus: this.state.isFocused,
+	        focusStyle: underlineFocusStyle,
+	        muiTheme: this.state.muiTheme,
+	        style: underlineStyle
+	      }) : null,
+	      errorTextElement
+	    );
+	  }
+	});
+
+	exports.default = TextField;
+	module.exports = exports['default'];
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ },
+/* 311 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var index = 0;
+
+	exports.default = {
+	  generate: function generate() {
+	    return 'mui-id-' + index++;
+	  }
+	};
+	module.exports = exports['default'];
+
+/***/ },
+/* 312 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(158);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _stylePropable = __webpack_require__(218);
+
+	var _stylePropable2 = _interopRequireDefault(_stylePropable);
+
+	var _getMuiTheme = __webpack_require__(263);
+
+	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+	var rowsHeight = 24;
+
+	var styles = {
+	  textarea: {
+	    width: '100%',
+	    resize: 'none',
+	    font: 'inherit',
+	    padding: 0
+	  },
+	  shadow: {
+	    width: '100%',
+	    resize: 'none',
+	    // Overflow also needed to here to remove the extra row
+	    // added to textareas in Firefox.
+	    overflow: 'hidden',
+	    // Visibility needed to hide the extra text area on ipads
+	    visibility: 'hidden',
+	    font: 'inherit',
+	    padding: 0,
+	    position: 'absolute'
+	  }
+	};
+
+	var EnhancedTextarea = _react2.default.createClass({
+	  displayName: 'EnhancedTextarea',
+
+	  propTypes: {
+	    defaultValue: _react2.default.PropTypes.any,
+	    disabled: _react2.default.PropTypes.bool,
+	    onChange: _react2.default.PropTypes.func,
+	    onHeightChange: _react2.default.PropTypes.func,
+	    rows: _react2.default.PropTypes.number,
+	    rowsMax: _react2.default.PropTypes.number,
+
+	    /**
+	     * Override the inline-styles of the root element.
+	     */
+	    style: _react2.default.PropTypes.object,
+	    textareaStyle: _react2.default.PropTypes.object,
+	    value: _react2.default.PropTypes.string,
+	    valueLink: _react2.default.PropTypes.object
+	  },
+
+	  contextTypes: {
+	    muiTheme: _react2.default.PropTypes.object
+	  },
+
+	  //for passing default theme context to children
+	  childContextTypes: {
+	    muiTheme: _react2.default.PropTypes.object
+	  },
+
+	  mixins: [_stylePropable2.default],
+
+	  getDefaultProps: function getDefaultProps() {
+	    return {
+	      rows: 1
+	    };
+	  },
+	  getInitialState: function getInitialState() {
+	    return {
+	      height: this.props.rows * rowsHeight,
+	      muiTheme: this.context.muiTheme || (0, _getMuiTheme2.default)()
+	    };
+	  },
+	  getChildContext: function getChildContext() {
+	    return {
+	      muiTheme: this.state.muiTheme
+	    };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this._syncHeightWithShadow();
+	  },
+	  componentWillReceiveProps: function componentWillReceiveProps(nextProps, nextContext) {
+	    if (nextProps.value !== this.props.value) {
+	      this._syncHeightWithShadow(nextProps.value);
+	    }
+	    var newState = {};
+	    newState.muiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
+	  },
+	  getInputNode: function getInputNode() {
+	    return _reactDom2.default.findDOMNode(this.refs.input);
+	  },
+	  setValue: function setValue(value) {
+	    this.getInputNode().value = value;
+	    this._syncHeightWithShadow(value);
+	  },
+	  _syncHeightWithShadow: function _syncHeightWithShadow(newValue, e) {
+	    var shadow = _reactDom2.default.findDOMNode(this.refs.shadow);
+
+	    if (newValue !== undefined) {
+	      shadow.value = newValue;
+	    }
+
+	    var newHeight = shadow.scrollHeight;
+
+	    if (this.props.rowsMax >= this.props.rows) {
+	      newHeight = Math.min(this.props.rowsMax * rowsHeight, newHeight);
+	    }
+
+	    newHeight = Math.max(newHeight, rowsHeight);
+
+	    if (this.state.height !== newHeight) {
+	      this.setState({
+	        height: newHeight
+	      });
+
+	      if (this.props.onHeightChange) {
+	        this.props.onHeightChange(e, newHeight);
+	      }
+	    }
+	  },
+	  _handleChange: function _handleChange(e) {
+	    this._syncHeightWithShadow(e.target.value);
+
+	    if (this.props.hasOwnProperty('valueLink')) {
+	      this.props.valueLink.requestChange(e.target.value);
+	    }
+
+	    if (this.props.onChange) {
+	      this.props.onChange(e);
+	    }
+	  },
+	  render: function render() {
+	    var _props = this.props;
+	    var onChange = _props.onChange;
+	    var onHeightChange = _props.onHeightChange;
+	    var rows = _props.rows;
+	    var style = _props.style;
+	    var textareaStyle = _props.textareaStyle;
+	    var valueLink = _props.valueLink;
+
+	    var other = _objectWithoutProperties(_props, ['onChange', 'onHeightChange', 'rows', 'style', 'textareaStyle', 'valueLink']);
+
+	    var textareaStyles = this.mergeStyles(styles.textarea, textareaStyle, {
+	      height: this.state.height
+	    });
+
+	    var shadowStyles = styles.shadow;
+
+	    if (this.props.hasOwnProperty('valueLink')) {
+	      other.value = this.props.valueLink.value;
+	    }
+
+	    if (this.props.disabled) {
+	      style.cursor = 'default';
+	    }
+
+	    return _react2.default.createElement(
+	      'div',
+	      { style: this.prepareStyles(this.props.style) },
+	      _react2.default.createElement('textarea', {
+	        ref: 'shadow',
+	        style: this.prepareStyles(shadowStyles),
+	        tabIndex: '-1',
+	        rows: this.props.rows,
+	        defaultValue: this.props.defaultValue,
+	        readOnly: true,
+	        value: this.props.value,
+	        valueLink: this.props.valueLink
+	      }),
+	      _react2.default.createElement('textarea', _extends({}, other, {
+	        ref: 'input',
+	        rows: this.props.rows,
+	        style: this.prepareStyles(textareaStyles),
+	        onChange: this._handleChange
+	      }))
+	    );
+	  }
+	});
+
+	exports.default = EnhancedTextarea;
+	module.exports = exports['default'];
+
+/***/ },
+/* 313 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _transitions = __webpack_require__(246);
+
+	var _transitions2 = _interopRequireDefault(_transitions);
+
+	var _styles = __webpack_require__(219);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var propTypes = {
+	  /**
+	   * The material-ui theme applied to this component.
+	   */
+	  muiTheme: _react2.default.PropTypes.object.isRequired,
+
+	  /**
+	   * True if the hint text should be visible.
+	   */
+	  show: _react2.default.PropTypes.bool,
+
+	  /**
+	   * Override the inline-styles of the root element.
+	   */
+	  style: _react2.default.PropTypes.object,
+
+	  /**
+	   * The hint text displayed.
+	   */
+	  text: _react2.default.PropTypes.node
+	};
+
+	var defaultProps = {
+	  show: true
+	};
+
+	var TextFieldHint = function TextFieldHint(props) {
+	  var muiTheme = props.muiTheme;
+	  var show = props.show;
+	  var style = props.style;
+	  var text = props.text;
+	  var hintColor = muiTheme.textField.hintColor;
+
+	  var styles = {
+	    root: {
+	      position: 'absolute',
+	      opacity: show ? 1 : 0,
+	      color: hintColor,
+	      transition: _transitions2.default.easeOut(),
+	      bottom: 12
+	    }
+	  };
+
+	  return _react2.default.createElement(
+	    'div',
+	    { style: (0, _styles.prepareStyles)(muiTheme, (0, _styles.mergeStyles)(styles.root, style)) },
+	    text
+	  );
+	};
+
+	TextFieldHint.propTypes = propTypes;
+	TextFieldHint.defaultProps = defaultProps;
+
+	exports.default = TextFieldHint;
+	module.exports = exports['default'];
+
+/***/ },
+/* 314 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _transitions = __webpack_require__(246);
+
+	var _transitions2 = _interopRequireDefault(_transitions);
+
+	var _styles = __webpack_require__(219);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var propTypes = {
+	  /**
+	   * The material-ui theme applied to this component.
+	   */
+	  muiTheme: _react2.default.PropTypes.object.isRequired,
+
+	  /**
+	   * The css class name of the root element.
+	   */
+	  className: _react2.default.PropTypes.string,
+
+	  /**
+	   * The label contents.
+	   */
+	  children: _react2.default.PropTypes.node,
+
+	  /**
+	   * Disables the label if set to true.
+	   */
+	  disabled: _react2.default.PropTypes.bool,
+
+	  /**
+	   * True if the floating label should shrink.
+	   */
+	  shrink: _react2.default.PropTypes.bool,
+
+	  /**
+	   * The id of the target element that this label should refer to.
+	   */
+	  htmlFor: _react2.default.PropTypes.string,
+
+	  /**
+	   * Callback function for when the label is selected via a touch tap.
+	   */
+	  onTouchTap: _react2.default.PropTypes.func,
+
+	  /**
+	   * Override the inline-styles of the root element.
+	   */
+	  style: _react2.default.PropTypes.object
+	};
+
+	var defaultProps = {
+	  disabled: false,
+	  shrink: false
+	};
+
+	var TextFieldLabel = function TextFieldLabel(props) {
+	  var muiTheme = props.muiTheme;
+	  var className = props.className;
+	  var children = props.children;
+	  var disabled = props.disabled;
+	  var shrink = props.shrink;
+	  var htmlFor = props.htmlFor;
+	  var style = props.style;
+	  var onTouchTap = props.onTouchTap;
+
+	  var styles = {
+	    root: {
+	      position: 'absolute',
+	      lineHeight: '22px',
+	      top: 38,
+	      transition: _transitions2.default.easeOut(),
+	      zIndex: 1, // Needed to display label above Chrome's autocomplete field background
+	      cursor: disabled ? 'default' : 'text',
+	      transform: shrink ? 'perspective(1px) scale(0.75) translate3d(2px, -28px, 0)' : 'scale(1) translate3d(0, 0, 0)',
+	      transformOrigin: 'left top',
+	      pointerEvents: shrink ? 'none' : 'auto',
+	      userSelect: 'none'
+	    }
+	  };
+
+	  return _react2.default.createElement(
+	    'label',
+	    {
+	      className: className,
+	      style: (0, _styles.prepareStyles)(muiTheme, (0, _styles.mergeStyles)(styles.root, style)),
+	      htmlFor: htmlFor,
+	      onTouchTap: onTouchTap
+	    },
+	    children
+	  );
+	};
+
+	TextFieldLabel.propTypes = propTypes;
+	TextFieldLabel.defaultProps = defaultProps;
+
+	exports.default = TextFieldLabel;
+	module.exports = exports['default'];
+
+/***/ },
+/* 315 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _transitions = __webpack_require__(246);
+
+	var _transitions2 = _interopRequireDefault(_transitions);
+
+	var _styles = __webpack_require__(219);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var propTypes = {
+	  /**
+	   * True if the parent `TextField` is disabled.
+	   */
+	  disabled: _react2.default.PropTypes.bool,
+
+	  /**
+	   * Override the inline-styles of the underline when parent `TextField` is disabled.
+	   */
+	  disabledStyle: _react2.default.PropTypes.object,
+
+	  /**
+	   * True if the parent `TextField` has an error.
+	   */
+	  error: _react2.default.PropTypes.bool,
+
+	  /**
+	   * Override the inline-styles of the underline when parent `TextField` has an error.
+	   */
+	  errorStyle: _react2.default.PropTypes.object,
+
+	  /**
+	   * True if the parent `TextField` is focused.
+	   */
+	  focus: _react2.default.PropTypes.bool,
+
+	  /**
+	   * Override the inline-styles of the underline when parent `TextField` is focused.
+	   */
+	  focusStyle: _react2.default.PropTypes.object,
+
+	  /**
+	   * The material-ui theme applied to this component.
+	   */
+	  muiTheme: _react2.default.PropTypes.object.isRequired,
+
+	  /**
+	   * Override the inline-styles of the root element.
+	   */
+	  style: _react2.default.PropTypes.object
+	};
+
+	var defaultProps = {
+	  disabled: false,
+	  disabledStyle: {},
+	  error: false,
+	  errorStyle: {},
+	  focus: false,
+	  focusStyle: {},
+	  style: {}
+	};
+
+	var TextFieldUnderline = function TextFieldUnderline(props) {
+	  var disabled = props.disabled;
+	  var disabledStyle = props.disabledStyle;
+	  var error = props.error;
+	  var errorStyle = props.errorStyle;
+	  var focus = props.focus;
+	  var focusStyle = props.focusStyle;
+	  var muiTheme = props.muiTheme;
+	  var style = props.style;
+	  var errorStyleColor = errorStyle.color;
+	  var _muiTheme$textField = muiTheme.textField;
+	  var borderColor = _muiTheme$textField.borderColor;
+	  var disabledTextColor = _muiTheme$textField.disabledTextColor;
+	  var errorColor = _muiTheme$textField.errorColor;
+	  var focusColor = _muiTheme$textField.focusColor;
+
+	  var styles = {
+	    root: {
+	      border: 'none',
+	      borderBottom: 'solid 1px',
+	      borderColor: borderColor,
+	      bottom: 8,
+	      boxSizing: 'content-box',
+	      margin: 0,
+	      position: 'absolute',
+	      width: '100%'
+	    },
+	    disabled: {
+	      borderBottom: 'dotted 2px',
+	      borderColor: disabledTextColor
+	    },
+	    focus: {
+	      borderBottom: 'solid 2px',
+	      borderColor: focusColor,
+	      transform: 'scaleX(0)',
+	      transition: _transitions2.default.easeOut()
+	    },
+	    error: {
+	      borderColor: errorStyleColor ? errorStyleColor : errorColor,
+	      transform: 'scaleX(1)'
+	    }
+	  };
+
+	  var underline = (0, _styles.mergeStyles)(styles.root, style);
+	  var focusedUnderline = (0, _styles.mergeStyles)(underline, styles.focus, focusStyle);
+
+	  if (disabled) underline = (0, _styles.mergeStyles)(underline, styles.disabled, disabledStyle);
+	  if (focus) focusedUnderline = (0, _styles.mergeStyles)(focusedUnderline, { transform: 'scaleX(1)' });
+	  if (error) focusedUnderline = (0, _styles.mergeStyles)(focusedUnderline, styles.error);
+
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    _react2.default.createElement('hr', { style: (0, _styles.prepareStyles)(muiTheme, underline) }),
+	    _react2.default.createElement('hr', { style: (0, _styles.prepareStyles)(muiTheme, focusedUnderline) })
+	  );
+	};
+
+	TextFieldUnderline.propTypes = propTypes;
+	TextFieldUnderline.defaultProps = defaultProps;
+
+	exports.default = TextFieldUnderline;
+	module.exports = exports['default'];
+
+/***/ },
+/* 316 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	exports.default = chats;
 
-	var _superagent = __webpack_require__(308);
+	var _superagent = __webpack_require__(317);
 
 	var _superagent2 = _interopRequireDefault(_superagent);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var API_HOST = "http://api.spots.trurl.it";
 
 	var GameOfSpotsAPI = function () {
 	    function GameOfSpotsAPI() {
@@ -34957,7 +36198,7 @@
 	        key: "withId",
 	        value: function withId(id) {
 	            return new Promise(function (resolve, reject) {
-	                var requestInstance = _superagent2.default.get("http://api.spots.trurl.it/chats/" + id + "/").accept('application/json');
+	                var requestInstance = _superagent2.default.get(API_HOST + "/chats/" + id + "/").accept('application/json');
 	                requestInstance.end(function (error, res) {
 	                    if (error) reject(error);
 	                    resolve(res.body);
@@ -34965,10 +36206,23 @@
 	            });
 	        }
 	    }, {
+	        key: "withPartialName",
+	        value: function withPartialName(query) {
+	            return new Promise(function (resolve, reject) {
+	                var requestInstance = _superagent2.default.get(API_HOST + "/chats/").accept('application/json').query({
+	                    'name': query
+	                });
+	                requestInstance.end(function (error, res) {
+	                    if (error) reject(error);
+	                    resolve(res.body.results);
+	                });
+	            });
+	        }
+	    }, {
 	        key: "all",
 	        value: function all() {
 	            return new Promise(function (resolve, reject) {
-	                var requestInstance = _superagent2.default.get("http://api.spots.trurl.it/chats/").accept('application/json');
+	                var requestInstance = _superagent2.default.get(API_HOST + "/chats/").accept('application/json');
 	                requestInstance.end(function (error, res) {
 	                    if (error) reject(error);
 	                    resolve(res.body.results);
@@ -34985,15 +36239,15 @@
 	}
 
 /***/ },
-/* 308 */
+/* 317 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * Module dependencies.
 	 */
 
-	var Emitter = __webpack_require__(309);
-	var reduce = __webpack_require__(310);
+	var Emitter = __webpack_require__(318);
+	var reduce = __webpack_require__(319);
 
 	/**
 	 * Root reference for iframes.
@@ -36182,7 +37436,7 @@
 
 
 /***/ },
-/* 309 */
+/* 318 */
 /***/ function(module, exports) {
 
 	
@@ -36349,7 +37603,7 @@
 
 
 /***/ },
-/* 310 */
+/* 319 */
 /***/ function(module, exports) {
 
 	
@@ -36378,7 +37632,7 @@
 	};
 
 /***/ },
-/* 311 */
+/* 320 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -36395,21 +37649,17 @@
 
 	var _paper2 = _interopRequireDefault(_paper);
 
-	var _tabs = __webpack_require__(312);
+	var _tabs = __webpack_require__(321);
 
 	var _tabs2 = _interopRequireDefault(_tabs);
 
-	var _tab = __webpack_require__(315);
+	var _tab = __webpack_require__(324);
 
 	var _tab2 = _interopRequireDefault(_tab);
 
-	var _textField = __webpack_require__(316);
+	var _textField = __webpack_require__(308);
 
 	var _textField2 = _interopRequireDefault(_textField);
-
-	var _divider = __webpack_require__(324);
-
-	var _divider2 = _interopRequireDefault(_divider);
 
 	var _list = __webpack_require__(300);
 
@@ -36419,19 +37669,19 @@
 
 	var _listItem2 = _interopRequireDefault(_listItem);
 
-	var _inbox = __webpack_require__(326);
+	var _touchApp = __webpack_require__(325);
 
-	var _inbox2 = _interopRequireDefault(_inbox);
+	var _touchApp2 = _interopRequireDefault(_touchApp);
 
-	var _card = __webpack_require__(327);
+	var _card = __webpack_require__(326);
 
 	var _card2 = _interopRequireDefault(_card);
 
-	var _cardMedia = __webpack_require__(331);
+	var _cardMedia = __webpack_require__(330);
 
 	var _cardMedia2 = _interopRequireDefault(_cardMedia);
 
-	var _cardTitle = __webpack_require__(338);
+	var _cardTitle = __webpack_require__(337);
 
 	var _cardTitle2 = _interopRequireDefault(_cardTitle);
 
@@ -36443,19 +37693,35 @@
 
 	var _colors2 = _interopRequireDefault(_colors);
 
-	var _chats = __webpack_require__(307);
+	var _chats = __webpack_require__(316);
 
 	var _chats2 = _interopRequireDefault(_chats);
+
+	var _raisedButton = __webpack_require__(338);
+
+	var _raisedButton2 = _interopRequireDefault(_raisedButton);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var customStyles = {
-	    inputPaperWrapperStyle: {
+	    defaultPadding: {
 	        padding: '15'
 	    },
 	    questionInputStyle: {
 	        textAlign: 'center',
 	        fontSize: 20
+	    },
+	    questionListHeading: {
+	        textAlign: 'center',
+	        fontSize: 14,
+	        fontWeight: '700',
+	        textTransform: 'uppercase',
+	        color: _colors2.default.blue500
+	    },
+	    cardMediaPhotoWrapper: {
+	        height: '250',
+	        minHeight: '250',
+	        overflow: 'hidden'
 	    }
 	};
 
@@ -36519,13 +37785,48 @@
 	                null,
 	                _react2.default.createElement(
 	                    _cardMedia2.default,
-	                    { overlay: _react2.default.createElement(_cardTitle2.default, { title: this.state.result.name, subtitle: this.state.distance }) },
+	                    {
+	                        overlay: _react2.default.createElement(_cardTitle2.default, { title: this.state.result.name, subtitle: this.state.distance }),
+	                        style: customStyles.cardMediaPhotoWrapper },
 	                    _react2.default.createElement("img", { src: this.state.result.image })
 	                )
 	            ),
 	            _react2.default.createElement(
 	                _tabs2.default,
 	                null,
+	                _react2.default.createElement(
+	                    _tab2.default,
+	                    { label: "Ask a question" },
+	                    _react2.default.createElement(
+	                        "div",
+	                        { style: customStyles.defaultPadding },
+	                        _react2.default.createElement(_textField2.default, {
+	                            hintText: "Ask any question...",
+	                            fullWidth: true,
+	                            style: customStyles.questionInputStyle
+	                        }),
+	                        _react2.default.createElement(_raisedButton2.default, {
+	                            label: "Send!", secondary: true,
+	                            fullWidth: true
+	                        })
+	                    ),
+	                    _react2.default.createElement(
+	                        _paper2.default,
+	                        { style: customStyles.defaultPadding, zDepth: 1 },
+	                        _react2.default.createElement(
+	                            "h3",
+	                            { style: customStyles.questionListHeading },
+	                            "Or pick a question..."
+	                        ),
+	                        _react2.default.createElement(
+	                            _list2.default,
+	                            null,
+	                            _react2.default.createElement(_listItem2.default, { primaryText: "Is the spot crowded right now?", rightIcon: _react2.default.createElement(_touchApp2.default, null) }),
+	                            _react2.default.createElement(_listItem2.default, { primaryText: "Is the spot crowded right now?", rightIcon: _react2.default.createElement(_touchApp2.default, null) }),
+	                            _react2.default.createElement(_listItem2.default, { primaryText: "Is the spot crowded right now?", rightIcon: _react2.default.createElement(_touchApp2.default, null) })
+	                        )
+	                    )
+	                ),
 	                _react2.default.createElement(
 	                    _tab2.default,
 	                    { label: "Chat" },
@@ -36549,8 +37850,8 @@
 	                                    " -- I'll be in your neighborhood doing errands this weekend. Do you want to grab brunch?"
 	                                ),
 	                                secondaryTextLines: 2,
-	                                onTouchTap: this.answerQuestion.bind(this, 'testRoom'),
-	                                onClick: this.answerQuestion.bind(this, 'testRoom')
+	                                onTouchTap: this.answerQuestion.bind(this, 1),
+	                                onClick: this.answerQuestion.bind(this, 1)
 	                            }),
 	                            _react2.default.createElement(_listItem2.default, {
 	                                leftAvatar: _react2.default.createElement(_avatar2.default, { src: "http://www.material-ui.com/images/ok-128.jpg" }),
@@ -36566,8 +37867,8 @@
 	                                    " -- I'll be in your neighborhood doing errands this weekend. Do you want to grab brunch?"
 	                                ),
 	                                secondaryTextLines: 2,
-	                                onTouchTap: this.answerQuestion.bind(this, 'testRoom'),
-	                                onClick: this.answerQuestion.bind(this, 'testRoom')
+	                                onTouchTap: this.answerQuestion.bind(this, 1),
+	                                onClick: this.answerQuestion.bind(this, 1)
 	                            }),
 	                            _react2.default.createElement(_listItem2.default, {
 	                                rightAvatar: _react2.default.createElement(_avatar2.default, { src: "http://www.material-ui.com/images/ok-128.jpg" }),
@@ -36583,39 +37884,9 @@
 	                                    " -- I'll be in your neighborhood doing errands this weekend. Do you want to grab brunch?"
 	                                ),
 	                                secondaryTextLines: 2,
-	                                onTouchTap: this.answerQuestion.bind(this, 'testRoom'),
-	                                onClick: this.answerQuestion.bind(this, 'testRoom')
+	                                onTouchTap: this.answerQuestion.bind(this, 1),
+	                                onClick: this.answerQuestion.bind(this, 1)
 	                            })
-	                        )
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    _tab2.default,
-	                    { label: "Ask a question" },
-	                    _react2.default.createElement(
-	                        "div",
-	                        null,
-	                        _react2.default.createElement(
-	                            _paper2.default,
-	                            { style: customStyles.inputPaperWrapperStyle, zDepth: 1 },
-	                            _react2.default.createElement(_textField2.default, {
-	                                hintText: "Ask any question...",
-	                                fullWidth: true,
-	                                style: customStyles.questionInputStyle
-	                            })
-	                        ),
-	                        _react2.default.createElement(_divider2.default, null),
-	                        _react2.default.createElement(
-	                            "p",
-	                            null,
-	                            "Or pick a question..."
-	                        ),
-	                        _react2.default.createElement(
-	                            _list2.default,
-	                            null,
-	                            _react2.default.createElement(_listItem2.default, { primaryText: "Is the spot crowded right now?", rightIcon: _react2.default.createElement(_inbox2.default, null) }),
-	                            _react2.default.createElement(_listItem2.default, { primaryText: "Is the spot crowded right now?", rightIcon: _react2.default.createElement(_inbox2.default, null) }),
-	                            _react2.default.createElement(_listItem2.default, { primaryText: "Is the spot crowded right now?", rightIcon: _react2.default.createElement(_inbox2.default, null) })
 	                        )
 	                    )
 	                )
@@ -36625,7 +37896,7 @@
 	});
 
 /***/ },
-/* 312 */
+/* 321 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -36644,11 +37915,11 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _tabTemplate = __webpack_require__(313);
+	var _tabTemplate = __webpack_require__(322);
 
 	var _tabTemplate2 = _interopRequireDefault(_tabTemplate);
 
-	var _inkBar = __webpack_require__(314);
+	var _inkBar = __webpack_require__(323);
 
 	var _inkBar2 = _interopRequireDefault(_inkBar);
 
@@ -36906,7 +38177,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 313 */
+/* 322 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36973,7 +38244,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 314 */
+/* 323 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37078,7 +38349,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 315 */
+/* 324 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37262,1292 +38533,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 316 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _TextField = __webpack_require__(317);
-
-	var _TextField2 = _interopRequireDefault(_TextField);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _TextField2.default;
-	module.exports = exports['default'];
-
-/***/ },
-/* 317 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _TextField = __webpack_require__(318);
-
-	var _TextField2 = _interopRequireDefault(_TextField);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _TextField2.default;
-	module.exports = exports['default'];
-
-/***/ },
-/* 318 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(158);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _colorManipulator = __webpack_require__(281);
-
-	var _colorManipulator2 = _interopRequireDefault(_colorManipulator);
-
-	var _stylePropable = __webpack_require__(218);
-
-	var _stylePropable2 = _interopRequireDefault(_stylePropable);
-
-	var _transitions = __webpack_require__(246);
-
-	var _transitions2 = _interopRequireDefault(_transitions);
-
-	var _uniqueId = __webpack_require__(319);
-
-	var _uniqueId2 = _interopRequireDefault(_uniqueId);
-
-	var _enhancedTextarea = __webpack_require__(320);
-
-	var _enhancedTextarea2 = _interopRequireDefault(_enhancedTextarea);
-
-	var _getMuiTheme = __webpack_require__(263);
-
-	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
-
-	var _contextPure = __webpack_require__(244);
-
-	var _contextPure2 = _interopRequireDefault(_contextPure);
-
-	var _TextFieldHint = __webpack_require__(321);
-
-	var _TextFieldHint2 = _interopRequireDefault(_TextFieldHint);
-
-	var _TextFieldLabel = __webpack_require__(322);
-
-	var _TextFieldLabel2 = _interopRequireDefault(_TextFieldLabel);
-
-	var _TextFieldUnderline = __webpack_require__(323);
-
-	var _TextFieldUnderline2 = _interopRequireDefault(_TextFieldUnderline);
-
-	var _warning = __webpack_require__(163);
-
-	var _warning2 = _interopRequireDefault(_warning);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	/**
-	 * Check if a value is valid to be displayed inside an input.
-	 *
-	 * @param The value to check.
-	 * @returns True if the string provided is valid, false otherwise.
-	 */
-	function isValid(value) {
-	  return Boolean(value || value === 0);
-	}
-
-	var TextField = _react2.default.createClass({
-	  displayName: 'TextField',
-
-	  propTypes: {
-	    children: _react2.default.PropTypes.node,
-
-	    /**
-	     * The css class name of the root element.
-	     */
-	    className: _react2.default.PropTypes.string,
-
-	    /**
-	     * The text string to use for the default value.
-	     */
-	    defaultValue: _react2.default.PropTypes.any,
-
-	    /**
-	     * Disables the text field if set to true.
-	     */
-	    disabled: _react2.default.PropTypes.bool,
-
-	    /**
-	     * The style object to use to override error styles.
-	     */
-	    errorStyle: _react2.default.PropTypes.object,
-
-	    /**
-	     * The error content to display.
-	     */
-	    errorText: _react2.default.PropTypes.node,
-
-	    /**
-	     * The style object to use to override floating label styles.
-	     */
-	    floatingLabelStyle: _react2.default.PropTypes.object,
-
-	    /**
-	     * The content to use for the floating label element.
-	     */
-	    floatingLabelText: _react2.default.PropTypes.node,
-
-	    /**
-	     * If true, the field receives the property width 100%.
-	     */
-	    fullWidth: _react2.default.PropTypes.bool,
-
-	    /**
-	     * Override the inline-styles of the TextField's hint text element.
-	     */
-	    hintStyle: _react2.default.PropTypes.object,
-
-	    /**
-	     * The hint content to display.
-	     */
-	    hintText: _react2.default.PropTypes.node,
-
-	    /**
-	     * The id prop for the text field.
-	     */
-	    id: _react2.default.PropTypes.string,
-
-	    /**
-	     * Override the inline-styles of the TextField's input element.
-	     */
-	    inputStyle: _react2.default.PropTypes.object,
-
-	    /**
-	     * If true, a textarea element will be rendered.
-	     * The textarea also grows and shrinks according to the number of lines.
-	     */
-	    multiLine: _react2.default.PropTypes.bool,
-
-	    /**
-	     * Callback function that is fired when the textfield loses focus.
-	     */
-	    onBlur: _react2.default.PropTypes.func,
-
-	    /**
-	     * Callback function that is fired when the textfield's value changes.
-	     */
-	    onChange: _react2.default.PropTypes.func,
-
-	    /**
-	     * The function to call when the user presses the Enter key.
-	     */
-	    onEnterKeyDown: _react2.default.PropTypes.func,
-
-	    /**
-	     * Callback function that is fired when the textfield gains focus.
-	     */
-	    onFocus: _react2.default.PropTypes.func,
-
-	    /**
-	     * Callback function fired when key is pressed down.
-	     */
-	    onKeyDown: _react2.default.PropTypes.func,
-
-	    /**
-	     * Number of rows to display when multiLine option is set to true.
-	     */
-	    rows: _react2.default.PropTypes.number,
-
-	    /**
-	     * Maximum number of rows to display when
-	     * multiLine option is set to true.
-	     */
-	    rowsMax: _react2.default.PropTypes.number,
-
-	    /**
-	     * Override the inline-styles of the root element.
-	     */
-	    style: _react2.default.PropTypes.object,
-
-	    /**
-	     * Specifies the type of input to display
-	     * such as "password" or "text".
-	     */
-	    type: _react2.default.PropTypes.string,
-
-	    /**
-	     * Override the inline-styles of the
-	     * TextField's underline element when disabled.
-	     */
-	    underlineDisabledStyle: _react2.default.PropTypes.object,
-
-	    /**
-	     * Override the inline-styles of the TextField's
-	     * underline element when focussed.
-	     */
-	    underlineFocusStyle: _react2.default.PropTypes.object,
-
-	    /**
-	     * If true, shows the underline for the text field.
-	     */
-	    underlineShow: _react2.default.PropTypes.bool,
-
-	    /**
-	     * Override the inline-styles of the TextField's underline element.
-	     */
-	    underlineStyle: _react2.default.PropTypes.object,
-
-	    /**
-	     * The value of the text field.
-	     */
-	    value: _react2.default.PropTypes.any
-	  },
-
-	  contextTypes: {
-	    muiTheme: _react2.default.PropTypes.object
-	  },
-
-	  //for passing default theme context to children
-	  childContextTypes: {
-	    muiTheme: _react2.default.PropTypes.object
-	  },
-
-	  mixins: [_contextPure2.default, _stylePropable2.default],
-
-	  statics: {
-	    getRelevantContextKeys: function getRelevantContextKeys(muiTheme) {
-	      var textFieldTheme = muiTheme.textField;
-
-	      return {
-	        floatingLabelColor: textFieldTheme.floatingLabelColor,
-	        focusColor: textFieldTheme.focusColor,
-	        textColor: textFieldTheme.textColor,
-	        disabledTextColor: textFieldTheme.disabledTextColor,
-	        backgroundColor: textFieldTheme.backgroundColor,
-	        hintColor: textFieldTheme.hintColor,
-	        errorColor: textFieldTheme.errorColor
-	      };
-	    },
-	    getChildrenClasses: function getChildrenClasses() {
-	      return [_enhancedTextarea2.default];
-	    }
-	  },
-
-	  getDefaultProps: function getDefaultProps() {
-	    return {
-	      disabled: false,
-	      multiLine: false,
-	      fullWidth: false,
-	      type: 'text',
-	      underlineShow: true,
-	      rows: 1
-	    };
-	  },
-	  getInitialState: function getInitialState() {
-	    var props = this.props.children ? this.props.children.props : this.props;
-
-	    return {
-	      isFocused: false,
-	      errorText: this.props.errorText,
-	      hasValue: isValid(props.value) || isValid(props.defaultValue) || props.valueLink && isValid(props.valueLink.value),
-	      muiTheme: this.context.muiTheme || (0, _getMuiTheme2.default)()
-	    };
-	  },
-	  getChildContext: function getChildContext() {
-	    return {
-	      muiTheme: this.state.muiTheme
-	    };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this._uniqueId = _uniqueId2.default.generate();
-	  },
-	  componentWillReceiveProps: function componentWillReceiveProps(nextProps, nextContext) {
-	    var newState = {};
-	    newState.muiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-
-	    newState.errorText = nextProps.errorText;
-	    if (nextProps.children && nextProps.children.props) {
-	      nextProps = nextProps.children.props;
-	    }
-
-	    var hasValueLinkProp = nextProps.hasOwnProperty('valueLink');
-	    var hasValueProp = nextProps.hasOwnProperty('value');
-	    var hasNewDefaultValue = nextProps.defaultValue !== this.props.defaultValue;
-
-	    if (hasValueLinkProp) {
-	      newState.hasValue = isValid(nextProps.valueLink.value);
-	    } else if (hasValueProp) {
-	      newState.hasValue = isValid(nextProps.value);
-	    } else if (hasNewDefaultValue) {
-	      newState.hasValue = isValid(nextProps.defaultValue);
-	    }
-
-	    if (newState) this.setState(newState);
-	  },
-	  getStyles: function getStyles() {
-	    var props = this.props;
-
-	    var _constructor$getRelev = this.constructor.getRelevantContextKeys(this.state.muiTheme);
-
-	    var floatingLabelColor = _constructor$getRelev.floatingLabelColor;
-	    var focusColor = _constructor$getRelev.focusColor;
-	    var textColor = _constructor$getRelev.textColor;
-	    var disabledTextColor = _constructor$getRelev.disabledTextColor;
-	    var backgroundColor = _constructor$getRelev.backgroundColor;
-	    var hintColor = _constructor$getRelev.hintColor;
-	    var errorColor = _constructor$getRelev.errorColor;
-
-	    var styles = {
-	      root: {
-	        fontSize: 16,
-	        lineHeight: '24px',
-	        width: props.fullWidth ? '100%' : 256,
-	        height: (props.rows - 1) * 24 + (props.floatingLabelText ? 72 : 48),
-	        display: 'inline-block',
-	        position: 'relative',
-	        backgroundColor: backgroundColor,
-	        fontFamily: this.state.muiTheme.rawTheme.fontFamily,
-	        transition: _transitions2.default.easeOut('200ms', 'height')
-	      },
-	      error: {
-	        position: 'relative',
-	        bottom: 2,
-	        fontSize: 12,
-	        lineHeight: '12px',
-	        color: errorColor,
-	        transition: _transitions2.default.easeOut()
-	      },
-	      floatingLabel: {
-	        color: hintColor
-	      },
-	      input: {
-	        tapHighlightColor: 'rgba(0,0,0,0)',
-	        padding: 0,
-	        position: 'relative',
-	        width: '100%',
-	        height: '100%',
-	        border: 'none',
-	        outline: 'none',
-	        backgroundColor: 'transparent',
-	        color: props.disabled ? disabledTextColor : textColor,
-	        font: 'inherit'
-	      }
-	    };
-
-	    styles.error = this.mergeStyles(styles.error, props.errorStyle);
-
-	    styles.textarea = this.mergeStyles(styles.input, {
-	      marginTop: props.floatingLabelText ? 36 : 12,
-	      marginBottom: props.floatingLabelText ? -36 : -12,
-	      boxSizing: 'border-box',
-	      font: 'inherit'
-	    });
-
-	    if (this.state.isFocused) {
-	      styles.floatingLabel.color = focusColor;
-	    }
-
-	    if (this.state.hasValue) {
-	      styles.floatingLabel.color = _colorManipulator2.default.fade(props.disabled ? disabledTextColor : floatingLabelColor, 0.5);
-	    }
-
-	    if (props.floatingLabelText) {
-	      styles.input.boxSizing = 'border-box';
-
-	      if (!props.multiLine) {
-	        styles.input.marginTop = 14;
-	      }
-
-	      if (this.state.errorText) {
-	        styles.error.bottom = !props.multiLine ? styles.error.fontSize + 3 : 3;
-	      }
-	    }
-
-	    if (this.state.errorText) {
-	      if (this.state.isFocused) {
-	        styles.floatingLabel.color = styles.error.color;
-	      }
-	    }
-
-	    return styles;
-	  },
-	  blur: function blur() {
-	    if (this.isMounted()) this._getInputNode().blur();
-	  },
-	  clearValue: function clearValue() {
-	    this.setValue('');
-	  },
-	  focus: function focus() {
-	    if (this.isMounted()) this._getInputNode().focus();
-	  },
-	  getValue: function getValue() {
-	    return this.isMounted() ? this._getInputNode().value : undefined;
-	  },
-	  setErrorText: function setErrorText(newErrorText) {
-	    process.env.NODE_ENV !== "production" ? (0, _warning2.default)(false, 'setErrorText() method is deprecated. Use the errorText property instead.') : undefined;
-
-	    if (this.isMounted()) {
-	      this.setState({ errorText: newErrorText });
-	    }
-	  },
-	  setValue: function setValue(newValue) {
-	    process.env.NODE_ENV !== "production" ? (0, _warning2.default)(false, 'setValue() method is deprecated. Use the defaultValue property instead.\n      Or use the TextField as a controlled component with the value property.') : undefined;
-
-	    if (this.isMounted()) {
-	      if (this.props.multiLine) {
-	        this.refs.input.setValue(newValue);
-	      } else {
-	        this._getInputNode().value = newValue;
-	      }
-
-	      this.setState({ hasValue: isValid(newValue) });
-	    }
-	  },
-	  _getInputNode: function _getInputNode() {
-	    return this.props.children || this.props.multiLine ? this.refs.input.getInputNode() : _reactDom2.default.findDOMNode(this.refs.input);
-	  },
-	  _handleInputBlur: function _handleInputBlur(e) {
-	    this.setState({ isFocused: false });
-	    if (this.props.onBlur) this.props.onBlur(e);
-	  },
-	  _handleInputChange: function _handleInputChange(e) {
-	    this.setState({ hasValue: isValid(e.target.value) });
-	    if (this.props.onChange) this.props.onChange(e);
-	  },
-	  _handleInputFocus: function _handleInputFocus(e) {
-	    if (this.props.disabled) return;
-	    this.setState({ isFocused: true });
-	    if (this.props.onFocus) this.props.onFocus(e);
-	  },
-	  _handleInputKeyDown: function _handleInputKeyDown(e) {
-	    if (e.keyCode === 13 && this.props.onEnterKeyDown) this.props.onEnterKeyDown(e);
-	    if (this.props.onKeyDown) this.props.onKeyDown(e);
-	  },
-	  _handleTextAreaHeightChange: function _handleTextAreaHeightChange(e, height) {
-	    var newHeight = height + 24;
-	    if (this.props.floatingLabelText) newHeight += 24;
-	    _reactDom2.default.findDOMNode(this).style.height = newHeight + 'px';
-	  },
-	  _isControlled: function _isControlled() {
-	    return this.props.hasOwnProperty('value') || this.props.hasOwnProperty('valueLink');
-	  },
-	  render: function render() {
-	    var _props = this.props;
-	    var className = _props.className;
-	    var disabled = _props.disabled;
-	    var errorStyle = _props.errorStyle;
-	    var errorText = _props.errorText;
-	    var floatingLabelText = _props.floatingLabelText;
-	    var fullWidth = _props.fullWidth;
-	    var hintText = _props.hintText;
-	    var hintStyle = _props.hintStyle;
-	    var id = _props.id;
-	    var multiLine = _props.multiLine;
-	    var onBlur = _props.onBlur;
-	    var onChange = _props.onChange;
-	    var onFocus = _props.onFocus;
-	    var style = _props.style;
-	    var type = _props.type;
-	    var underlineDisabledStyle = _props.underlineDisabledStyle;
-	    var underlineFocusStyle = _props.underlineFocusStyle;
-	    var underlineShow = _props.underlineShow;
-	    var underlineStyle = _props.underlineStyle;
-	    var rows = _props.rows;
-	    var rowsMax = _props.rowsMax;
-
-	    var other = _objectWithoutProperties(_props, ['className', 'disabled', 'errorStyle', 'errorText', 'floatingLabelText', 'fullWidth', 'hintText', 'hintStyle', 'id', 'multiLine', 'onBlur', 'onChange', 'onFocus', 'style', 'type', 'underlineDisabledStyle', 'underlineFocusStyle', 'underlineShow', 'underlineStyle', 'rows', 'rowsMax']);
-
-	    var styles = this.getStyles();
-
-	    var inputId = id || this._uniqueId;
-
-	    var errorTextElement = this.state.errorText ? _react2.default.createElement(
-	      'div',
-	      { style: this.prepareStyles(styles.error) },
-	      this.state.errorText
-	    ) : null;
-
-	    var floatingLabelTextElement = floatingLabelText ? _react2.default.createElement(
-	      _TextFieldLabel2.default,
-	      {
-	        muiTheme: this.state.muiTheme,
-	        style: this.mergeStyles(styles.floatingLabel, this.props.floatingLabelStyle),
-	        htmlFor: inputId,
-	        shrink: this.state.hasValue || this.state.isFocused,
-	        disabled: disabled,
-	        onTouchTap: this.focus
-	      },
-	      floatingLabelText
-	    ) : null;
-
-	    var inputProps = undefined;
-	    var inputElement = undefined;
-
-	    inputProps = {
-	      id: inputId,
-	      ref: 'input',
-	      onBlur: this._handleInputBlur,
-	      onFocus: this._handleInputFocus,
-	      disabled: this.props.disabled,
-	      onKeyDown: this._handleInputKeyDown
-	    };
-	    var inputStyle = this.mergeStyles(styles.input, this.props.inputStyle);
-
-	    if (!this.props.hasOwnProperty('valueLink')) {
-	      inputProps.onChange = this._handleInputChange;
-	    }
-
-	    if (this.props.children) {
-	      inputElement = _react2.default.cloneElement(this.props.children, _extends({}, inputProps, this.props.children.props, {
-	        style: this.mergeStyles(inputStyle, this.props.children.props.style)
-	      }));
-	    } else {
-	      inputElement = multiLine ? _react2.default.createElement(_enhancedTextarea2.default, _extends({}, other, inputProps, {
-	        style: inputStyle,
-	        rows: rows,
-	        rowsMax: rowsMax,
-	        onHeightChange: this._handleTextAreaHeightChange,
-	        textareaStyle: styles.textarea
-	      })) : _react2.default.createElement('input', _extends({}, other, inputProps, {
-	        style: this.prepareStyles(inputStyle),
-	        type: type
-	      }));
-	    }
-
-	    return _react2.default.createElement(
-	      'div',
-	      { className: className, style: this.prepareStyles(styles.root, this.props.style) },
-	      floatingLabelTextElement,
-	      hintText ? _react2.default.createElement(_TextFieldHint2.default, {
-	        muiTheme: this.state.muiTheme,
-	        show: !(this.state.hasValue || floatingLabelText && !this.state.isFocused),
-	        style: hintStyle,
-	        text: hintText
-	      }) : null,
-	      inputElement,
-	      underlineShow ? _react2.default.createElement(_TextFieldUnderline2.default, {
-	        disabled: disabled,
-	        disabledStyle: underlineDisabledStyle,
-	        error: this.state.errorText ? true : false,
-	        errorStyle: errorStyle,
-	        focus: this.state.isFocused,
-	        focusStyle: underlineFocusStyle,
-	        muiTheme: this.state.muiTheme,
-	        style: underlineStyle
-	      }) : null,
-	      errorTextElement
-	    );
-	  }
-	});
-
-	exports.default = TextField;
-	module.exports = exports['default'];
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
-
-/***/ },
-/* 319 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var index = 0;
-
-	exports.default = {
-	  generate: function generate() {
-	    return 'mui-id-' + index++;
-	  }
-	};
-	module.exports = exports['default'];
-
-/***/ },
-/* 320 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(158);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _stylePropable = __webpack_require__(218);
-
-	var _stylePropable2 = _interopRequireDefault(_stylePropable);
-
-	var _getMuiTheme = __webpack_require__(263);
-
-	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	var rowsHeight = 24;
-
-	var styles = {
-	  textarea: {
-	    width: '100%',
-	    resize: 'none',
-	    font: 'inherit',
-	    padding: 0
-	  },
-	  shadow: {
-	    width: '100%',
-	    resize: 'none',
-	    // Overflow also needed to here to remove the extra row
-	    // added to textareas in Firefox.
-	    overflow: 'hidden',
-	    // Visibility needed to hide the extra text area on ipads
-	    visibility: 'hidden',
-	    font: 'inherit',
-	    padding: 0,
-	    position: 'absolute'
-	  }
-	};
-
-	var EnhancedTextarea = _react2.default.createClass({
-	  displayName: 'EnhancedTextarea',
-
-	  propTypes: {
-	    defaultValue: _react2.default.PropTypes.any,
-	    disabled: _react2.default.PropTypes.bool,
-	    onChange: _react2.default.PropTypes.func,
-	    onHeightChange: _react2.default.PropTypes.func,
-	    rows: _react2.default.PropTypes.number,
-	    rowsMax: _react2.default.PropTypes.number,
-
-	    /**
-	     * Override the inline-styles of the root element.
-	     */
-	    style: _react2.default.PropTypes.object,
-	    textareaStyle: _react2.default.PropTypes.object,
-	    value: _react2.default.PropTypes.string,
-	    valueLink: _react2.default.PropTypes.object
-	  },
-
-	  contextTypes: {
-	    muiTheme: _react2.default.PropTypes.object
-	  },
-
-	  //for passing default theme context to children
-	  childContextTypes: {
-	    muiTheme: _react2.default.PropTypes.object
-	  },
-
-	  mixins: [_stylePropable2.default],
-
-	  getDefaultProps: function getDefaultProps() {
-	    return {
-	      rows: 1
-	    };
-	  },
-	  getInitialState: function getInitialState() {
-	    return {
-	      height: this.props.rows * rowsHeight,
-	      muiTheme: this.context.muiTheme || (0, _getMuiTheme2.default)()
-	    };
-	  },
-	  getChildContext: function getChildContext() {
-	    return {
-	      muiTheme: this.state.muiTheme
-	    };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this._syncHeightWithShadow();
-	  },
-	  componentWillReceiveProps: function componentWillReceiveProps(nextProps, nextContext) {
-	    if (nextProps.value !== this.props.value) {
-	      this._syncHeightWithShadow(nextProps.value);
-	    }
-	    var newState = {};
-	    newState.muiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-	  },
-	  getInputNode: function getInputNode() {
-	    return _reactDom2.default.findDOMNode(this.refs.input);
-	  },
-	  setValue: function setValue(value) {
-	    this.getInputNode().value = value;
-	    this._syncHeightWithShadow(value);
-	  },
-	  _syncHeightWithShadow: function _syncHeightWithShadow(newValue, e) {
-	    var shadow = _reactDom2.default.findDOMNode(this.refs.shadow);
-
-	    if (newValue !== undefined) {
-	      shadow.value = newValue;
-	    }
-
-	    var newHeight = shadow.scrollHeight;
-
-	    if (this.props.rowsMax >= this.props.rows) {
-	      newHeight = Math.min(this.props.rowsMax * rowsHeight, newHeight);
-	    }
-
-	    newHeight = Math.max(newHeight, rowsHeight);
-
-	    if (this.state.height !== newHeight) {
-	      this.setState({
-	        height: newHeight
-	      });
-
-	      if (this.props.onHeightChange) {
-	        this.props.onHeightChange(e, newHeight);
-	      }
-	    }
-	  },
-	  _handleChange: function _handleChange(e) {
-	    this._syncHeightWithShadow(e.target.value);
-
-	    if (this.props.hasOwnProperty('valueLink')) {
-	      this.props.valueLink.requestChange(e.target.value);
-	    }
-
-	    if (this.props.onChange) {
-	      this.props.onChange(e);
-	    }
-	  },
-	  render: function render() {
-	    var _props = this.props;
-	    var onChange = _props.onChange;
-	    var onHeightChange = _props.onHeightChange;
-	    var rows = _props.rows;
-	    var style = _props.style;
-	    var textareaStyle = _props.textareaStyle;
-	    var valueLink = _props.valueLink;
-
-	    var other = _objectWithoutProperties(_props, ['onChange', 'onHeightChange', 'rows', 'style', 'textareaStyle', 'valueLink']);
-
-	    var textareaStyles = this.mergeStyles(styles.textarea, textareaStyle, {
-	      height: this.state.height
-	    });
-
-	    var shadowStyles = styles.shadow;
-
-	    if (this.props.hasOwnProperty('valueLink')) {
-	      other.value = this.props.valueLink.value;
-	    }
-
-	    if (this.props.disabled) {
-	      style.cursor = 'default';
-	    }
-
-	    return _react2.default.createElement(
-	      'div',
-	      { style: this.prepareStyles(this.props.style) },
-	      _react2.default.createElement('textarea', {
-	        ref: 'shadow',
-	        style: this.prepareStyles(shadowStyles),
-	        tabIndex: '-1',
-	        rows: this.props.rows,
-	        defaultValue: this.props.defaultValue,
-	        readOnly: true,
-	        value: this.props.value,
-	        valueLink: this.props.valueLink
-	      }),
-	      _react2.default.createElement('textarea', _extends({}, other, {
-	        ref: 'input',
-	        rows: this.props.rows,
-	        style: this.prepareStyles(textareaStyles),
-	        onChange: this._handleChange
-	      }))
-	    );
-	  }
-	});
-
-	exports.default = EnhancedTextarea;
-	module.exports = exports['default'];
-
-/***/ },
-/* 321 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _transitions = __webpack_require__(246);
-
-	var _transitions2 = _interopRequireDefault(_transitions);
-
-	var _styles = __webpack_require__(219);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var propTypes = {
-	  /**
-	   * The material-ui theme applied to this component.
-	   */
-	  muiTheme: _react2.default.PropTypes.object.isRequired,
-
-	  /**
-	   * True if the hint text should be visible.
-	   */
-	  show: _react2.default.PropTypes.bool,
-
-	  /**
-	   * Override the inline-styles of the root element.
-	   */
-	  style: _react2.default.PropTypes.object,
-
-	  /**
-	   * The hint text displayed.
-	   */
-	  text: _react2.default.PropTypes.node
-	};
-
-	var defaultProps = {
-	  show: true
-	};
-
-	var TextFieldHint = function TextFieldHint(props) {
-	  var muiTheme = props.muiTheme;
-	  var show = props.show;
-	  var style = props.style;
-	  var text = props.text;
-	  var hintColor = muiTheme.textField.hintColor;
-
-	  var styles = {
-	    root: {
-	      position: 'absolute',
-	      opacity: show ? 1 : 0,
-	      color: hintColor,
-	      transition: _transitions2.default.easeOut(),
-	      bottom: 12
-	    }
-	  };
-
-	  return _react2.default.createElement(
-	    'div',
-	    { style: (0, _styles.prepareStyles)(muiTheme, (0, _styles.mergeStyles)(styles.root, style)) },
-	    text
-	  );
-	};
-
-	TextFieldHint.propTypes = propTypes;
-	TextFieldHint.defaultProps = defaultProps;
-
-	exports.default = TextFieldHint;
-	module.exports = exports['default'];
-
-/***/ },
-/* 322 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _transitions = __webpack_require__(246);
-
-	var _transitions2 = _interopRequireDefault(_transitions);
-
-	var _styles = __webpack_require__(219);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var propTypes = {
-	  /**
-	   * The material-ui theme applied to this component.
-	   */
-	  muiTheme: _react2.default.PropTypes.object.isRequired,
-
-	  /**
-	   * The css class name of the root element.
-	   */
-	  className: _react2.default.PropTypes.string,
-
-	  /**
-	   * The label contents.
-	   */
-	  children: _react2.default.PropTypes.node,
-
-	  /**
-	   * Disables the label if set to true.
-	   */
-	  disabled: _react2.default.PropTypes.bool,
-
-	  /**
-	   * True if the floating label should shrink.
-	   */
-	  shrink: _react2.default.PropTypes.bool,
-
-	  /**
-	   * The id of the target element that this label should refer to.
-	   */
-	  htmlFor: _react2.default.PropTypes.string,
-
-	  /**
-	   * Callback function for when the label is selected via a touch tap.
-	   */
-	  onTouchTap: _react2.default.PropTypes.func,
-
-	  /**
-	   * Override the inline-styles of the root element.
-	   */
-	  style: _react2.default.PropTypes.object
-	};
-
-	var defaultProps = {
-	  disabled: false,
-	  shrink: false
-	};
-
-	var TextFieldLabel = function TextFieldLabel(props) {
-	  var muiTheme = props.muiTheme;
-	  var className = props.className;
-	  var children = props.children;
-	  var disabled = props.disabled;
-	  var shrink = props.shrink;
-	  var htmlFor = props.htmlFor;
-	  var style = props.style;
-	  var onTouchTap = props.onTouchTap;
-
-	  var styles = {
-	    root: {
-	      position: 'absolute',
-	      lineHeight: '22px',
-	      top: 38,
-	      transition: _transitions2.default.easeOut(),
-	      zIndex: 1, // Needed to display label above Chrome's autocomplete field background
-	      cursor: disabled ? 'default' : 'text',
-	      transform: shrink ? 'perspective(1px) scale(0.75) translate3d(2px, -28px, 0)' : 'scale(1) translate3d(0, 0, 0)',
-	      transformOrigin: 'left top',
-	      pointerEvents: shrink ? 'none' : 'auto',
-	      userSelect: 'none'
-	    }
-	  };
-
-	  return _react2.default.createElement(
-	    'label',
-	    {
-	      className: className,
-	      style: (0, _styles.prepareStyles)(muiTheme, (0, _styles.mergeStyles)(styles.root, style)),
-	      htmlFor: htmlFor,
-	      onTouchTap: onTouchTap
-	    },
-	    children
-	  );
-	};
-
-	TextFieldLabel.propTypes = propTypes;
-	TextFieldLabel.defaultProps = defaultProps;
-
-	exports.default = TextFieldLabel;
-	module.exports = exports['default'];
-
-/***/ },
-/* 323 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _transitions = __webpack_require__(246);
-
-	var _transitions2 = _interopRequireDefault(_transitions);
-
-	var _styles = __webpack_require__(219);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var propTypes = {
-	  /**
-	   * True if the parent `TextField` is disabled.
-	   */
-	  disabled: _react2.default.PropTypes.bool,
-
-	  /**
-	   * Override the inline-styles of the underline when parent `TextField` is disabled.
-	   */
-	  disabledStyle: _react2.default.PropTypes.object,
-
-	  /**
-	   * True if the parent `TextField` has an error.
-	   */
-	  error: _react2.default.PropTypes.bool,
-
-	  /**
-	   * Override the inline-styles of the underline when parent `TextField` has an error.
-	   */
-	  errorStyle: _react2.default.PropTypes.object,
-
-	  /**
-	   * True if the parent `TextField` is focused.
-	   */
-	  focus: _react2.default.PropTypes.bool,
-
-	  /**
-	   * Override the inline-styles of the underline when parent `TextField` is focused.
-	   */
-	  focusStyle: _react2.default.PropTypes.object,
-
-	  /**
-	   * The material-ui theme applied to this component.
-	   */
-	  muiTheme: _react2.default.PropTypes.object.isRequired,
-
-	  /**
-	   * Override the inline-styles of the root element.
-	   */
-	  style: _react2.default.PropTypes.object
-	};
-
-	var defaultProps = {
-	  disabled: false,
-	  disabledStyle: {},
-	  error: false,
-	  errorStyle: {},
-	  focus: false,
-	  focusStyle: {},
-	  style: {}
-	};
-
-	var TextFieldUnderline = function TextFieldUnderline(props) {
-	  var disabled = props.disabled;
-	  var disabledStyle = props.disabledStyle;
-	  var error = props.error;
-	  var errorStyle = props.errorStyle;
-	  var focus = props.focus;
-	  var focusStyle = props.focusStyle;
-	  var muiTheme = props.muiTheme;
-	  var style = props.style;
-	  var errorStyleColor = errorStyle.color;
-	  var _muiTheme$textField = muiTheme.textField;
-	  var borderColor = _muiTheme$textField.borderColor;
-	  var disabledTextColor = _muiTheme$textField.disabledTextColor;
-	  var errorColor = _muiTheme$textField.errorColor;
-	  var focusColor = _muiTheme$textField.focusColor;
-
-	  var styles = {
-	    root: {
-	      border: 'none',
-	      borderBottom: 'solid 1px',
-	      borderColor: borderColor,
-	      bottom: 8,
-	      boxSizing: 'content-box',
-	      margin: 0,
-	      position: 'absolute',
-	      width: '100%'
-	    },
-	    disabled: {
-	      borderBottom: 'dotted 2px',
-	      borderColor: disabledTextColor
-	    },
-	    focus: {
-	      borderBottom: 'solid 2px',
-	      borderColor: focusColor,
-	      transform: 'scaleX(0)',
-	      transition: _transitions2.default.easeOut()
-	    },
-	    error: {
-	      borderColor: errorStyleColor ? errorStyleColor : errorColor,
-	      transform: 'scaleX(1)'
-	    }
-	  };
-
-	  var underline = (0, _styles.mergeStyles)(styles.root, style);
-	  var focusedUnderline = (0, _styles.mergeStyles)(underline, styles.focus, focusStyle);
-
-	  if (disabled) underline = (0, _styles.mergeStyles)(underline, styles.disabled, disabledStyle);
-	  if (focus) focusedUnderline = (0, _styles.mergeStyles)(focusedUnderline, { transform: 'scaleX(1)' });
-	  if (error) focusedUnderline = (0, _styles.mergeStyles)(focusedUnderline, styles.error);
-
-	  return _react2.default.createElement(
-	    'div',
-	    null,
-	    _react2.default.createElement('hr', { style: (0, _styles.prepareStyles)(muiTheme, underline) }),
-	    _react2.default.createElement('hr', { style: (0, _styles.prepareStyles)(muiTheme, focusedUnderline) })
-	  );
-	};
-
-	TextFieldUnderline.propTypes = propTypes;
-	TextFieldUnderline.defaultProps = defaultProps;
-
-	exports.default = TextFieldUnderline;
-	module.exports = exports['default'];
-
-/***/ },
-/* 324 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _muiThemeable = __webpack_require__(325);
-
-	var _muiThemeable2 = _interopRequireDefault(_muiThemeable);
-
-	var _styles = __webpack_require__(219);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	var propTypes = {
-	  /**
-	   * The css class name of the root element.
-	   */
-	  className: _react2.default.PropTypes.string,
-
-	  /**
-	   * If true, the `Divider` will be indented `72px`.
-	   */
-	  inset: _react2.default.PropTypes.bool,
-
-	  /**
-	   * The material-ui theme applied to this component.
-	   * @ignore
-	   */
-	  muiTheme: _react2.default.PropTypes.object.isRequired,
-
-	  /**
-	   * Override the inline-styles of the root element.
-	   */
-	  style: _react2.default.PropTypes.object
-	};
-
-	var defaultProps = {
-	  inset: false
-	};
-
-	var Divider = function Divider(props) {
-	  var inset = props.inset;
-	  var muiTheme = props.muiTheme;
-	  var style = props.style;
-
-	  var other = _objectWithoutProperties(props, ['inset', 'muiTheme', 'style']);
-
-	  var styles = {
-	    root: {
-	      margin: 0,
-	      marginTop: -1,
-	      marginLeft: inset ? 72 : 0,
-	      height: 1,
-	      border: 'none',
-	      backgroundColor: muiTheme.rawTheme.palette.borderColor
-	    }
-	  };
-
-	  return _react2.default.createElement('hr', _extends({}, other, { style: (0, _styles.prepareStyles)(muiTheme, (0, _styles.mergeStyles)(styles.root, style)) }));
-	};
-
-	Divider.displayName = 'Divider';
-	Divider.propTypes = propTypes;
-	Divider.defaultProps = defaultProps;
-	Divider = (0, _muiThemeable2.default)(Divider);
-
-	exports.default = Divider;
-	module.exports = exports['default'];
-
-/***/ },
 /* 325 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = muiThemeable;
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _getMuiTheme = __webpack_require__(263);
-
-	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function getDisplayName(WrappedComponent) {
-	  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
-	}
-
-	function muiThemeable(WrappedComponent) {
-	  var MuiComponent = function MuiComponent(props, _ref) {
-	    var _ref$muiTheme = _ref.muiTheme;
-	    var muiTheme = _ref$muiTheme === undefined ? (0, _getMuiTheme2.default)() : _ref$muiTheme;
-
-	    return _react2.default.createElement(WrappedComponent, _extends({}, props, { muiTheme: muiTheme }));
-	  };
-
-	  MuiComponent.displayName = getDisplayName(WrappedComponent);
-	  MuiComponent.contextTypes = {
-	    muiTheme: _react2.default.PropTypes.object
-	  };
-	  MuiComponent.childContextTypes = {
-	    muiTheme: _react2.default.PropTypes.object
-	  };
-
-	  return MuiComponent;
-	}
-	module.exports = exports['default'];
-
-/***/ },
-/* 326 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38570,8 +38556,8 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var ContentInbox = _react2.default.createClass({
-	  displayName: 'ContentInbox',
+	var ActionTouchApp = _react2.default.createClass({
+	  displayName: 'ActionTouchApp',
 
 	  mixins: [_reactAddonsPureRenderMixin2.default],
 
@@ -38579,16 +38565,16 @@
 	    return _react2.default.createElement(
 	      _svgIcon2.default,
 	      this.props,
-	      _react2.default.createElement('path', { d: 'M19 3H4.99c-1.11 0-1.98.89-1.98 2L3 19c0 1.1.88 2 1.99 2H19c1.1 0 2-.9 2-2V5c0-1.11-.9-2-2-2zm0 12h-4c0 1.66-1.35 3-3 3s-3-1.34-3-3H4.99V5H19v10z' })
+	      _react2.default.createElement('path', { d: 'M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z' })
 	    );
 	  }
 	});
 
-	exports.default = ContentInbox;
+	exports.default = ActionTouchApp;
 	module.exports = exports['default'];
 
 /***/ },
-/* 327 */
+/* 326 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38611,7 +38597,7 @@
 
 	var _stylePropable2 = _interopRequireDefault(_stylePropable);
 
-	var _cardExpandable = __webpack_require__(328);
+	var _cardExpandable = __webpack_require__(327);
 
 	var _cardExpandable2 = _interopRequireDefault(_cardExpandable);
 
@@ -38739,7 +38725,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 328 */
+/* 327 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38752,11 +38738,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _keyboardArrowUp = __webpack_require__(329);
+	var _keyboardArrowUp = __webpack_require__(328);
 
 	var _keyboardArrowUp2 = _interopRequireDefault(_keyboardArrowUp);
 
-	var _keyboardArrowDown = __webpack_require__(330);
+	var _keyboardArrowDown = __webpack_require__(329);
 
 	var _keyboardArrowDown2 = _interopRequireDefault(_keyboardArrowDown);
 
@@ -38873,7 +38859,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 329 */
+/* 328 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38914,7 +38900,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 330 */
+/* 329 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38955,7 +38941,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 331 */
+/* 330 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38970,7 +38956,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _styles = __webpack_require__(332);
+	var _styles = __webpack_require__(331);
 
 	var _styles2 = _interopRequireDefault(_styles);
 
@@ -39122,7 +39108,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 332 */
+/* 331 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39144,7 +39130,7 @@
 
 	var _spacing2 = _interopRequireDefault(_spacing);
 
-	var _themeManager = __webpack_require__(333);
+	var _themeManager = __webpack_require__(332);
 
 	var _themeManager2 = _interopRequireDefault(_themeManager);
 
@@ -39156,7 +39142,7 @@
 
 	var _typography2 = _interopRequireDefault(_typography);
 
-	var _lightRawTheme = __webpack_require__(334);
+	var _lightRawTheme = __webpack_require__(333);
 
 	var _lightRawTheme2 = _interopRequireDefault(_lightRawTheme);
 
@@ -39164,15 +39150,15 @@
 
 	var _lightBaseTheme2 = _interopRequireDefault(_lightBaseTheme);
 
-	var _darkRawTheme = __webpack_require__(335);
+	var _darkRawTheme = __webpack_require__(334);
 
 	var _darkRawTheme2 = _interopRequireDefault(_darkRawTheme);
 
-	var _darkBaseTheme = __webpack_require__(336);
+	var _darkBaseTheme = __webpack_require__(335);
 
 	var _darkBaseTheme2 = _interopRequireDefault(_darkBaseTheme);
 
-	var _themeDecorator = __webpack_require__(337);
+	var _themeDecorator = __webpack_require__(336);
 
 	var _themeDecorator2 = _interopRequireDefault(_themeDecorator);
 
@@ -39215,7 +39201,7 @@
 	};
 
 /***/ },
-/* 333 */
+/* 332 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39261,7 +39247,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 334 */
+/* 333 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39289,7 +39275,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 335 */
+/* 334 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39298,7 +39284,7 @@
 	  value: true
 	});
 
-	var _darkBaseTheme = __webpack_require__(336);
+	var _darkBaseTheme = __webpack_require__(335);
 
 	var _darkBaseTheme2 = _interopRequireDefault(_darkBaseTheme);
 
@@ -39317,7 +39303,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 336 */
+/* 335 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39362,7 +39348,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 337 */
+/* 336 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39402,7 +39388,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 338 */
+/* 337 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39417,7 +39403,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _styles = __webpack_require__(332);
+	var _styles = __webpack_require__(331);
 
 	var _styles2 = _interopRequireDefault(_styles);
 
@@ -39535,223 +39521,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 339 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _react2.default.createClass({
-	    displayName: 'Error404',
-	    render: function render() {
-	        return _react2.default.createElement('div', null);
-	    }
-	});
-
-/***/ },
-/* 340 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _react2.default.createClass({
-	    displayName: 'About',
-	    render: function render() {
-	        return _react2.default.createElement(
-	            'div',
-	            null,
-	            'about page'
-	        );
-	    }
-	});
-
-/***/ },
-/* 341 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _textField = __webpack_require__(316);
-
-	var _textField2 = _interopRequireDefault(_textField);
-
-	var _raisedButton = __webpack_require__(342);
-
-	var _raisedButton2 = _interopRequireDefault(_raisedButton);
-
-	var _colors = __webpack_require__(242);
-
-	var _colors2 = _interopRequireDefault(_colors);
-
-	var _card = __webpack_require__(327);
-
-	var _card2 = _interopRequireDefault(_card);
-
-	var _cardHeader = __webpack_require__(343);
-
-	var _cardHeader2 = _interopRequireDefault(_cardHeader);
-
-	var _cardMedia = __webpack_require__(331);
-
-	var _cardMedia2 = _interopRequireDefault(_cardMedia);
-
-	var _cardTitle = __webpack_require__(338);
-
-	var _cardTitle2 = _interopRequireDefault(_cardTitle);
-
-	var _cardText = __webpack_require__(344);
-
-	var _cardText2 = _interopRequireDefault(_cardText);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var customStyles = {
-	    defaultPadding: {
-	        padding: '15'
-	    },
-	    topMarginSmall: {
-	        marginTop: '5'
-	    },
-	    inputPaperWrapperStyle: {
-	        padding: '15'
-	    },
-	    questionInputStyle: {
-	        textAlign: 'center',
-	        fontSize: 20
-	    },
-	    cardMediaPhotoWrapper: {
-	        height: '150',
-	        overflow: 'hidden'
-	    },
-	    cardHeader: {
-	        height: '56',
-	        paddingBottom: '0',
-	        textAlign: 'center',
-	        backgroundColor: _colors2.default.grey100
-	    },
-	    cardTextAuthor: {
-	        height: '50',
-	        textAlign: 'center',
-	        paddingTop: '5',
-	        paddingBottom: '0',
-	        backgroundColor: _colors2.default.grey100
-	    },
-	    cardTextAuthorName: {
-	        fontSize: 16,
-	        color: _colors2.default.pink500,
-	        fontWeight: '900'
-	    },
-	    cardTextAuthorSubtitle: {
-	        fontSize: 14,
-	        color: _colors2.default.grey500,
-	        fontWeight: '400'
-	    },
-	    cardTextQuestion: {
-	        textAlign: 'center',
-	        fontSize: 16
-	    }
-	};
-
-	exports.default = _react2.default.createClass({
-	    displayName: 'Answer',
-	    contextTypes: {
-	        router: _react2.default.PropTypes.object
-	    },
-	    backToChat: function backToChat(chatId, event) {
-	        this.context.router.push("/chats/" + chatId);
-	    },
-	    render: function render() {
-	        return _react2.default.createElement(
-	            "div",
-	            { className: "app-chat" },
-	            _react2.default.createElement(
-	                _card2.default,
-	                null,
-	                _react2.default.createElement(
-	                    _cardMedia2.default,
-	                    {
-	                        overlay: _react2.default.createElement(_cardTitle2.default, { title: "Multitap PiwPaw", subtitle: "0.2km away from you" }),
-	                        style: customStyles.cardMediaPhotoWrapper
-	                    },
-	                    _react2.default.createElement("img", { src: "http://lorempixel.com/600/337/nature/" })
-	                ),
-	                _react2.default.createElement(_cardHeader2.default, {
-	                    avatar: "http://lorempixel.com/100/100/nature/",
-	                    style: customStyles.cardHeader
-	                }),
-	                _react2.default.createElement(
-	                    _cardText2.default,
-	                    { style: customStyles.cardTextAuthor },
-	                    _react2.default.createElement(
-	                        "div",
-	                        { style: customStyles.cardTextAuthorName },
-	                        "Stevie Wonder"
-	                    ),
-	                    _react2.default.createElement(
-	                        "div",
-	                        { style: customStyles.cardTextAuthorSubtitle },
-	                        "asked..."
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    _cardText2.default,
-	                    { style: customStyles.cardTextQuestion },
-	                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mattis pretium massa. Aliquam erat volutpat. Nulla facilisi?"
-	                )
-	            ),
-	            _react2.default.createElement(
-	                "div",
-	                { style: customStyles.defaultPadding },
-	                _react2.default.createElement(_textField2.default, {
-	                    hintText: "Your answer",
-	                    fullWidth: true,
-	                    style: customStyles.questionInputStyle
-	                }),
-	                _react2.default.createElement(_raisedButton2.default, {
-	                    label: "Send!", secondary: true,
-	                    fullWidth: true
-	                }),
-	                _react2.default.createElement(_raisedButton2.default, {
-	                    label: "I am not there / I don't know",
-	                    fullWidth: true,
-	                    style: customStyles.topMarginSmall,
-	                    onTouchTap: this.backToChat.bind(this, 1),
-	                    onClick: this.backToChat.bind(this, 1)
-	                })
-	            )
-	        );
-	    }
-	});
-
-/***/ },
-/* 342 */
+/* 338 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40199,7 +39969,224 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 343 */
+/* 339 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _react2.default.createClass({
+	    displayName: 'Error404',
+	    render: function render() {
+	        return _react2.default.createElement('div', null);
+	    }
+	});
+
+/***/ },
+/* 340 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _react2.default.createClass({
+	    displayName: 'About',
+	    render: function render() {
+	        return _react2.default.createElement(
+	            'div',
+	            null,
+	            'about page'
+	        );
+	    }
+	});
+
+/***/ },
+/* 341 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _textField = __webpack_require__(308);
+
+	var _textField2 = _interopRequireDefault(_textField);
+
+	var _raisedButton = __webpack_require__(338);
+
+	var _raisedButton2 = _interopRequireDefault(_raisedButton);
+
+	var _colors = __webpack_require__(242);
+
+	var _colors2 = _interopRequireDefault(_colors);
+
+	var _card = __webpack_require__(326);
+
+	var _card2 = _interopRequireDefault(_card);
+
+	var _cardHeader = __webpack_require__(342);
+
+	var _cardHeader2 = _interopRequireDefault(_cardHeader);
+
+	var _cardMedia = __webpack_require__(330);
+
+	var _cardMedia2 = _interopRequireDefault(_cardMedia);
+
+	var _cardTitle = __webpack_require__(337);
+
+	var _cardTitle2 = _interopRequireDefault(_cardTitle);
+
+	var _cardText = __webpack_require__(343);
+
+	var _cardText2 = _interopRequireDefault(_cardText);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var customStyles = {
+	    defaultPadding: {
+	        padding: '15'
+	    },
+	    topMarginSmall: {
+	        marginTop: '5'
+	    },
+	    inputPaperWrapperStyle: {
+	        padding: '15'
+	    },
+	    questionInputStyle: {
+	        textAlign: 'center',
+	        fontSize: 20
+	    },
+	    cardMediaPhotoWrapper: {
+	        height: '250',
+	        minHeight: '250',
+	        overflow: 'hidden'
+	    },
+	    cardHeader: {
+	        height: '56',
+	        paddingBottom: '0',
+	        textAlign: 'center',
+	        backgroundColor: _colors2.default.grey100
+	    },
+	    cardTextAuthor: {
+	        height: '50',
+	        textAlign: 'center',
+	        paddingTop: '5',
+	        paddingBottom: '0',
+	        backgroundColor: _colors2.default.grey100
+	    },
+	    cardTextAuthorName: {
+	        fontSize: 16,
+	        color: _colors2.default.pink500,
+	        fontWeight: '900'
+	    },
+	    cardTextAuthorSubtitle: {
+	        fontSize: 14,
+	        color: _colors2.default.grey500,
+	        fontWeight: '400'
+	    },
+	    cardTextQuestion: {
+	        textAlign: 'center',
+	        fontSize: 16
+	    }
+	};
+
+	exports.default = _react2.default.createClass({
+	    displayName: 'Answer',
+	    contextTypes: {
+	        router: _react2.default.PropTypes.object
+	    },
+	    backToChat: function backToChat(chatId, event) {
+	        this.context.router.push("/chats/" + chatId);
+	    },
+	    render: function render() {
+	        return _react2.default.createElement(
+	            "div",
+	            { className: "app-chat" },
+	            _react2.default.createElement(
+	                _card2.default,
+	                null,
+	                _react2.default.createElement(
+	                    _cardMedia2.default,
+	                    {
+	                        overlay: _react2.default.createElement(_cardTitle2.default, { title: "Multitap PiwPaw", subtitle: "0.2km away from you" }),
+	                        style: customStyles.cardMediaPhotoWrapper
+	                    },
+	                    _react2.default.createElement("img", { src: "http://lorempixel.com/600/337/nature/" })
+	                ),
+	                _react2.default.createElement(_cardHeader2.default, {
+	                    avatar: "http://lorempixel.com/100/100/nature/",
+	                    style: customStyles.cardHeader
+	                }),
+	                _react2.default.createElement(
+	                    _cardText2.default,
+	                    { style: customStyles.cardTextAuthor },
+	                    _react2.default.createElement(
+	                        "div",
+	                        { style: customStyles.cardTextAuthorName },
+	                        "Stevie Wonder"
+	                    ),
+	                    _react2.default.createElement(
+	                        "div",
+	                        { style: customStyles.cardTextAuthorSubtitle },
+	                        "asked..."
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    _cardText2.default,
+	                    { style: customStyles.cardTextQuestion },
+	                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mattis pretium massa. Aliquam erat volutpat. Nulla facilisi?"
+	                )
+	            ),
+	            _react2.default.createElement(
+	                "div",
+	                { style: customStyles.defaultPadding },
+	                _react2.default.createElement(_textField2.default, {
+	                    hintText: "Your answer",
+	                    fullWidth: true,
+	                    style: customStyles.questionInputStyle
+	                }),
+	                _react2.default.createElement(_raisedButton2.default, {
+	                    label: "Send!", secondary: true,
+	                    fullWidth: true
+	                }),
+	                _react2.default.createElement(_raisedButton2.default, {
+	                    label: "I am not there / I don't know",
+	                    fullWidth: true,
+	                    style: customStyles.topMarginSmall,
+	                    onTouchTap: this.backToChat.bind(this, 1),
+	                    onClick: this.backToChat.bind(this, 1)
+	                })
+	            )
+	        );
+	    }
+	});
+
+/***/ },
+/* 342 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40214,7 +40201,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _styles = __webpack_require__(332);
+	var _styles = __webpack_require__(331);
 
 	var _styles2 = _interopRequireDefault(_styles);
 
@@ -40360,7 +40347,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 344 */
+/* 343 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40454,7 +40441,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 345 */
+/* 344 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -40487,11 +40474,11 @@
 
 	var _transitions2 = _interopRequireDefault(_transitions);
 
-	var _windowListenable = __webpack_require__(346);
+	var _windowListenable = __webpack_require__(345);
 
 	var _windowListenable2 = _interopRequireDefault(_windowListenable);
 
-	var _overlay = __webpack_require__(347);
+	var _overlay = __webpack_require__(346);
 
 	var _overlay2 = _interopRequireDefault(_overlay);
 
@@ -40499,7 +40486,7 @@
 
 	var _paper2 = _interopRequireDefault(_paper);
 
-	var _menu = __webpack_require__(348);
+	var _menu = __webpack_require__(347);
 
 	var _menu2 = _interopRequireDefault(_menu);
 
@@ -40511,7 +40498,7 @@
 
 	var _warning2 = _interopRequireDefault(_warning);
 
-	var _deprecatedPropType = __webpack_require__(359);
+	var _deprecatedPropType = __webpack_require__(358);
 
 	var _deprecatedPropType2 = _interopRequireDefault(_deprecatedPropType);
 
@@ -41017,7 +41004,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 346 */
+/* 345 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41053,7 +41040,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 347 */
+/* 346 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41198,7 +41185,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 348 */
+/* 347 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -41217,11 +41204,11 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _cssEvent = __webpack_require__(349);
+	var _cssEvent = __webpack_require__(348);
 
 	var _cssEvent2 = _interopRequireDefault(_cssEvent);
 
-	var _keyLine = __webpack_require__(350);
+	var _keyLine = __webpack_require__(349);
 
 	var _keyLine2 = _interopRequireDefault(_keyLine);
 
@@ -41237,7 +41224,7 @@
 
 	var _transitions2 = _interopRequireDefault(_transitions);
 
-	var _clickAwayable = __webpack_require__(351);
+	var _clickAwayable = __webpack_require__(350);
 
 	var _clickAwayable2 = _interopRequireDefault(_clickAwayable);
 
@@ -41245,15 +41232,15 @@
 
 	var _paper2 = _interopRequireDefault(_paper);
 
-	var _menuItem2 = __webpack_require__(352);
+	var _menuItem2 = __webpack_require__(351);
 
 	var _menuItem3 = _interopRequireDefault(_menuItem2);
 
-	var _linkMenuItem = __webpack_require__(357);
+	var _linkMenuItem = __webpack_require__(356);
 
 	var _linkMenuItem2 = _interopRequireDefault(_linkMenuItem);
 
-	var _subheaderMenuItem = __webpack_require__(358);
+	var _subheaderMenuItem = __webpack_require__(357);
 
 	var _subheaderMenuItem2 = _interopRequireDefault(_subheaderMenuItem);
 
@@ -41857,7 +41844,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 349 */
+/* 348 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41919,7 +41906,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 350 */
+/* 349 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -41943,7 +41930,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 351 */
+/* 350 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42002,7 +41989,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 352 */
+/* 351 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -42025,7 +42012,7 @@
 
 	var _fontIcon2 = _interopRequireDefault(_fontIcon);
 
-	var _toggle = __webpack_require__(353);
+	var _toggle = __webpack_require__(352);
 
 	var _toggle2 = _interopRequireDefault(_toggle);
 
@@ -42272,7 +42259,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 353 */
+/* 352 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42299,7 +42286,7 @@
 
 	var _paper2 = _interopRequireDefault(_paper);
 
-	var _enhancedSwitch = __webpack_require__(354);
+	var _enhancedSwitch = __webpack_require__(353);
 
 	var _enhancedSwitch2 = _interopRequireDefault(_enhancedSwitch);
 
@@ -42545,7 +42532,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 354 */
+/* 353 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -42576,15 +42563,15 @@
 
 	var _transitions2 = _interopRequireDefault(_transitions);
 
-	var _uniqueId = __webpack_require__(319);
+	var _uniqueId = __webpack_require__(311);
 
 	var _uniqueId2 = _interopRequireDefault(_uniqueId);
 
-	var _windowListenable = __webpack_require__(346);
+	var _windowListenable = __webpack_require__(345);
 
 	var _windowListenable2 = _interopRequireDefault(_windowListenable);
 
-	var _clearfix = __webpack_require__(355);
+	var _clearfix = __webpack_require__(354);
 
 	var _clearfix2 = _interopRequireDefault(_clearfix);
 
@@ -43025,7 +43012,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 355 */
+/* 354 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43040,7 +43027,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _beforeAfterWrapper = __webpack_require__(356);
+	var _beforeAfterWrapper = __webpack_require__(355);
 
 	var _beforeAfterWrapper2 = _interopRequireDefault(_beforeAfterWrapper);
 
@@ -43092,7 +43079,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 356 */
+/* 355 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43246,7 +43233,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 357 */
+/* 356 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43393,7 +43380,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 358 */
+/* 357 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43509,7 +43496,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 359 */
+/* 358 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -43538,7 +43525,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 360 */
+/* 359 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43569,11 +43556,11 @@
 
 	var _colors2 = _interopRequireDefault(_colors);
 
-	var _popover = __webpack_require__(361);
+	var _popover = __webpack_require__(360);
 
 	var _popover2 = _interopRequireDefault(_popover);
 
-	var _check = __webpack_require__(366);
+	var _check = __webpack_require__(365);
 
 	var _check2 = _interopRequireDefault(_check);
 
@@ -43585,7 +43572,7 @@
 
 	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
 
-	var _menu = __webpack_require__(367);
+	var _menu = __webpack_require__(366);
 
 	var _menu2 = _interopRequireDefault(_menu);
 
@@ -43893,7 +43880,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 361 */
+/* 360 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43912,11 +43899,11 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _windowListenable = __webpack_require__(346);
+	var _windowListenable = __webpack_require__(345);
 
 	var _windowListenable2 = _interopRequireDefault(_windowListenable);
 
-	var _renderToLayer = __webpack_require__(362);
+	var _renderToLayer = __webpack_require__(361);
 
 	var _renderToLayer2 = _interopRequireDefault(_renderToLayer);
 
@@ -43932,7 +43919,7 @@
 
 	var _paper2 = _interopRequireDefault(_paper);
 
-	var _lodash = __webpack_require__(363);
+	var _lodash = __webpack_require__(362);
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -43940,7 +43927,7 @@
 
 	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
 
-	var _popoverDefaultAnimation = __webpack_require__(365);
+	var _popoverDefaultAnimation = __webpack_require__(364);
 
 	var _popoverDefaultAnimation2 = _interopRequireDefault(_popoverDefaultAnimation);
 
@@ -44326,7 +44313,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 362 */
+/* 361 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44501,7 +44488,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 363 */
+/* 362 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -44512,7 +44499,7 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var debounce = __webpack_require__(364);
+	var debounce = __webpack_require__(363);
 
 	/** Used as the `TypeError` message for "Functions" methods. */
 	var FUNC_ERROR_TEXT = 'Expected a function';
@@ -44603,7 +44590,7 @@
 
 
 /***/ },
-/* 364 */
+/* 363 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -44843,7 +44830,7 @@
 
 
 /***/ },
-/* 365 */
+/* 364 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45019,7 +45006,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 366 */
+/* 365 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45060,7 +45047,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 367 */
+/* 366 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45087,7 +45074,7 @@
 
 	var _stylePropable2 = _interopRequireDefault(_stylePropable);
 
-	var _clickAwayable = __webpack_require__(351);
+	var _clickAwayable = __webpack_require__(350);
 
 	var _clickAwayable2 = _interopRequireDefault(_clickAwayable);
 
@@ -45673,6 +45660,54 @@
 
 	exports.default = Menu;
 	module.exports = exports['default'];
+
+/***/ },
+/* 367 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _colors = __webpack_require__(242);
+
+	var _colors2 = _interopRequireDefault(_colors);
+
+	var _colorManipulator = __webpack_require__(281);
+
+	var _colorManipulator2 = _interopRequireDefault(_colorManipulator);
+
+	var _spacing = __webpack_require__(283);
+
+	var _spacing2 = _interopRequireDefault(_spacing);
+
+	var _zIndex = __webpack_require__(284);
+
+	var _zIndex2 = _interopRequireDefault(_zIndex);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = {
+	    spacing: _spacing2.default,
+	    zIndex: _zIndex2.default,
+	    fontFamily: 'Roboto, sans-serif',
+	    palette: {
+	        primary1Color: _colors2.default.red500,
+	        primary2Color: _colors2.default.red700,
+	        primary3Color: _colors2.default.lightBlack,
+	        accent1Color: _colors2.default.yellow200,
+	        accent2Color: _colors2.default.grey100,
+	        accent3Color: _colors2.default.grey500,
+	        textColor: _colors2.default.darkBlack,
+	        alternateTextColor: _colors2.default.white,
+	        canvasColor: _colors2.default.white,
+	        borderColor: _colors2.default.grey300,
+	        disabledColor: _colorManipulator2.default.fade(_colors2.default.darkBlack, 0.3),
+	        pickerHeaderColor: _colors2.default.red500
+	    }
+	};
 
 /***/ },
 /* 368 */
