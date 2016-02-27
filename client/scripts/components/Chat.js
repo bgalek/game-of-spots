@@ -34,33 +34,18 @@ const customStyles = {
 export default React.createClass({
     displayName: 'Chat',
 
-    getInitialState: function() {
-        return {
-            tab: 'ask'
-        }
-    },
-
-    handleTabChange: function(value) {
-        this.setState({
-            tab: value,
-        });
-    },
-
     render() {
         return (
             <div className="app-chat">
                 <Card>
                   <CardMedia
-                    overlay={<CardTitle title="Multitap PiwPaw" subtitle="200m away" />}
+                    overlay={<CardTitle title="Multitap PiwPaw" subtitle="0.2km away from you" />}
                   >
                     <img src="http://lorempixel.com/600/337/nature/" />
                   </CardMedia>
                 </Card>
-                <Tabs
-                  value={this.state.tab}
-                  onChange={this.handleTabChange}
-                >
-                    <Tab label="Chat" value="chat">
+                <Tabs>
+                    <Tab label="Chat">
                         <div>
                             <List>
                               <ListItem
@@ -72,9 +57,8 @@ export default React.createClass({
                                     I&apos;ll be in your neighborhood doing errands this weekend. Do you want to grab brunch?
                                   </p>
                                 }
-                                secondaryTextLines={2}
+                                secondaryTextLines={10}
                               />
-                              <Divider inset={true} />
                               <ListItem
                                 leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
                                 primaryText="Brunch this weekend?"
@@ -84,12 +68,23 @@ export default React.createClass({
                                     I&apos;ll be in your neighborhood doing errands this weekend. Do you want to grab brunch?
                                   </p>
                                 }
-                                secondaryTextLines={2}
+                                secondaryTextLines={10}
                               />
+                                <ListItem
+                                    rightAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
+                                    primaryText="Brunch this weekend?"
+                                    secondaryText={
+                                  <p>
+                                    <span style={{color: Colors.darkBlack}}>Brendan Lim</span> --
+                                    I&apos;ll be in your neighborhood doing errands this weekend. Do you want to grab brunch?
+                                  </p>
+                                }
+                                    secondaryTextLines={10}
+                                />
                             </List>
                         </div>
                     </Tab>
-                    <Tab label="Ask a question" value="ask">
+                    <Tab label="Ask a question">
                         <div>
                             <Paper style={customStyles.inputPaperWrapperStyle} zDepth={1}>
                                 <TextField
