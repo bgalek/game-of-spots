@@ -7,8 +7,12 @@ import CommunicationChatBubble from "material-ui/lib/svg-icons/communication/cha
 export default React.createClass({
     displayName: 'Chats',
 
-    goTo(){
-        console.log('goto')
+    contextTypes: {
+        router: React.PropTypes.object
+    },
+
+    handleChatClick(chatId, event) {
+        this.context.router.push(`/chats/${chatId}`);
     },
 
     render() {
@@ -16,30 +20,44 @@ export default React.createClass({
             <div>
                 <List subheader="Available spots">
                     <ListItem
+                        id="test1"
                         primaryText="Brendan Lim"
                         leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
                         rightIcon={<CommunicationChatBubble />}
-                        onTouchTap={this.goTo}
+                        onTouchTap={this.handleChatClick.bind(this, 'testRoom')}
+                        onClick={this.handleChatClick.bind(this, 'testRoom')}
                     />
                     <ListItem
-                        primaryText="Eric Hoffman"
-                        leftAvatar={<Avatar src="http://www.material-ui.com/images/kolage-128.jpg" />}
+                        id="test2"
+                        primaryText="Brendan Lim"
+                        leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
                         rightIcon={<CommunicationChatBubble />}
+                        onTouchTap={this.handleChatClick.bind(this, 'testRoom')}
+                        onClick={this.handleChatClick.bind(this, 'testRoom')}
                     />
                     <ListItem
-                        primaryText="Grace Ng"
-                        leftAvatar={<Avatar src="http://www.material-ui.com/images/uxceo-128.jpg" />}
+                        id="test3"
+                        primaryText="Brendan Lim"
+                        leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
                         rightIcon={<CommunicationChatBubble />}
+                        onTouchTap={this.handleChatClick.bind(this, 'testRoom')}
+                        onClick={this.handleChatClick.bind(this, 'testRoom')}
                     />
                     <ListItem
-                        primaryText="Kerem Suer"
-                        leftAvatar={<Avatar src="http://www.material-ui.com/images/kerem-128.jpg" />}
+                        id="test4"
+                        primaryText="Brendan Lim"
+                        leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
                         rightIcon={<CommunicationChatBubble />}
+                        onTouchTap={this.handleChatClick.bind(this, 'testRoom')}
+                        onClick={this.handleChatClick.bind(this, 'testRoom')}
                     />
                     <ListItem
-                        primaryText="Raquel Parrado"
-                        leftAvatar={<Avatar src="http://www.material-ui.com/images/raquelromanp-128.jpg" />}
+                        id="test5"
+                        primaryText="Brendan Lim"
+                        leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
                         rightIcon={<CommunicationChatBubble />}
+                        onTouchTap={this.handleChatClick.bind(this, 'testRoom')}
+                        onClick={this.handleChatClick.bind(this, 'testRoom')}
                     />
                 </List>
             </div>
