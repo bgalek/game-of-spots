@@ -6,12 +6,11 @@ import TextField from "material-ui/lib/text-field";
 export default React.createClass({
     displayName: 'Chat',
 
-    // default props
-    // constructor(props) {
-    //     this.state = {
-    //         value: 'chat',
-    //     };
-    // },
+    getInitialState() {
+        return {
+            tab: 'chat'
+        }
+    },
 
     handleChange(value) {
         this.setState({
