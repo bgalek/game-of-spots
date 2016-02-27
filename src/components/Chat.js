@@ -31,6 +31,12 @@ const customStyles = {
         textTransform: 'uppercase',
         color: Colors.red500,
         margin: '0'
+    },
+    myCommentsStyle: {
+        borderTopStyle: 'solid',
+        borderTopWidth: '3',
+        borderTopColor: Colors.red500,
+        backgroundColor: Colors.grey100
     }
     //cardMediaPhotoWrapper: {
         //height: '250',
@@ -143,6 +149,7 @@ export default React.createClass({
                                     secondaryTextLines={2}
                                 />
                                 <ListItem
+                                    style={customStyles.myCommentsStyle}
                                     rightAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
                                     primaryText="Brunch this weekend?"
                                     secondaryText={
@@ -151,6 +158,17 @@ export default React.createClass({
                                     I&apos;ll be in your neighborhood doing errands this weekend. Do you want to grab brunch?
                                   </p>
 
+                                }
+                                    secondaryTextLines={2}
+                                />
+                                <ListItem
+                                    leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
+                                    primaryText="Brunch this weekend?"
+                                    secondaryText={
+                                  <p>
+                                    <span style={{color: Colors.darkBlack}}>Brendan Lim</span> --
+                                    I&apos;ll be in your neighborhood doing errands this weekend. Do you want to grab brunch?
+                                  </p>
                                 }
                                     secondaryTextLines={2}
                                 />
