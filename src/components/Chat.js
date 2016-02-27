@@ -6,21 +6,29 @@ import TextField from "material-ui/lib/text-field";
 import Divider from "material-ui/lib/divider";
 import List from "material-ui/lib/lists/list";
 import ListItem from "material-ui/lib/lists/list-item";
-import ContentInbox from "material-ui/lib/svg-icons/content/inbox";
+import ContentInbox from "material-ui/lib/svg-icons/action/touch-app";
 import Card from "material-ui/lib/card/card";
 import CardMedia from "material-ui/lib/card/card-media";
 import CardTitle from "material-ui/lib/card/card-title";
 import Avatar from "material-ui/lib/avatar";
 import Colors from "material-ui/lib/styles/colors";
 import chats from "../api/chats";
+import RaisedButton from 'material-ui/lib/raised-button';
 
 const customStyles = {
-    inputPaperWrapperStyle: {
+    defaultPadding: {
         padding: '15'
     },
     questionInputStyle: {
         textAlign: 'center',
         fontSize: 20
+    },
+    questionListHeading: {
+        textAlign: 'center',
+        fontSize: 14,
+        fontWeight: '700',
+        textTransform: 'uppercase',
+        color: Colors.blue500
     }
 };
 
@@ -81,6 +89,29 @@ export default React.createClass({
                     </CardMedia>
                 </Card>
                 <Tabs>
+                    <Tab label="Ask a question">
+                        <div style={customStyles.defaultPadding}>
+                            <TextField
+                                hintText="Ask any question..."
+                                fullWidth={true}
+                                style={customStyles.questionInputStyle}
+                            />
+                            <RaisedButton
+                                label="Send!" secondary={true}
+                                fullWidth={true}
+                            />
+                        </div>
+                        <Paper style={customStyles.defaultPadding} zDepth={1}>
+                            <h3 style={customStyles.questionListHeading}>
+                                Or pick a question...
+                            </h3>
+                            <List>
+                                <ListItem primaryText="Is the spot crowded right now?" rightIcon={<ContentInbox />}/>
+                                <ListItem primaryText="Is the spot crowded right now?" rightIcon={<ContentInbox />}/>
+                                <ListItem primaryText="Is the spot crowded right now?" rightIcon={<ContentInbox />}/>
+                            </List>
+                        </Paper>
+                    </Tab>
                     <Tab label="Chat">
                         <div>
                             <List>
@@ -93,23 +124,23 @@ export default React.createClass({
                                     I&apos;ll be in your neighborhood doing errands this weekend. Do you want to grab brunch?
                                   </p>
                                 }
-                                secondaryTextLines={2}
-                                onTouchTap={this.answerQuestion.bind(this, 'testRoom')}
-                                onClick={this.answerQuestion.bind(this, 'testRoom')}
-                              />
-                              <ListItem
-                                leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
-                                primaryText="Brunch this weekend?"
-                                secondaryText={
+                                    secondaryTextLines={2}
+                                    onTouchTap={this.answerQuestion.bind(this, 1)}
+                                    onClick={this.answerQuestion.bind(this, 1)}
+                                />
+                                <ListItem
+                                    leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
+                                    primaryText="Brunch this weekend?"
+                                    secondaryText={
                                   <p>
                                     <span style={{color: Colors.darkBlack}}>Brendan Lim</span> --
                                     I&apos;ll be in your neighborhood doing errands this weekend. Do you want to grab brunch?
                                   </p>
                                 }
-                                secondaryTextLines={2}
-                                onTouchTap={this.answerQuestion.bind(this, 'testRoom')}
-                                onClick={this.answerQuestion.bind(this, 'testRoom')}
-                              />
+                                    secondaryTextLines={2}
+                                    onTouchTap={this.answerQuestion.bind(this, 1)}
+                                    onClick={this.answerQuestion.bind(this, 1)}
+                                />
                                 <ListItem
                                     rightAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
                                     primaryText="Brunch this weekend?"
@@ -121,29 +152,9 @@ export default React.createClass({
 
                                 }
                                     secondaryTextLines={2}
-                                    onTouchTap={this.answerQuestion.bind(this, 'testRoom')}
-                                    onClick={this.answerQuestion.bind(this, 'testRoom')}
+                                    onTouchTap={this.answerQuestion.bind(this, 1)}
+                                    onClick={this.answerQuestion.bind(this, 1)}
                                 />
-                            </List>
-                        </div>
-                    </Tab>
-                    <Tab label="Ask a question">
-                        <div>
-                            <Paper style={customStyles.inputPaperWrapperStyle} zDepth={1}>
-                                <TextField
-                                    hintText="Ask any question..."
-                                    fullWidth={true}
-                                    style={customStyles.questionInputStyle}
-                                />
-                            </Paper>
-                            <Divider/>
-                            <p>
-                                Or pick a question...
-                            </p>
-                            <List>
-                                <ListItem primaryText="Is the spot crowded right now?" rightIcon={<ContentInbox />}/>
-                                <ListItem primaryText="Is the spot crowded right now?" rightIcon={<ContentInbox />}/>
-                                <ListItem primaryText="Is the spot crowded right now?" rightIcon={<ContentInbox />}/>
                             </List>
                         </div>
                     </Tab>

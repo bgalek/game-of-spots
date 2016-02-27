@@ -9,11 +9,24 @@ import Answer from "./Answer";
 import LeftNav from "material-ui/lib/left-nav";
 import MenuItem from "material-ui/lib/menus/menu-item";
 
+import ThemeManager from 'material-ui/lib/styles/theme-manager';
+import CustomTheme from '../CustomTheme';
+
 export default React.createClass({
     displayName: 'App',
 
     getInitialState: function () {
         return {open: false};
+    },
+
+    childContextTypes : {
+        muiTheme: React.PropTypes.object,
+    },
+
+    getChildContext() {
+        return {
+            muiTheme: ThemeManager.getMuiTheme(CustomTheme),
+        };
     },
 
     handleToggle() {
