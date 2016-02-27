@@ -4,8 +4,8 @@ var path = require('path');
 module.exports = {
     entry: './client/scripts/main.js',
     output: {
-        path: './public/dist',
-        publicPath: 'dist/',
+        path: './dist',
+        publicPath: '/',
         filename: 'bundle.js'
     },
     module: {
@@ -44,6 +44,6 @@ module.exports = {
         ]
     },
     devServer: {
-        contentBase: path.join(__dirname, 'public/')
+        contentBase: path.join(__dirname, '/')
     }
 };
