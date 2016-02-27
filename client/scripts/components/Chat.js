@@ -1,49 +1,112 @@
 import React from "react";
+import Paper from 'material-ui/lib/paper';
+
 import Tabs from "material-ui/lib/tabs/tabs";
 import Tab from "material-ui/lib/tabs/tab";
 import TextField from "material-ui/lib/text-field";
+import Divider from 'material-ui/lib/divider';
+import List from 'material-ui/lib/lists/list';
+import ListItem from 'material-ui/lib/lists/list-item';
+import ContentInbox from 'material-ui/lib/svg-icons/content/inbox';
+
+import Card from 'material-ui/lib/card/card';
+import CardActions from 'material-ui/lib/card/card-actions';
+import CardHeader from 'material-ui/lib/card/card-header';
+import CardMedia from 'material-ui/lib/card/card-media';
+import CardTitle from 'material-ui/lib/card/card-title';
+import FlatButton from 'material-ui/lib/flat-button';
+import CardText from 'material-ui/lib/card/card-text';
+
+import Avatar from 'material-ui/lib/avatar';
+import Colors from 'material-ui/lib/styles/colors';
+import IconButton from 'material-ui/lib/icon-button';
+
+const customStyles = {
+    inputPaperWrapperStyle: {
+        padding: '15'
+    },
+    questionInputStyle: {
+        textAlign: 'center',
+        fontSize: 20
+    }
+};
 
 export default React.createClass({
     displayName: 'Chat',
 
-    getInitialState() {
+    getInitialState: function() {
         return {
-            tab: 'chat'
+            tab: 'ask'
         }
     },
 
-    handleChange(value) {
+    handleTabChange: function(value) {
         this.setState({
-            value: value,
+            tab: value,
         });
     },
 
     render() {
         return (
             <div className="app-chat">
-                <TextField
-                    hintText="Hint Text"
-                />
+                <Card>
+                  <CardMedia
+                    overlay={<CardTitle title="Multitap PiwPaw" subtitle="200m away" />}
+                  >
+                    <img src="http://lorempixel.com/600/337/nature/" />
+                  </CardMedia>
+                </Card>
                 <Tabs
-                    value={this.state.value}
-                    onChange={this.handleChange}
+                  value={this.state.tab}
+                  onChange={this.handleTabChange}
                 >
                     <Tab label="Chat" value="chat">
                         <div>
-                            <p>
-                                Tabs are also controllable if you want to programmatically pass them their values.
-                                This allows for more functionality in Tabs such as not
-                                having any Tab selected or assigning them different values.
-                            </p>
+                            <List>
+                              <ListItem
+                                leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
+                                primaryText="Brunch this weekend?"
+                                secondaryText={
+                                  <p>
+                                    <span style={{color: Colors.darkBlack}}>Brendan Lim</span> --
+                                    I&apos;ll be in your neighborhood doing errands this weekend. Do you want to grab brunch?
+                                  </p>
+                                }
+                                secondaryTextLines={2}
+                              />
+                              <Divider inset={true} />
+                              <ListItem
+                                leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
+                                primaryText="Brunch this weekend?"
+                                secondaryText={
+                                  <p>
+                                    <span style={{color: Colors.darkBlack}}>Brendan Lim</span> --
+                                    I&apos;ll be in your neighborhood doing errands this weekend. Do you want to grab brunch?
+                                  </p>
+                                }
+                                secondaryTextLines={2}
+                              />
+                            </List>
                         </div>
                     </Tab>
                     <Tab label="Ask a question" value="ask">
                         <div>
+                            <Paper style={customStyles.inputPaperWrapperStyle} zDepth={1}>
+                                <TextField
+                                    hintText="Ask any question..."
+                                    fullWidth={true}
+                                    style={customStyles.questionInputStyle}
+                                />
+                            </Paper>
+                            <Divider/>
                             <p>
-                                This is another example of a controllable tab. Remember, if you
-                                use controllable Tabs, you need to give all of your tabs values or else
-                                you wont be able to select them.
+                                Or pick a question...
                             </p>
+                            <List>
+                                <ListItem primaryText="Is the spot crowded right now?" rightIcon={<ContentInbox />} />
+                                <ListItem primaryText="Is the spot crowded right now?" rightIcon={<ContentInbox />} />
+                                <ListItem primaryText="Is the spot crowded right now?" rightIcon={<ContentInbox />} />
+                            </List>
                         </div>
                     </Tab>
                 </Tabs>
