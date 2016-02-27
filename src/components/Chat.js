@@ -29,6 +29,11 @@ const customStyles = {
         fontWeight: '700',
         textTransform: 'uppercase',
         color: Colors.blue500
+    },
+    cardMediaPhotoWrapper: {
+        height: '250',
+        minHeight: '250',
+        overflow: 'hidden'
     }
 };
 
@@ -84,7 +89,9 @@ export default React.createClass({
         return (
             <div>
                 <Card>
-                    <CardMedia overlay={<CardTitle title={this.state.result.name} subtitle={this.state.distance} />}>
+                    <CardMedia
+                        overlay={<CardTitle title={this.state.result.name} subtitle={this.state.distance} />}
+                        style={customStyles.cardMediaPhotoWrapper}>
                         <img src={this.state.result.image}/>
                     </CardMedia>
                 </Card>

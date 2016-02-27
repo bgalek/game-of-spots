@@ -23,7 +23,8 @@ const customStyles = {
         fontSize: 20
     },
     cardMediaPhotoWrapper: {
-        height: '150',
+        height: '250',
+        minHeight: '250',
         overflow: 'hidden'
     },
     cardHeader: {
