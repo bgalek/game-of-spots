@@ -34991,7 +34991,7 @@
 	            value: ''
 	        };
 	    },
-	    handleChange: function handleChange(event) {
+	    handleQuestionChange: function handleChange(event) {
 	        this.setState({
 	            value: event.target.value
 	        });
@@ -35004,7 +35004,7 @@
 	        return _react2.default.createElement(
 	            "form",
 	            { style: customStyles.defaultPadding, onSubmit: this.handleSearch },
-	            _react2.default.createElement(_textField2.default, { hintText: "Find a spot", value: this.state.value, onChange: this.handleChange, fullWidth: true })
+	            _react2.default.createElement(_textField2.default, { hintText: "Find a spot", value: this.state.value, onChange: this.handleQuestionChange, fullWidth: true })
 	        );
 	    }
 	});

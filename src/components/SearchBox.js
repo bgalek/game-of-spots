@@ -25,7 +25,7 @@ export default React.createClass({
     render() {
         return (
             <form style={customStyles.defaultPadding} onSubmit={this.handleSearch}>
-                <TextField hintText="Find a spot" onChange={this.handleChange} fullWidth={true}/>
+                <TextField hintText="Find a spot" onChange={this.handleQuestionChange} fullWidth={true}/>
             </form>
         );
     }

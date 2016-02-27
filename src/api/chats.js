@@ -7,7 +7,7 @@ class GameOfSpotsAPI {
     withId(id) {
         return new Promise((resolve, reject) => {
             let requestInstance = request.get(`${API_HOST}/chats/${id}/`)
-                .accept('application/json')
+                .accept('application/json');
             requestInstance.end((error, res) => {
                 if (error) reject(error);
                 resolve(res.body);
@@ -29,10 +29,44 @@ class GameOfSpotsAPI {
         });
     }
 
+    join(chatId) {
+        return new Promise((resolve, reject) => {
+            let requestInstance = request.post(`${API_HOST}/chats/${chatId}/join/`)
+                .accept('application/json');
+            requestInstance.end((error, res) => {
+                if (error) reject(error);
+                resolve(res.body);
+            });
+        });
+    }
+
+    sendMessage(chatId, message, username) {
+        return new Promise((resolve, reject) => {
+            let requestInstance = request.post(`${API_HOST}/chats/${chatId}/messages/`)
+                .accept('application/json')
+                .send(`{"body":"${message}","username":"${username}"}`);
+            requestInstance.end((error, res) => {
+                if (error) reject(error);
+                resolve(res.body);
+            });
+        });
+    }
+
+    chatLog(chatId) {
+        return new Promise((resolve, reject) => {
+            let requestInstance = request.get(`${API_HOST}/chats/${chatId}/messages/`)
+                .accept('application/json')
+            requestInstance.end((error, res) => {
+                if (error) reject(error);
+                resolve(res.body.results);
+            });
+        });
+    }
+
     all() {
         return new Promise((resolve, reject) => {
             let requestInstance = request.get(`${API_HOST}/chats/`)
-                .accept('application/json')
+                .accept('application/json');
             requestInstance.end((error, res) => {
                 if (error) reject(error);
                 resolve(res.body.results);

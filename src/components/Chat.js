@@ -9,12 +9,12 @@ import ContentInbox from "material-ui/lib/svg-icons/action/touch-app";
 import Card from "material-ui/lib/card/card";
 import CardMedia from "material-ui/lib/card/card-media";
 import CardTitle from "material-ui/lib/card/card-title";
-import Avatar from "material-ui/lib/avatar";
 import Colors from "material-ui/lib/styles/colors";
-import chats from "../api/chats";
 import RaisedButton from "material-ui/lib/raised-button";
+import PostSender from "./PostSender";
+import chats from "../api/chats";
 
-import PostSender from './PostSender'
+var LocalStorageMixin = require('react-localstorage');
 
 const customStyles = {
     defaultPadding: {
@@ -38,15 +38,12 @@ const customStyles = {
         borderTopColor: Colors.red500,
         backgroundColor: Colors.grey100
     }
-    //cardMediaPhotoWrapper: {
-        //height: '250',
-        //minHeight: '250',
-        //overflow: 'hidden'
-    //}
 };
 
 export default React.createClass({
+
     displayName: 'Chat',
+    mixins: [LocalStorageMixin],
 
     contextTypes: {
         router: React.PropTypes.object
@@ -56,7 +53,11 @@ export default React.createClass({
         return {
             tab: 'ask',
             distance: 'calculating distance...',
-            result: {}
+            result: {},
+            question: '',
+            user: null,
+            chatLog: [],
+            loading: true
         }
     },
 
@@ -74,6 +75,12 @@ export default React.createClass({
         });
 
         navigator.geolocation.getCurrentPosition(position => this.calculateDistance(position.coords.latitude, position.coords.longitude, this.state.result.geo_location[0], this.state.result.geo_location[1]))
+
+        chats().chatLog(this.props.params.chatId).then(response => {
+            this.setState({chatLog: response, loading: false})
+        }).catch(error => {
+            console.log(error);
+        });
     },
 
     calculateDistance(lat1, lon1, lat2, lon2) {
@@ -89,6 +96,26 @@ export default React.createClass({
         this.setState({"distance": Math.round(dist * 100) / 100 + " km"});
     },
 
+    handleQuestionSubmit(event){
+        event.preventDefault();
+        if (this.state.user == null) {
+            chats().join(this.props.params.chatId).then(response => {
+                this.setState({user: response});
+            });
+        } else {
+            chats().sendMessage(this.props.params.chatId, this.state.question, this.state.user.username).then(response => {
+                console.log(response);
+                console.log('posted!');
+            });
+        }
+    },
+
+    handleQuestionChange(event){
+        this.setState({
+            question: event.target.value
+        });
+    },
+
     render() {
         return (
             <div>
@@ -101,17 +128,22 @@ export default React.createClass({
                 </Card>
                 <Tabs>
                     <Tab label="Ask a question">
-                        <div style={customStyles.defaultPadding}>
+                        <form style={customStyles.defaultPadding} onSubmit={this.handleQuestionSubmit}>
                             <TextField
                                 hintText="Ask any question..."
                                 fullWidth={true}
                                 inputStyle={customStyles.questionInputStyle}
+                                value={this.state.question}
+                                onChange={this.handleQuestionChange}
+                                style={customStyles.questionInputStyle}
                             />
                             <RaisedButton
-                                label="Send!" secondary={true}
+                                label="Send!"
+                                secondary={true}
                                 fullWidth={true}
+                                onClick={this.handleQuestionSubmit}
                             />
-                        </div>
+                        </form>
                         <Paper style={customStyles.defaultPadding} zDepth={1}>
                             <h3 style={customStyles.questionListHeading}>
                                 Or pick a question...
@@ -136,6 +168,8 @@ export default React.createClass({
                                   </p>
                                 }
                                     secondaryTextLines={2}
+                                    onTouchTap={this.answerQuestion.bind(this, 1)}
+                                    onClick={this.answerQuestion.bind(this, 1)}
                                 />
                                 <ListItem
                                     leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
@@ -147,9 +181,10 @@ export default React.createClass({
                                   </p>
                                 }
                                     secondaryTextLines={2}
+                                    onTouchTap={this.answerQuestion.bind(this, 1)}
+                                    onClick={this.answerQuestion.bind(this, 1)}
                                 />
                                 <ListItem
-                                    style={customStyles.myCommentsStyle}
                                     rightAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
                                     primaryText="Brunch this weekend?"
                                     secondaryText={
@@ -160,17 +195,8 @@ export default React.createClass({
 
                                 }
                                     secondaryTextLines={2}
-                                />
-                                <ListItem
-                                    leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
-                                    primaryText="Brunch this weekend?"
-                                    secondaryText={
-                                  <p>
-                                    <span style={{color: Colors.darkBlack}}>Brendan Lim</span> --
-                                    I&apos;ll be in your neighborhood doing errands this weekend. Do you want to grab brunch?
-                                  </p>
-                                }
-                                    secondaryTextLines={2}
+                                    onTouchTap={this.answerQuestion.bind(this, 1)}
+                                    onClick={this.answerQuestion.bind(this, 1)}
                                 />
                             </List>
                             <PostSender/>
