@@ -1,16 +1,25 @@
-import request from 'superagent';
+import request from "superagent";
 
 class GameOfSpotsAPI {
-    constructor(query) {
-        this.query = query;
+    constructor() {
     }
 
-    end() {
+    withId(id) {
         return new Promise((resolve, reject) => {
-            let requestInstance = request.get(`http://hostname:8080`).accept('application/json')
+            let requestInstance = request.get("http://api.spots.trurl.it/chats/" + id + "/").accept('application/json')
             requestInstance.end((error, res) => {
                 if (error) reject(error);
                 resolve(res.body);
+            });
+        });
+    }
+
+    all() {
+        return new Promise((resolve, reject) => {
+            let requestInstance = request.get("http://api.spots.trurl.it/chats/").accept('application/json')
+            requestInstance.end((error, res) => {
+                if (error) reject(error);
+                resolve(res.body.results);
             });
         });
     }

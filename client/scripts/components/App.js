@@ -26,10 +26,10 @@ export default React.createClass({
     render() {
         return (
             <div className="app">
-                <AppBar title="Game of Spots" onClick={this.handleToggle} onLeftIconButtonTouchTap={this.handleToggle}/>
+                <AppBar title="Game of Spots" onTouchTap={this.handleToggle} onLeftIconButtonTouchTap={this.handleToggle}/>
                 <LeftNav docked={false} width={200} open={this.state.open} onRequestChange={open => this.setState({open})}>
-                    <MenuItem onClick={this.handleGoToHome} onTouchTap={this.handleGoToHome}>Chats</MenuItem>
-                    <MenuItem onClick={this.handleToggle} onTouchTap={this.handleToggle}>About</MenuItem>
+                    <MenuItem onTouchTap={this.handleGoToHome}>Chats</MenuItem>
+                    <MenuItem onTouchTap={this.handleToggle}>About</MenuItem>
                 </LeftNav>
                 <Router history={hashHistory}>
                     <Route path="/" component={Chats}/>
