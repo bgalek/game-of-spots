@@ -35,8 +35,8 @@ const customStyles = {
         width: '20%'
     },
     sendPostIcon: {
-        color: Colors.yellow500,
-        fill: Colors.yellow500
+        color: Colors.red500,
+        fill: Colors.red500
     }
 };
 

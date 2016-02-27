@@ -43,7 +43,7 @@ export default React.createClass({
             <div className="app">
                 <AppBar title="Game of Spots" onTouchTap={this.handleToggle} onLeftIconButtonTouchTap={this.handleToggle}/>
                 <LeftNav docked={false} width={200} open={this.state.open} onRequestChange={open => this.setState({open})}>
-                    <MenuItem onTouchTap={this.handleGoTo.bind(this, '/')}>Chats</MenuItem>
+                    <MenuItem onTouchTap={this.handleGoTo.bind(this, '/')}>Available spots</MenuItem>
                     <MenuItem onTouchTap={this.handleGoTo.bind(this, '/about')}>About</MenuItem>
                 </LeftNav>
                 <Router ref="router" history={hashHistory}>
