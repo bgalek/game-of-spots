@@ -11,28 +11,20 @@ const customStyles = {
 export default React.createClass({
     displayName: 'SearchBox',
 
-    getInitialState(){
-        return {
-            value: ''
-        }
-    },
-
     handleChange(event){
-        this.setState({
-            value: event.target.value
-        });
+        this.props.onSubmit(event.target.value);
     },
 
     handleSearch(event){
         event.preventDefault();
-        this.props.onSubmit(this.state.value);
+        this.props.onSubmit(event.target.value);
     },
 
     render() {
         return (
-        <form style={customStyles.defaultPadding} onSubmit={this.handleSearch}>
-            <TextField hintText="Find a spot" value={this.state.value} onChange={this.handleChange} fullWidth={true}/>
-        </form>
+            <form style={customStyles.defaultPadding} onSubmit={this.handleSearch}>
+                <TextField hintText="Find a spot" onChange={this.handleChange} fullWidth={true}/>
+            </form>
         );
     }
 });
