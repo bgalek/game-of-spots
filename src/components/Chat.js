@@ -111,9 +111,9 @@ export default React.createClass({
                                 Or pick a question...
                             </h3>
                             <List>
-                                <ListItem primaryText="Is the spot crowded right now?" rightIcon={<ContentInbox />}/>
-                                <ListItem primaryText="Is the spot crowded right now?" rightIcon={<ContentInbox />}/>
-                                <ListItem primaryText="Is the spot crowded right now?" rightIcon={<ContentInbox />}/>
+                                <ListItem primaryText="Are there any free spots there right now?" rightIcon={<ContentInbox />}/>
+                                <ListItem primaryText="How long will I wait for service?" rightIcon={<ContentInbox />}/>
+                                <ListItem primaryText="Are the waitresses pretty?" rightIcon={<ContentInbox />}/>
                             </List>
                         </Paper>
                     </Tab>
