@@ -67,7 +67,7 @@ export default React.createClass({
         }
 
         let results = this.state.results.map(result => {
-            let {slug_name, name, avatar, image} = result;
+            let {slug_name, name, avatar} = result;
             return (
                 <ListItem
                     key={`${slug_name}`}

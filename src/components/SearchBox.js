@@ -17,7 +17,9 @@ export default React.createClass({
 
     handleSearch(event){
         event.preventDefault();
-        this.props.onSubmit(event.target.value);
+        if (typeof event.target.value !== "undefined") {
+            this.props.onSubmit(event.target.value);
+        }
     },
 
     render() {
