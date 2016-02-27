@@ -64,12 +64,12 @@ export default React.createClass({
         }
 
         let results = this.state.results.map(result => {
-            let {slug_name, name} = result;
+            let {slug_name, name, avatar, image} = result;
             return (
                 <ListItem
                     key={`${slug_name}`}
                     primaryText={`${name}`}
-                    leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
+                    leftAvatar={<Avatar src={avatar} />}
                     rightIcon={<CommunicationChatBubble />}
                     onTouchTap={this.handleChatClick.bind(this, slug_name)}
                 />

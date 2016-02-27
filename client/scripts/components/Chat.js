@@ -46,7 +46,8 @@ export default React.createClass({
             this.setState({result: response, loading: false})
         }).catch(error => {
             console.log(error);
-        })
+        });
+
         navigator.geolocation.getCurrentPosition(position => this.calculateDistance(position.coords.latitude, position.coords.longitude, this.state.result.geo_location[0], this.state.result.geo_location[1]))
     },
 
@@ -68,7 +69,7 @@ export default React.createClass({
             <div>
                 <Card>
                     <CardMedia overlay={<CardTitle title={this.state.result.name} subtitle={this.state.distance} />}>
-                        <img src="http://lorempixel.com/600/337/nature/"/>
+                        <img src={this.state.result.image}/>
                     </CardMedia>
                 </Card>
                 <Tabs>
