@@ -36,6 +36,7 @@ const customStyles = {
 export default React.createClass({
 
     displayName: 'Chat',
+    interval: null,
 
     contextTypes: {
         router: React.PropTypes.object
@@ -45,7 +46,7 @@ export default React.createClass({
         return {
             tab: 'ask',
             distance: 'calculating distance...',
-            result: {},
+            chatDetails: {},
             question: '',
             chatLog: [],
             loading: true
@@ -53,24 +54,47 @@ export default React.createClass({
     },
 
     handleTabChange: function (value) {
-        this.setState({
-            tab: value
-        });
+        if (typeof value == "string") { //whyyy?
+            this.setState({
+                tab: value
+            });
+        }
+    },
+
+    componentWillMount(){
+        navigator.geolocation.getCurrentPosition(position => this.calculateDistance(position.coords.latitude, position.coords.longitude, this.state.chatDetails.geo_location[0], this.state.chatDetails.geo_location[1]))
     },
 
     componentDidMount() {
-        chats().withId(this.props.params.chatId).then(response => {
-            this.setState({result: response, loading: false})
-        }).catch(error => {
-            console.log(error);
-        });
+        this.fetchChatDetails();
+        this.fetchChatLog();
+        this.interval = setInterval(this.fetchChatLog, 1000);
+    },
 
-        navigator.geolocation.getCurrentPosition(position => this.calculateDistance(position.coords.latitude, position.coords.longitude, this.state.result.geo_location[0], this.state.result.geo_location[1]))
+    componentWillUnmount(){
+        clearInterval(this.interval)
+    },
 
+    fetchChatLog: function () {
         chats().chatLog(this.props.params.chatId).then(response => {
             this.setState({chatLog: response, loading: false})
         }).catch(error => {
             console.log(error);
+        });
+    },
+
+    fetchChatDetails: function () {
+        chats().withId(this.props.params.chatId).then(response => {
+            this.setState({chatDetails: response, loading: false})
+        }).catch(error => {
+            console.log(error);
+        });
+    },
+
+    predefinedTextSubmit: function (event) {
+        chats().sendMessage(this.props.params.chatId, event.target.innerHTML, this.props.route.user.username).then(response => {
+            this.fetchChatLog();
+            this.setState({question: ''});
         });
     },
 
@@ -89,10 +113,9 @@ export default React.createClass({
 
     handleQuestionSubmit(event){
         event.preventDefault();
-
-        chats().sendMessage(this.props.params.chatId, this.state.question, this.props.route.user).then(response => {
-            console.log(response);
-            console.log('posted!');
+        chats().sendMessage(this.props.params.chatId, this.state.question, this.props.route.user.username).then(response => {
+            this.fetchChatLog();
+            this.setState({question: ''});
         });
     },
 
@@ -107,9 +130,9 @@ export default React.createClass({
             <div>
                 <Card>
                     <CardMedia
-                        overlay={<CardTitle title={this.state.result.name} subtitle={this.state.distance} />}
+                        overlay={<CardTitle title={this.state.chatDetails.name} subtitle={this.state.distance} />}
                         style={customStyles.cardMediaPhotoWrapper}>
-                        <img src={this.state.result.image}/>
+                        <img src={this.state.chatDetails.image}/>
                     </CardMedia>
                 </Card>
                 <Tabs value={this.state.tab} onChange={this.handleTabChange}>
@@ -135,14 +158,14 @@ export default React.createClass({
                                 Or pick a question...
                             </h3>
                             <List>
-                                <ListItem primaryText="Are there any free spots there right now?" rightIcon={<ContentInbox />}/>
-                                <ListItem primaryText="How long will I wait for service?" rightIcon={<ContentInbox />}/>
-                                <ListItem primaryText="Are the waitresses pretty?" rightIcon={<ContentInbox />}/>
+                                <ListItem onTouchTap={this.predefinedTextSubmit} primaryText="Are there any free spots there right now?" rightIcon={<ContentInbox />}/>
+                                <ListItem onTouchTap={this.predefinedTextSubmit} primaryText="How long will I wait for service?" rightIcon={<ContentInbox />}/>
+                                <ListItem onTouchTap={this.predefinedTextSubmit} primaryText="Are the waitresses pretty?" rightIcon={<ContentInbox />}/>
                             </List>
                         </Paper>
                     </Tab>
                     <Tab label="Chat" value="chat">
-                        <ChatLog chatId={this.props.params.chatId} user={this.props.route.user}/>
+                        <ChatLog chatLog={this.state.chatLog} chatId={this.props.params.chatId} user={this.props.route.user}/>
                         <PostSender/>
                     </Tab>
                 </Tabs>

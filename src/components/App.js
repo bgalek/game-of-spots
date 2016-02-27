@@ -77,7 +77,7 @@ export default React.createClass({
                 </div>
             );
         } else {
-            return (<div/>)
+            return (<div>loading...</div>)
         }
     }
 });

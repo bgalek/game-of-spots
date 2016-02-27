@@ -4,7 +4,6 @@ import ListItem from "material-ui/lib/lists/list-item";
 import RefreshIndicator from "material-ui/lib/refresh-indicator";
 import Colors from "material-ui/lib/styles/colors";
 import Avatar from "material-ui/lib/avatar";
-import chats from "../api/chats";
 var moment = require('moment');
 
 const customStyles = {
@@ -21,21 +20,13 @@ export default React.createClass({
 
     getInitialState(){
         return {
-            results: [],
+            chatLog: [],
             loading: true
         }
     },
 
-    handleRefresh() {
-        chats().chatLog(this.props.chatId).then(response => {
-            this.setState({results: response, loading: false});
-        }).catch(error => {
-            console.log(error);
-        });
-    },
-
-    componentDidMount() {
-        this.handleRefresh();
+    componentWillReceiveProps() {
+        this.setState({loading: false});
     },
 
     render() {
@@ -60,9 +51,9 @@ export default React.createClass({
             />
         }
 
-        let results = this.state.results.map(result => {
+        let results = this.props.chatLog.map(result => {
             let {body, from_user, avatar, id, created_at} = result;
-            if (from_user.username == this.props.user.username) {
+            if (from_user.username != this.props.user.username) {
                 return (
                     <ListItem key={`${id}`}
                               leftAvatar={<Avatar src={`https://robohash.org/${from_user.username}`} />}
