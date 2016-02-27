@@ -3,9 +3,36 @@ import Avatar from "material-ui/lib/avatar";
 import List from "material-ui/lib/lists/list";
 import ListItem from "material-ui/lib/lists/list-item";
 import CommunicationChatBubble from "material-ui/lib/svg-icons/communication/chat";
+import RefreshIndicator from "material-ui/lib/refresh-indicator";
+import chats from "../api/chats";
 
 export default React.createClass({
     displayName: 'Chats',
+
+    getInitialState(){
+        return {
+            results: [],
+            loading: true
+        }
+    },
+
+    componentWillReceiveProps(nextProps){
+        this.setState({loading: true});
+    },
+
+    componentDidMount() {
+        chats().all().then(response => {
+            function toListItems(response) {
+                return Object.keys(response).map(item => {
+                    return response[item];
+                });
+            }
+
+            this.setState({results: toListItems(response), loading: false})
+        }).catch(error => {
+            console.log(error);
+        })
+    },
 
     contextTypes: {
         router: React.PropTypes.object
@@ -16,51 +43,39 @@ export default React.createClass({
     },
 
     render() {
-        return (
-            <div>
-                <List subheader="Available spots">
-                    <ListItem
-                        id="test1"
-                        primaryText="Brendan Lim"
-                        leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
-                        rightIcon={<CommunicationChatBubble />}
-                        onTouchTap={this.handleChatClick.bind(this, 'testRoom')}
-                        onClick={this.handleChatClick.bind(this, 'testRoom')}
-                    />
-                    <ListItem
-                        id="test2"
-                        primaryText="Brendan Lim"
-                        leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
-                        rightIcon={<CommunicationChatBubble />}
-                        onTouchTap={this.handleChatClick.bind(this, 'testRoom')}
-                        onClick={this.handleChatClick.bind(this, 'testRoom')}
-                    />
-                    <ListItem
-                        id="test3"
-                        primaryText="Brendan Lim"
-                        leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
-                        rightIcon={<CommunicationChatBubble />}
-                        onTouchTap={this.handleChatClick.bind(this, 'testRoom')}
-                        onClick={this.handleChatClick.bind(this, 'testRoom')}
-                    />
-                    <ListItem
-                        id="test4"
-                        primaryText="Brendan Lim"
-                        leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
-                        rightIcon={<CommunicationChatBubble />}
-                        onTouchTap={this.handleChatClick.bind(this, 'testRoom')}
-                        onClick={this.handleChatClick.bind(this, 'testRoom')}
-                    />
-                    <ListItem
-                        id="test5"
-                        primaryText="Brendan Lim"
-                        leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
-                        rightIcon={<CommunicationChatBubble />}
-                        onTouchTap={this.handleChatClick.bind(this, 'testRoom')}
-                        onClick={this.handleChatClick.bind(this, 'testRoom')}
-                    />
-                </List>
-            </div>
-        );
+        if (this.state.loading) {
+            let style = {
+                container: {
+                    position: 'relative',
+                },
+                refresh: {
+                    display: 'inline-block',
+                    position: 'relative',
+                },
+            };
+            return <RefreshIndicator
+                size={50}
+                left={70}
+                top={150}
+                loadingColor={"#FF9800"}
+                status="loading"
+                style={style.refresh}
+            />
+        }
+
+        let results = this.state.results.map(result => {
+            let {slug_name, name} = result;
+            return (
+                <ListItem
+                    key={`${slug_name}`}
+                    primaryText={`${name}`}
+                    leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
+                    rightIcon={<CommunicationChatBubble />}
+                    onTouchTap={this.handleChatClick.bind(this, slug_name)}
+                />
+            )
+        });
+
+        return (<List subheader="Available spots">{results}</List>)
     }
 });
