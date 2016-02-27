@@ -4,15 +4,8 @@ import List from "material-ui/lib/lists/list";
 import ListItem from "material-ui/lib/lists/list-item";
 import CommunicationChatBubble from "material-ui/lib/svg-icons/communication/chat";
 import RefreshIndicator from "material-ui/lib/refresh-indicator";
-import TextField from "material-ui/lib/text-field";
+import SearchBox from "./SearchBox";
 import chats from "../api/chats";
-
-const customStyles = {
-    defaultPadding: {
-        padding: '15',
-        paddingBottom: '0'
-    }
-}
 
 export default React.createClass({
     displayName: 'Chats',
@@ -24,21 +17,24 @@ export default React.createClass({
         }
     },
 
-    fetchData() {
-        chats().all().then(response => {
-            this.setState({results: response, loading: false});
-        }).catch(error => {
-            console.log(error);
-        })
-    },
-
-    componentWillReceiveProps(nextProps){
-        this.setState({loading: true});
-        this.fetchData();
+    handleRefresh(query) {
+        if (typeof query !== "undefined") {
+            chats().withPartialName(query).then(response => {
+                this.setState({results: response, loading: false});
+            }).catch(error => {
+                console.log(error);
+            })
+        } else {
+            chats().all().then(response => {
+                this.setState({results: response, loading: false});
+            }).catch(error => {
+                console.log(error);
+            })
+        }
     },
 
     componentDidMount() {
-        this.fetchData();
+        this.handleRefresh();
     },
 
     contextTypes: {
@@ -85,12 +81,7 @@ export default React.createClass({
 
         return (
             <div>
-                <div style={customStyles.defaultPadding}>
-                    <TextField
-                        hintText="Find a spot"
-                        fullWidth={true}
-                    />
-                </div>
+                <SearchBox onSubmit={this.handleRefresh}/>
                 <List subheader="Available spots">{results}</List>
             </div>
         )

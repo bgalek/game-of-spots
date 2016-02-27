@@ -3,7 +3,6 @@ import Paper from "material-ui/lib/paper";
 import Tabs from "material-ui/lib/tabs/tabs";
 import Tab from "material-ui/lib/tabs/tab";
 import TextField from "material-ui/lib/text-field";
-import Divider from "material-ui/lib/divider";
 import List from "material-ui/lib/lists/list";
 import ListItem from "material-ui/lib/lists/list-item";
 import ContentInbox from "material-ui/lib/svg-icons/action/touch-app";
@@ -13,7 +12,7 @@ import CardTitle from "material-ui/lib/card/card-title";
 import Avatar from "material-ui/lib/avatar";
 import Colors from "material-ui/lib/styles/colors";
 import chats from "../api/chats";
-import RaisedButton from 'material-ui/lib/raised-button';
+import RaisedButton from "material-ui/lib/raised-button";
 
 import PostSender from './PostSender'
 
