@@ -42,7 +42,7 @@ const customStyles = {
     },
     cardTextAuthorName: {
         fontSize: 16,
-        color: Colors.pink500,
+        color: Colors.red500,
         fontWeight: '900'
     },
     cardTextAuthorSubtitle: {

@@ -11,7 +11,7 @@ export default {
         primary1Color: Colors.red500,
         primary2Color: Colors.red700,
         primary3Color: Colors.lightBlack,
-        accent1Color: Colors.yellow200,
+        accent1Color: Colors.yellow500,
         accent2Color: Colors.grey100,
         accent3Color: Colors.grey500,
         textColor: Colors.darkBlack,
@@ -19,6 +19,6 @@ export default {
         canvasColor: Colors.white,
         borderColor: Colors.grey300,
         disabledColor: ColorManipulator.fade(Colors.darkBlack, 0.3),
-        pickerHeaderColor: Colors.red500,
+        pickerHeaderColor: Colors.red500
     }
 };

@@ -15,6 +15,8 @@ import Colors from "material-ui/lib/styles/colors";
 import chats from "../api/chats";
 import RaisedButton from 'material-ui/lib/raised-button';
 
+import PostSender from './PostSender'
+
 const customStyles = {
     defaultPadding: {
         padding: '15'
@@ -28,7 +30,7 @@ const customStyles = {
         fontSize: 14,
         fontWeight: '700',
         textTransform: 'uppercase',
-        color: Colors.blue500
+        color: Colors.red500
     },
     cardMediaPhotoWrapper: {
         height: '250',
@@ -163,6 +165,7 @@ export default React.createClass({
                                     onClick={this.answerQuestion.bind(this, 1)}
                                 />
                             </List>
+                            <PostSender/>
                         </div>
                     </Tab>
                 </Tabs>
