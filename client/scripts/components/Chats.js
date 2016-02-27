@@ -3,22 +3,25 @@ import AppBar from "material-ui/lib/app-bar";
 import Avatar from "material-ui/lib/avatar";
 import List from "material-ui/lib/lists/list";
 import ListItem from "material-ui/lib/lists/list-item";
-import Divider from "material-ui/lib/divider";
 import CommunicationChatBubble from "material-ui/lib/svg-icons/communication/chat";
 
 export default React.createClass({
-    displayName: 'App',
+    displayName: 'Chats',
+
+    goTo(){
+        console.log('goto')
+    },
 
     render() {
         return (
-            <div className="app">
+            <div>
                 <AppBar title="Game of Spots"/>
                 <List subheader="Available spots">
                     <ListItem
                         primaryText="Brendan Lim"
                         leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
                         rightIcon={<CommunicationChatBubble />}
-                        onTouchTap={this.showDialog}
+                        onTouchTap={this.goTo}
                     />
                     <ListItem
                         primaryText="Eric Hoffman"

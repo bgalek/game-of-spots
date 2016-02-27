@@ -1,22 +1,17 @@
 import React from "react";
-import AppBar from "material-ui/lib/app-bar";
-import Avatar from "material-ui/lib/avatar";
-import List from "material-ui/lib/lists/list";
-import ListItem from "material-ui/lib/lists/list-item";
-import Divider from "material-ui/lib/divider";
-import CommunicationChatBubble from "material-ui/lib/svg-icons/communication/chat";
-import Tabs from 'material-ui/lib/tabs/tabs';
-import Tab from 'material-ui/lib/tabs/tab';
-import TextField from 'material-ui/lib/text-field';
+import Tabs from "material-ui/lib/tabs/tabs";
+import Tab from "material-ui/lib/tabs/tab";
+import TextField from "material-ui/lib/text-field";
 
 export default React.createClass({
     displayName: 'Chat',
 
-    constructor(props) {
-        this.state = {
-            value: 'chat',
-        };
-    },
+    // default props
+    // constructor(props) {
+    //     this.state = {
+    //         value: 'chat',
+    //     };
+    // },
 
     handleChange(value) {
         this.setState({
