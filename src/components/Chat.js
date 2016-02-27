@@ -12,9 +12,8 @@ import CardTitle from "material-ui/lib/card/card-title";
 import Colors from "material-ui/lib/styles/colors";
 import RaisedButton from "material-ui/lib/raised-button";
 import PostSender from "./PostSender";
+import ChatLog from "./ChatLog";
 import chats from "../api/chats";
-
-var LocalStorageMixin = require('react-localstorage');
 
 const customStyles = {
     defaultPadding: {
@@ -31,19 +30,12 @@ const customStyles = {
         textTransform: 'uppercase',
         color: Colors.red500,
         margin: '0'
-    },
-    myCommentsStyle: {
-        borderTopStyle: 'solid',
-        borderTopWidth: '3',
-        borderTopColor: Colors.red500,
-        backgroundColor: Colors.grey100
     }
 };
 
 export default React.createClass({
 
     displayName: 'Chat',
-    mixins: [LocalStorageMixin],
 
     contextTypes: {
         router: React.PropTypes.object
@@ -55,7 +47,6 @@ export default React.createClass({
             distance: 'calculating distance...',
             result: {},
             question: '',
-            user: null,
             chatLog: [],
             loading: true
         }
@@ -98,16 +89,11 @@ export default React.createClass({
 
     handleQuestionSubmit(event){
         event.preventDefault();
-        if (this.state.user == null) {
-            chats().join(this.props.params.chatId).then(response => {
-                this.setState({user: response});
-            });
-        } else {
-            chats().sendMessage(this.props.params.chatId, this.state.question, this.state.user.username).then(response => {
-                console.log(response);
-                console.log('posted!');
-            });
-        }
+
+        chats().sendMessage(this.props.params.chatId, this.state.question, this.props.route.user).then(response => {
+            console.log(response);
+            console.log('posted!');
+        });
     },
 
     handleQuestionChange(event){
@@ -126,8 +112,8 @@ export default React.createClass({
                         <img src={this.state.result.image}/>
                     </CardMedia>
                 </Card>
-                <Tabs>
-                    <Tab label="Ask a question">
+                <Tabs value={this.state.tab} onChange={this.handleTabChange}>
+                    <Tab label="Ask a question" value="ask">
                         <form style={customStyles.defaultPadding} onSubmit={this.handleQuestionSubmit}>
                             <TextField
                                 hintText="Ask any question..."
@@ -155,52 +141,9 @@ export default React.createClass({
                             </List>
                         </Paper>
                     </Tab>
-                    <Tab label="Chat">
-                        <div>
-                            <List>
-                                <ListItem
-                                    leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
-                                    primaryText="Brunch this weekend?"
-                                    secondaryText={
-                                  <p>
-                                    <span style={{color: Colors.darkBlack}}>Brendan Lim</span> --
-                                    I&apos;ll be in your neighborhood doing errands this weekend. Do you want to grab brunch?
-                                  </p>
-                                }
-                                    secondaryTextLines={2}
-                                    onTouchTap={this.answerQuestion.bind(this, 1)}
-                                    onClick={this.answerQuestion.bind(this, 1)}
-                                />
-                                <ListItem
-                                    leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
-                                    primaryText="Brunch this weekend?"
-                                    secondaryText={
-                                  <p>
-                                    <span style={{color: Colors.darkBlack}}>Brendan Lim</span> --
-                                    I&apos;ll be in your neighborhood doing errands this weekend. Do you want to grab brunch?
-                                  </p>
-                                }
-                                    secondaryTextLines={2}
-                                    onTouchTap={this.answerQuestion.bind(this, 1)}
-                                    onClick={this.answerQuestion.bind(this, 1)}
-                                />
-                                <ListItem
-                                    rightAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
-                                    primaryText="Brunch this weekend?"
-                                    secondaryText={
-                                  <p>
-                                    <span style={{color: Colors.darkBlack}}>Brendan Lim</span> --
-                                    I&apos;ll be in your neighborhood doing errands this weekend. Do you want to grab brunch?
-                                  </p>
-
-                                }
-                                    secondaryTextLines={2}
-                                    onTouchTap={this.answerQuestion.bind(this, 1)}
-                                    onClick={this.answerQuestion.bind(this, 1)}
-                                />
-                            </List>
-                            <PostSender/>
-                        </div>
+                    <Tab label="Chat" value="chat">
+                        <ChatLog chatId={this.props.params.chatId} user={this.props.route.user}/>
+                        <PostSender/>
                     </Tab>
                 </Tabs>
             </div>
