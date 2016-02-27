@@ -18,6 +18,7 @@ export default React.createClass({
                         primaryText="Brendan Lim"
                         leftAvatar={<Avatar src="http://www.material-ui.com/images/ok-128.jpg" />}
                         rightIcon={<CommunicationChatBubble />}
+                        onTouchTap={this.showDialog}
                     />
                     <ListItem
                         primaryText="Eric Hoffman"
@@ -38,17 +39,6 @@ export default React.createClass({
                         primaryText="Raquel Parrado"
                         leftAvatar={<Avatar src="http://www.material-ui.com/images/raquelromanp-128.jpg" />}
                         rightIcon={<CommunicationChatBubble />}
-                    />
-                </List>
-                <Divider />
-                <List subheader="Previous chats">
-                    <ListItem
-                        primaryText="Chelsea Otakan"
-                        leftAvatar={<Avatar src="http://www.material-ui.com/images/chexee-128.jpg" />}
-                    />
-                    <ListItem
-                        primaryText="James Anderson"
-                        leftAvatar={<Avatar src="http://www.material-ui.com/images/jsa-128.jpg" />}
                     />
                 </List>
             </div>
