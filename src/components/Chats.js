@@ -4,7 +4,15 @@ import List from "material-ui/lib/lists/list";
 import ListItem from "material-ui/lib/lists/list-item";
 import CommunicationChatBubble from "material-ui/lib/svg-icons/communication/chat";
 import RefreshIndicator from "material-ui/lib/refresh-indicator";
+import TextField from "material-ui/lib/text-field";
 import chats from "../api/chats";
+
+const customStyles = {
+    defaultPadding: {
+        padding: '15',
+        paddingBottom: '0'
+    }
+}
 
 export default React.createClass({
     displayName: 'Chats',
@@ -76,6 +84,16 @@ export default React.createClass({
             )
         });
 
-        return (<List subheader="Available spots">{results}</List>)
+        return (
+            <div>
+                <div style={customStyles.defaultPadding}>
+                    <TextField
+                        hintText="Find a spot"
+                        fullWidth={true}
+                    />
+                </div>
+                <List subheader="Available spots">{results}</List>
+            </div>
+        )
     }
 });
