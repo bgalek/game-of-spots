@@ -12,12 +12,9 @@ import ThemeManager from "material-ui/lib/styles/theme-manager";
 import CustomTheme from "../CustomTheme";
 import chats from "../api/chats";
 import Dialog from "material-ui/lib/dialog";
-import FlatButton from "material-ui/lib/flat-button";
 import TextField from "material-ui/lib/text-field";
 import RaisedButton from "material-ui/lib/raised-button";
 import Colors from "material-ui/lib/styles/colors";
-
-var LocalStorageMixin = require('react-localstorage');
 
 const customStyles = {
     defaultPadding: {
@@ -34,18 +31,11 @@ const customStyles = {
         color: Colors.red500,
         margin: '0'
     }
-}
+};
 
 export default React.createClass({
     displayName: 'App',
-    mixins: [LocalStorageMixin],
     modalInterval: null,
-
-    getDefaultProps: function () {
-        return {
-            stateFilterKeys: ['user']
-        };
-    },
 
     getInitialState: function () {
         return {
@@ -57,22 +47,12 @@ export default React.createClass({
         }
     },
 
-    componentDidUpdate(){
-        if (this.state.user == null) {
-            chats().register().then(response => {
-                this.setState({user: response});
-            });
-        }
-    },
-
     componentDidMount() {
         this.modalInterval = setInterval(this.tryToshowModal, 3000);
     },
 
     tryToshowModal() {
-        // TODO: use parameter instead of static chat name
         chats().chatPrivateLog(this.state.user.username).then(response => {
-            console.log('privates:', response);
             response = response.filter(it => it.was_seen == false);
             if (response.length > 0) {
                 this.setState({privateQuestion: response[0]})
@@ -122,7 +102,7 @@ export default React.createClass({
         }).catch(error => {
             console.log(error);
         });
-        this.setState({showPrivateQuestionDialog: false, privateQuestion: {body : null, chat: {name: null}}});
+        this.setState({showPrivateQuestionDialog: false, privateQuestion: {body: null, chat: {name: null}}});
         this.modalInterval = setInterval(this.tryToshowModal, 3000);
     },
 
@@ -140,7 +120,7 @@ export default React.createClass({
         }).catch(error => {
             console.log(error);
         });
-        this.setState({showPrivateQuestionDialog: false, privateQuestion: {body : null, chat: {name: null}}});
+        this.setState({showPrivateQuestionDialog: false, privateQuestion: {body: null, chat: {name: null}}});
     },
 
     render() {
@@ -161,6 +141,8 @@ export default React.createClass({
                     onTouchTap={this.handleMarkAsSeen}
                 />
             ];
+
+            console.log(this.state.user);
 
             return (
                 <div className="app">
@@ -196,6 +178,7 @@ export default React.createClass({
             );
         } else {
             chats().register().then(response => {
+                console.log('brak usera, loading..')
                 this.setState({user: response});
             });
             return (<div>loading...</div>)

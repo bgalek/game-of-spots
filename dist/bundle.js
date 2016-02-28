@@ -58,7 +58,7 @@
 
 	var _App2 = _interopRequireDefault(_App);
 
-	var _reactTapEventPlugin = __webpack_require__(474);
+	var _reactTapEventPlugin = __webpack_require__(472);
 
 	var _reactTapEventPlugin2 = _interopRequireDefault(_reactTapEventPlugin);
 
@@ -19734,10 +19734,6 @@
 
 	var _dialog2 = _interopRequireDefault(_dialog);
 
-	var _flatButton = __webpack_require__(447);
-
-	var _flatButton2 = _interopRequireDefault(_flatButton);
-
 	var _textField = __webpack_require__(308);
 
 	var _textField2 = _interopRequireDefault(_textField);
@@ -19751,8 +19747,6 @@
 	var _colors2 = _interopRequireDefault(_colors);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var LocalStorageMixin = __webpack_require__(472);
 
 	var customStyles = {
 	    defaultPadding: {
@@ -19773,14 +19767,7 @@
 
 	exports.default = _react2.default.createClass({
 	    displayName: 'App',
-	    mixins: [LocalStorageMixin],
 	    modalInterval: null,
-
-	    getDefaultProps: function getDefaultProps() {
-	        return {
-	            stateFilterKeys: ['user']
-	        };
-	    },
 
 	    getInitialState: function getInitialState() {
 	        return {
@@ -19792,29 +19779,18 @@
 	        };
 	    },
 
-	    componentDidUpdate: function componentDidUpdate() {
-	        var _this = this;
-
-	        if (this.state.user == null) {
-	            (0, _chats2.default)().register().then(function (response) {
-	                _this.setState({ user: response });
-	            });
-	        }
-	    },
 	    componentDidMount: function componentDidMount() {
 	        this.modalInterval = setInterval(this.tryToshowModal, 3000);
 	    },
 	    tryToshowModal: function tryToshowModal() {
-	        var _this2 = this;
+	        var _this = this;
 
-	        // TODO: use parameter instead of static chat name
 	        (0, _chats2.default)().chatPrivateLog(this.state.user.username).then(function (response) {
-	            console.log('privates:', response);
 	            response = response.filter(function (it) {
 	                return it.was_seen == false;
 	            });
 	            if (response.length > 0) {
-	                _this2.setState({ privateQuestion: response[0] });
+	                _this.setState({ privateQuestion: response[0] });
 	            }
 	        }).catch(function (error) {
 	            console.log(error);
@@ -19850,13 +19826,13 @@
 	        }
 	    },
 	    handleAnswerSubmit: function handleAnswerSubmit(event) {
-	        var _this3 = this;
+	        var _this2 = this;
 
 	        event.preventDefault();
 	        (0, _chats2.default)().answer(this.state.privateQuestion.id, this.state.responseMessage).then(function (response) {
-	            _this3.setState({ responseMessage: '' });
+	            _this2.setState({ responseMessage: '' });
 	            console.log(response);
-	            console.log('question answered:', _this3.state.privateQuestion.id);
+	            console.log('question answered:', _this2.state.privateQuestion.id);
 	        }).catch(function (error) {
 	            console.log(error);
 	        });
@@ -19869,19 +19845,19 @@
 	        });
 	    },
 	    handleMarkAsSeen: function handleMarkAsSeen(event) {
-	        var _this4 = this;
+	        var _this3 = this;
 
 	        event.preventDefault();
 	        (0, _chats2.default)().markAsSeen(this.state.privateQuestion.id).then(function (response) {
 	            console.log(response);
-	            console.log('answer marked as seen:', _this4.state.privateQuestion.id);
+	            console.log('answer marked as seen:', _this3.state.privateQuestion.id);
 	        }).catch(function (error) {
 	            console.log(error);
 	        });
 	        this.setState({ showPrivateQuestionDialog: false, privateQuestion: { body: null, chat: { name: null } } });
 	    },
 	    render: function render() {
-	        var _this5 = this;
+	        var _this4 = this;
 
 	        if (this.state.user !== null) {
 
@@ -19897,6 +19873,8 @@
 	                onTouchTap: this.handleMarkAsSeen
 	            })];
 
+	            console.log(this.state.user);
+
 	            return _react2.default.createElement(
 	                "div",
 	                { className: "app" },
@@ -19904,7 +19882,7 @@
 	                _react2.default.createElement(
 	                    _leftNav2.default,
 	                    { docked: false, width: 200, open: this.state.leftNavVisible, onRequestChange: function onRequestChange(leftNavVisible) {
-	                            return _this5.setState({ leftNavVisible: leftNavVisible });
+	                            return _this4.setState({ leftNavVisible: leftNavVisible });
 	                        } },
 	                    _react2.default.createElement(
 	                        _menuItem2.default,
@@ -19953,7 +19931,8 @@
 	            );
 	        } else {
 	            (0, _chats2.default)().register().then(function (response) {
-	                _this5.setState({ user: response });
+	                console.log('brak usera, loading..');
+	                _this4.setState({ user: response });
 	            });
 	            return _react2.default.createElement(
 	                "div",
@@ -60220,213 +60199,20 @@
 /* 472 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global, process) {'use strict';
-	var React = __webpack_require__(1);
-	var warn = __webpack_require__(473);
-	var hasLocalStorage = 'localStorage' in global;
-	var ls, testKey;
-
-	if (hasLocalStorage) {
-	  testKey = 'react-localstorage.mixin.test-key';
-	  try {
-	    // Access to global `localStorage` property must be guarded as it
-	    // fails under iOS private session mode.
-	    ls = global.localStorage;
-	    ls.setItem(testKey, 'foo');
-	    ls.removeItem(testKey);
-	  } catch (e) {
-	    hasLocalStorage = false;
-	  }
-	}
-
-	// Warn if localStorage cannot be found or accessed.
-	if (process.browser) {
-	  warn(
-	    hasLocalStorage,
-	    'localStorage not found. Component state will not be stored to localStorage.'
-	  );
-	}
-
-	var Mixin = module.exports = {
-	  /**
-	   * Error checking. On update, ensure that the last state stored in localStorage is equal
-	   * to the state on the component. We skip the check the first time around as state is left
-	   * alone until mount to keep server rendering working.
-	   *
-	   * If it is not consistent, we know that someone else is modifying localStorage out from under us, so we throw
-	   * an error.
-	   *
-	   * There are a lot of ways this can happen, so it is worth throwing the error.
-	   */
-	  componentWillUpdate: function(nextProps, nextState) {
-	    if (!hasLocalStorage || !this.__stateLoadedFromLS) return;
-	    var key = getLocalStorageKey(this);
-	    var prevStoredState = ls.getItem(key);
-	    if (prevStoredState && process.env.NODE_ENV !== "production") {
-	      warn(
-	        prevStoredState === JSON.stringify(getSyncState(this, this.state)),
-	        'While component ' + getDisplayName(this) + ' was saving state to localStorage, ' +
-	        'the localStorage entry was modified by another actor. This can happen when multiple ' +
-	        'components are using the same localStorage key. Set the property `localStorageKey` ' +
-	        'on ' + getDisplayName(this) + '.'
-	      );
-	    }
-	    // Since setState() can't be called in CWU, it's a fine time to save the state.
-	    ls.setItem(key, JSON.stringify(getSyncState(this, nextState)));
-	  },
-
-	  /**
-	   * Load data.
-	   * This seems odd to do this on componentDidMount, but it prevents server checksum errors.
-	   * This is because the server has no way to know what is in your localStorage. So instead
-	   * of breaking the checksum and causing a full rerender, we instead change the component after mount
-	   * for an efficient diff.
-	   */
-	  componentDidMount: function () {
-	    if (!hasLocalStorage) return;
-	    var me = this;
-	    loadStateFromLocalStorage(this, function() {
-	      // After setting state, mirror back to localstorage.
-	      // This prevents invariants if the developer has changed the initial state of the component.
-	      ls.setItem(getLocalStorageKey(me), JSON.stringify(getSyncState(me, me.state)));
-	    });
-	  }
-	};
-
-	function loadStateFromLocalStorage(component, cb) {
-	  if (!ls) return;
-	  var key = getLocalStorageKey(component);
-	  var settingState = false;
-	  try {
-	    var storedState = JSON.parse(ls.getItem(key));
-	    if (storedState) {
-	      settingState = true;
-	      component.setState(storedState, done);
-	    }
-	  } catch(e) {
-	    if (console) console.warn("Unable to load state for", getDisplayName(component), "from localStorage.");
-	  }
-	  // If we didn't set state, run the callback right away.
-	  if (!settingState) done();
-
-	  function done() {
-	    // Flag this component as loaded.
-	    component.__stateLoadedFromLS = true;
-	    cb();
-	  }
-	}
-
-	function getDisplayName(component) {
-	  // at least, we cannot get displayname
-	  // via this.displayname in react 0.12
-	  return component.displayName || component.constructor.displayName || component.constructor.name;
-	}
-
-	function getLocalStorageKey(component) {
-	  if (component.getLocalStorageKey) {
-	    return component.getLocalStorageKey();
-	  }
-	  return component.props.localStorageKey || getDisplayName(component) || 'react-localstorage';
-	}
-
-	function getStateFilterKeys(component) {
-	  if (component.getStateFilterKeys) {
-	    return typeof component.getStateFilterKeys() === 'string' ?
-	      [component.getStateFilterKeys()] : component.getStateFilterKeys();
-	  }
-	  return typeof component.props.stateFilterKeys === 'string' ?
-	    [component.props.stateFilterKeys] : component.props.stateFilterKeys;
-	}
-
-	/**
-	* Filters state to only save keys defined in stateFilterKeys.
-	* If stateFilterKeys is not set, returns full state.
-	*/
-	function getSyncState(component, state) {
-	  var stateFilterKeys = getStateFilterKeys(component);
-	  if (!stateFilterKeys) return state;
-	  var result = {};
-	  stateFilterKeys.forEach(function(sk) {
-	    for (var key in state) {
-	      if (state.hasOwnProperty(key) && sk === key) result[key] = state[key];
-	    }
-	  });
-	  return result;
-	}
-
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(4)))
-
-/***/ },
-/* 473 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule warning
-	 */
-
-	"use strict";
-
-	/**
-	 * Similar to invariant but only logs a warning if the condition is not met.
-	 * This can be used to log issues in development environments in critical
-	 * paths. Removing the logging code for production environments will keep the
-	 * same logic and follow the same code paths.
-	 */
-
-	var warning = function() {};
-
-	if ("production" !== process.env.NODE_ENV) {
-	  warning = function(condition, format ) {var args=Array.prototype.slice.call(arguments,2);
-	    if (format === undefined) {
-	      throw new Error(
-	        '`warning(condition, format, ...args)` requires a warning ' +
-	        'message argument'
-	      );
-	    }
-
-	    if (!condition) {
-	      var argIndex = 0;
-	      console.warn('Warning: ' + format.replace(/%s/g, function()  {return args[argIndex++];}));
-	    }
-	  };
-	}
-
-	module.exports = warning;
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
-
-/***/ },
-/* 474 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var defaultClickRejectionStrategy = __webpack_require__(475);
+	var defaultClickRejectionStrategy = __webpack_require__(473);
 
 	module.exports = function injectTapEventPlugin (strategyOverrides) {
 	  strategyOverrides = strategyOverrides || {}
 	  var shouldRejectClick = strategyOverrides.shouldRejectClick || defaultClickRejectionStrategy;
 
 	  __webpack_require__(31).injection.injectEventPluginsByName({
-	    "TapEventPlugin":       __webpack_require__(476)(shouldRejectClick)
+	    "TapEventPlugin":       __webpack_require__(474)(shouldRejectClick)
 	  });
 	};
 
 
 /***/ },
-/* 475 */
+/* 473 */
 /***/ function(module, exports) {
 
 	module.exports = function(lastTouchEvent, clickTimestamp) {
@@ -60437,7 +60223,7 @@
 
 
 /***/ },
-/* 476 */
+/* 474 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -60465,10 +60251,10 @@
 	var EventPluginUtils = __webpack_require__(33);
 	var EventPropagators = __webpack_require__(73);
 	var SyntheticUIEvent = __webpack_require__(87);
-	var TouchEventUtils = __webpack_require__(477);
+	var TouchEventUtils = __webpack_require__(475);
 	var ViewportMetrics = __webpack_require__(38);
 
-	var keyOf = __webpack_require__(478);
+	var keyOf = __webpack_require__(476);
 	var topLevelTypes = EventConstants.topLevelTypes;
 
 	var isStartish = EventPluginUtils.isStartish;
@@ -60614,7 +60400,7 @@
 
 
 /***/ },
-/* 477 */
+/* 475 */
 /***/ function(module, exports) {
 
 	/**
@@ -60662,7 +60448,7 @@
 
 
 /***/ },
-/* 478 */
+/* 476 */
 /***/ function(module, exports) {
 
 	/**
