@@ -19746,6 +19746,10 @@
 
 	var _colors2 = _interopRequireDefault(_colors);
 
+	var _flatButton = __webpack_require__(447);
+
+	var _flatButton2 = _interopRequireDefault(_flatButton);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var customStyles = {
@@ -19758,6 +19762,13 @@
 	    },
 	    chatNameHeading: {
 	        fontSize: 14,
+	        fontWeight: '400',
+	        textTransform: 'uppercase',
+	        color: _colors2.default.grey900,
+	        margin: '0'
+	    },
+	    chatNameHeadingOriginalBody: {
+	        fontSize: 16,
 	        fontWeight: '700',
 	        textTransform: 'uppercase',
 	        color: _colors2.default.red500,
@@ -19875,10 +19886,52 @@
 
 	            console.log(this.state.user);
 
+	            var dialog = undefined;
+
+	            if (this.state.privateQuestion.is_response) {
+	                dialog = _react2.default.createElement(
+	                    "div",
+	                    null,
+	                    _react2.default.createElement(
+	                        "h2",
+	                        { style: customStyles.chatNameHeadingOriginalBody },
+	                        this.state.privateQuestion.original_body
+	                    ),
+	                    _react2.default.createElement(
+	                        "h3",
+	                        { style: customStyles.chatNameHeading },
+	                        this.state.privateQuestion.body
+	                    )
+	                );
+	            } else {
+	                dialog = _react2.default.createElement(
+	                    "div",
+	                    null,
+	                    _react2.default.createElement(
+	                        "h3",
+	                        { style: customStyles.chatNameHeading },
+	                        this.state.privateQuestion.body
+	                    ),
+	                    _react2.default.createElement(
+	                        "form",
+	                        { onSubmit: this.handleAnswerSubmit },
+	                        _react2.default.createElement(_textField2.default, {
+	                            hintText: "Your answer...",
+	                            fullWidth: true,
+	                            value: this.state.responseMessage,
+	                            onChange: this.handleAnswerChange,
+	                            inputStyle: customStyles.questionInputStyle
+	                        })
+	                    )
+	                );
+	            }
+
 	            return _react2.default.createElement(
 	                "div",
 	                { className: "app" },
-	                _react2.default.createElement(_appBar2.default, { title: "Spotcheck", onTouchTap: this.handleToggle, onLeftIconButtonTouchTap: this.handleToggle }),
+	                _react2.default.createElement(_appBar2.default, { title: "Spotcheck",
+	                    onLeftIconButtonTouchTap: this.handleToggle,
+	                    iconElementRight: _react2.default.createElement(_flatButton2.default, { label: "Hello, " + this.state.user.username + "!" }) }),
 	                _react2.default.createElement(
 	                    _leftNav2.default,
 	                    { docked: false, width: 200, open: this.state.leftNavVisible, onRequestChange: function onRequestChange(leftNavVisible) {
@@ -19911,22 +19964,7 @@
 	                        modal: true,
 	                        actions: this.state.privateQuestion.is_response ? actionsNotify : actionsAnswer,
 	                        open: this.state.showPrivateQuestionDialog },
-	                    _react2.default.createElement(
-	                        "h3",
-	                        { style: customStyles.chatNameHeading },
-	                        this.state.privateQuestion.body
-	                    ),
-	                    _react2.default.createElement(
-	                        "form",
-	                        { onSubmit: this.handleAnswerSubmit },
-	                        _react2.default.createElement(_textField2.default, {
-	                            hintText: "Your answer...",
-	                            fullWidth: true,
-	                            value: this.state.responseMessage,
-	                            onChange: this.handleAnswerChange,
-	                            inputStyle: customStyles.questionInputStyle
-	                        })
-	                    )
+	                    dialog
 	                )
 	            );
 	        } else {
@@ -38086,14 +38124,14 @@
 	    predefinedTextSubmit: function predefinedTextSubmit(event) {
 	        var _this4 = this;
 
-	        (0, _chats2.default)().sendMessage(this.props.params.chatId, event.target.innerHTML, this.props.route.user.username).then(function (response) {
-	            _this4.fetchChatLog();
+	        (0, _chats2.default)().ask(this.props.params.chatId, event.target.innerHTML, this.props.route.user.username).then(function (response) {
 	            _this4.setState({ question: '' });
 	        });
 	    },
 
 	    calculateDistance: function calculateDistance(lat1, lon1, latlon2) {
-	        if (latlon2 === "undefined") {
+	        console.log(latlon2);
+	        if (typeof latlon2 === "undefined") {
 	            this.setState({ "distance": "unavailable" });
 	        } else {
 	            var radlat1 = Math.PI * lat1 / 180;
@@ -38113,7 +38151,6 @@
 
 	        event.preventDefault();
 	        (0, _chats2.default)().ask(this.props.params.chatId, this.state.question, this.props.route.user.username).then(function (response) {
-	            _this5.fetchChatLog();
 	            _this5.setState({ question: '' });
 	        });
 	    },
@@ -38126,10 +38163,12 @@
 	        var _this6 = this;
 
 	        event.preventDefault();
-	        (0, _chats2.default)().sendMessage(this.props.params.chatId, this.state.message, this.props.route.user.username).then(function (response) {
-	            _this6.fetchChatLog();
-	            _this6.setState({ message: '' });
-	        });
+	        if (this.state.message !== undefined && this.state.message !== '') {
+	            (0, _chats2.default)().sendMessage(this.props.params.chatId, this.state.message, this.props.route.user.username).then(function (response) {
+	                _this6.fetchChatLog();
+	                _this6.setState({ message: '' });
+	            });
+	        }
 	    },
 	    handleMessageChange: function handleMessageChange(event) {
 	        this.setState({
@@ -38217,7 +38256,7 @@
 	                            { style: customStyles.postSenderButtonWrapper },
 	                            _react2.default.createElement(
 	                                _iconButton2.default,
-	                                { iconStyle: customStyles.sendPostIcon },
+	                                { iconStyle: customStyles.sendPostIcon, onTouchTap: this.handleMessageSubmit },
 	                                _react2.default.createElement(_send2.default, null)
 	                            )
 	                        )
@@ -40450,7 +40489,7 @@
 	                });
 	            } else {
 	                return _react2.default.createElement(_listItem2.default, { key: "" + id,
-	                    rightAvatar: _react2.default.createElement(_avatar2.default, { src: "https://robohash.org/" + from_user.username }),
+	                    leftAvatar: _react2.default.createElement(_avatar2.default, { src: "https://robohash.org/" + from_user.username }),
 	                    primaryText: body,
 	                    secondaryText: _react2.default.createElement(
 	                        "p",

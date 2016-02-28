@@ -166,10 +166,12 @@ export default React.createClass({
 
     handleMessageSubmit(event){
         event.preventDefault();
-        chats().sendMessage(this.props.params.chatId, this.state.message, this.props.route.user.username).then(response => {
-            this.fetchChatLog();
-            this.setState({message: ''});
-        });
+        if (this.state.message !== undefined && this.state.message !== '') {
+            chats().sendMessage(this.props.params.chatId, this.state.message, this.props.route.user.username).then(response => {
+                this.fetchChatLog();
+                this.setState({message: ''});
+            });
+        }
     },
 
     handleMessageChange(event){
@@ -232,7 +234,7 @@ export default React.createClass({
                                 />
                             </div>
                             <div style={customStyles.postSenderButtonWrapper}>
-                                <IconButton iconStyle={customStyles.sendPostIcon}>
+                                <IconButton iconStyle={customStyles.sendPostIcon} onTouchTap={this.handleMessageSubmit}>
                                     <SendIcon />
                                 </IconButton>
                             </div>
