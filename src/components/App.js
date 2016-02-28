@@ -49,9 +49,9 @@ export default React.createClass({
     },
 
     tryToshowModal() {
-        chats().chatLog("piwpaw").then(response => {
+        chats().chatPrivateLog("piwpaw", this.state.user.username).then(response => {
             console.log('privates:', response);
-            response = response.filter(it => it.was_seen == false);
+            //response = response.filter(it => it.was_seen == false);
             if (response.length > 0) {
                 this.setState({privateQuestion: response[0]})
             }
@@ -108,7 +108,7 @@ export default React.createClass({
 
             return (
                 <div className="app">
-                    <AppBar title="Game of Spots" onTouchTap={this.handleToggle} onLeftIconButtonTouchTap={this.handleToggle}/>
+                    <AppBar title="Spotcheck" onTouchTap={this.handleToggle} onLeftIconButtonTouchTap={this.handleToggle}/>
                     <LeftNav docked={false} width={200} open={this.state.leftNavVisible} onRequestChange={leftNavVisible => this.setState({leftNavVisible})}>
                         <MenuItem onTouchTap={this.handleGoTo.bind(this, '/')}>Available spots</MenuItem>
                         <MenuItem onTouchTap={this.handleGoTo.bind(this, '/about')}>About</MenuItem>

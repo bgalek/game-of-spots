@@ -40,10 +40,11 @@ class GameOfSpotsAPI {
         });
     }
 
-    join(chatId) {
+    join(chatId, username) {
         return new Promise((resolve, reject) => {
             let requestInstance = request.post(`${API_HOST}/chats/${chatId}/join/`)
-                .accept('application/json');
+                .accept('application/json')
+                .send(`{"username":"${username}"}`);
             requestInstance.end((error, res) => {
                 if (error) reject(error);
                 resolve(res.body);
@@ -97,11 +98,20 @@ class GameOfSpotsAPI {
         });
     }
 
-
-
     chatLog(chatId) {
         return new Promise((resolve, reject) => {
             let requestInstance = request.get(`${API_HOST}/chats/${chatId}/messages/`)
+                .accept('application/json');
+            requestInstance.end((error, res) => {
+                if (error) reject(error);
+                resolve(res.body.results);
+            });
+        });
+    }
+
+    chatPrivateLog(chatId, username) {
+        return new Promise((resolve, reject) => {
+            let requestInstance = request.get(`${API_HOST}/chats/${chatId}/private/?username=${username}`)
                 .accept('application/json');
             requestInstance.end((error, res) => {
                 if (error) reject(error);

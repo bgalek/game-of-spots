@@ -93,7 +93,12 @@ export default React.createClass({
     },
 
     componentWillMount(){
-        navigator.geolocation.getCurrentPosition(position => this.calculateDistance(position.coords.latitude, position.coords.longitude, this.state.chatDetails.geo_location[0], this.state.chatDetails.geo_location[1]))
+        chats().join(this.props.params.chatId, this.props.route.user.username).then(response => {
+        }).catch(error => {
+            // TODO: display a dialog maybe?
+            console.log(error);
+        });
+        navigator.geolocation.getCurrentPosition(position => this.calculateDistance(position.coords.latitude, position.coords.longitude, this.state.chatDetails.geo_location))
     },
 
     componentDidMount() {
@@ -129,17 +134,21 @@ export default React.createClass({
         });
     },
 
-    calculateDistance(lat1, lon1, lat2, lon2) {
-        let radlat1 = Math.PI * lat1 / 180;
-        let radlat2 = Math.PI * lat2 / 180;
-        let theta = lon1 - lon2;
-        let radtheta = Math.PI * theta / 180;
-        let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-        dist = Math.acos(dist);
-        dist = dist * 180 / Math.PI;
-        dist = dist * 60 * 1.1515;
-        dist = dist * 1.609344;
-        this.setState({"distance": Math.round(dist * 100) / 100 + " km"});
+    calculateDistance(lat1, lon1, latlon2) {
+        if (latlon2 === "undefined") {
+            this.setState({"distance": "unavailable"});
+        } else {
+            let radlat1 = Math.PI * lat1 / 180;
+            let radlat2 = Math.PI * latlon2[0] / 180;
+            let theta = lon1 - latlon2[1];
+            let radtheta = Math.PI * theta / 180;
+            let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+            dist = Math.acos(dist);
+            dist = dist * 180 / Math.PI;
+            dist = dist * 60 * 1.1515;
+            dist = dist * 1.609344;
+            this.setState({"distance": Math.round(dist * 100) / 100 + " km"});
+        }
     },
 
     handleQuestionSubmit(event){

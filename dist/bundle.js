@@ -19777,11 +19777,9 @@
 	    tryToshowModal: function tryToshowModal() {
 	        var _this2 = this;
 
-	        (0, _chats2.default)().chatLog("piwpaw").then(function (response) {
+	        (0, _chats2.default)().chatPrivateLog("piwpaw", this.state.user.username).then(function (response) {
 	            console.log('privates:', response);
-	            response = response.filter(function (it) {
-	                return it.was_seen == false;
-	            });
+	            //response = response.filter(it => it.was_seen == false);
 	            if (response.length > 0) {
 	                _this2.setState({ privateQuestion: response[0] });
 	            }
@@ -19837,7 +19835,7 @@
 	            return _react2.default.createElement(
 	                "div",
 	                { className: "app" },
-	                _react2.default.createElement(_appBar2.default, { title: "Game of Spots", onTouchTap: this.handleToggle, onLeftIconButtonTouchTap: this.handleToggle }),
+	                _react2.default.createElement(_appBar2.default, { title: "Spotcheck", onTouchTap: this.handleToggle, onLeftIconButtonTouchTap: this.handleToggle }),
 	                _react2.default.createElement(
 	                    _leftNav2.default,
 	                    { docked: false, width: 200, open: this.state.leftNavVisible, onRequestChange: function onRequestChange(leftNavVisible) {
@@ -35099,7 +35097,7 @@
 	        return _react2.default.createElement(
 	            "form",
 	            { style: customStyles.defaultPadding, onSubmit: this.handleSearch },
-	            _react2.default.createElement(_textField2.default, { hintText: "Find a spot", onChange: this.handleQuestionChange, fullWidth: true })
+	            _react2.default.createElement(_textField2.default, { hintText: "Find a spot", onChange: this.handleSearch, fullWidth: true })
 	        );
 	    }
 	});
@@ -36326,9 +36324,9 @@
 	        }
 	    }, {
 	        key: "join",
-	        value: function join(chatId) {
+	        value: function join(chatId, username) {
 	            return new Promise(function (resolve, reject) {
-	                var requestInstance = _superagent2.default.post(API_HOST + "/chats/" + chatId + "/join/").accept('application/json');
+	                var requestInstance = _superagent2.default.post(API_HOST + "/chats/" + chatId + "/join/").accept('application/json').send("{\"username\":\"" + username + "\"}");
 	                requestInstance.end(function (error, res) {
 	                    if (error) reject(error);
 	                    resolve(res.body);
@@ -36384,6 +36382,17 @@
 	        value: function chatLog(chatId) {
 	            return new Promise(function (resolve, reject) {
 	                var requestInstance = _superagent2.default.get(API_HOST + "/chats/" + chatId + "/messages/").accept('application/json');
+	                requestInstance.end(function (error, res) {
+	                    if (error) reject(error);
+	                    resolve(res.body.results);
+	                });
+	            });
+	        }
+	    }, {
+	        key: "chatPrivateLog",
+	        value: function chatPrivateLog(chatId, username) {
+	            return new Promise(function (resolve, reject) {
+	                var requestInstance = _superagent2.default.get(API_HOST + "/chats/" + chatId + "/private/?username=" + username).accept('application/json');
 	                requestInstance.end(function (error, res) {
 	                    if (error) reject(error);
 	                    resolve(res.body.results);
@@ -37963,8 +37972,12 @@
 	    componentWillMount: function componentWillMount() {
 	        var _this = this;
 
+	        (0, _chats2.default)().join(this.props.params.chatId, this.props.route.user.username).then(function (response) {}).catch(function (error) {
+	            // TODO: display a dialog maybe?
+	            console.log(error);
+	        });
 	        navigator.geolocation.getCurrentPosition(function (position) {
-	            return _this.calculateDistance(position.coords.latitude, position.coords.longitude, _this.state.chatDetails.geo_location[0], _this.state.chatDetails.geo_location[1]);
+	            return _this.calculateDistance(position.coords.latitude, position.coords.longitude, _this.state.chatDetails.geo_location);
 	        });
 	    },
 	    componentDidMount: function componentDidMount() {
@@ -38006,17 +38019,21 @@
 	        });
 	    },
 
-	    calculateDistance: function calculateDistance(lat1, lon1, lat2, lon2) {
-	        var radlat1 = Math.PI * lat1 / 180;
-	        var radlat2 = Math.PI * lat2 / 180;
-	        var theta = lon1 - lon2;
-	        var radtheta = Math.PI * theta / 180;
-	        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-	        dist = Math.acos(dist);
-	        dist = dist * 180 / Math.PI;
-	        dist = dist * 60 * 1.1515;
-	        dist = dist * 1.609344;
-	        this.setState({ "distance": Math.round(dist * 100) / 100 + " km" });
+	    calculateDistance: function calculateDistance(lat1, lon1, latlon2) {
+	        if (latlon2 === "undefined") {
+	            this.setState({ "distance": "unavailable" });
+	        } else {
+	            var radlat1 = Math.PI * lat1 / 180;
+	            var radlat2 = Math.PI * latlon2[0] / 180;
+	            var theta = lon1 - latlon2[1];
+	            var radtheta = Math.PI * theta / 180;
+	            var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+	            dist = Math.acos(dist);
+	            dist = dist * 180 / Math.PI;
+	            dist = dist * 60 * 1.1515;
+	            dist = dist * 1.609344;
+	            this.setState({ "distance": Math.round(dist * 100) / 100 + " km" });
+	        }
 	    },
 	    handleQuestionSubmit: function handleQuestionSubmit(event) {
 	        var _this5 = this;
@@ -53244,13 +53261,23 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	var customStyles = {
+	    defaultPadding: {
+	        padding: '15'
+	    }
+	};
+
 	exports.default = _react2.default.createClass({
 	    displayName: 'About',
 	    render: function render() {
 	        return _react2.default.createElement(
 	            'div',
-	            null,
-	            'about page'
+	            { style: customStyles.defaultPadding },
+	            _react2.default.createElement(
+	                'p',
+	                null,
+	                'About the project.'
+	            )
 	        );
 	    }
 	});
