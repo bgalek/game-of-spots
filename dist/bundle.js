@@ -19832,7 +19832,7 @@
 	    },
 	    handleAnswer: function handleAnswer(event) {
 	        event.preventDefault();
-	        if (typeof event.target.value !== "undefined") {
+	        if (typeof event.target.value !== "undefined" && event.target.value !== '') {
 	            this.answerQuestion(event.target.value);
 	        }
 	    },
@@ -19840,15 +19840,15 @@
 	        var _this2 = this;
 
 	        event.preventDefault();
-	        (0, _chats2.default)().answer(this.state.privateQuestion.id, this.state.responseMessage).then(function (response) {
-	            _this2.setState({ responseMessage: '' });
-	            console.log(response);
-	            console.log('question answered:', _this2.state.privateQuestion.id);
-	        }).catch(function (error) {
-	            console.log(error);
-	        });
-	        this.setState({ showPrivateQuestionDialog: false, privateQuestion: { body: null, chat: { name: null } } });
-	        this.modalInterval = setInterval(this.tryToshowModal, 3000);
+	        if (this.state.responseMessage !== undefined && this.state.responseMessage !== '') {
+	            (0, _chats2.default)().answer(this.state.privateQuestion.id, this.state.responseMessage).then(function (response) {
+	                _this2.setState({ responseMessage: '' });
+	            }).catch(function (error) {
+	                console.log(error);
+	            });
+	            this.setState({ showPrivateQuestionDialog: false, privateQuestion: { body: null, chat: { name: null } } });
+	            this.modalInterval = setInterval(this.tryToshowModal, 3000);
+	        }
 	    },
 	    handleAnswerChange: function handleAnswerChange(event) {
 	        this.setState({
@@ -19931,7 +19931,7 @@
 	                { className: "app" },
 	                _react2.default.createElement(_appBar2.default, { title: "Spotcheck",
 	                    onLeftIconButtonTouchTap: this.handleToggle,
-	                    iconElementRight: _react2.default.createElement(_flatButton2.default, { label: "Hello, " + this.state.user.username + "!" }) }),
+	                    iconElementRight: _react2.default.createElement(_flatButton2.default, { label: this.state.user.username }) }),
 	                _react2.default.createElement(
 	                    _leftNav2.default,
 	                    { docked: false, width: 200, open: this.state.leftNavVisible, onRequestChange: function onRequestChange(leftNavVisible) {
@@ -38130,7 +38130,6 @@
 	    },
 
 	    calculateDistance: function calculateDistance(lat1, lon1, latlon2) {
-	        console.log(latlon2);
 	        if (typeof latlon2 === "undefined") {
 	            this.setState({ "distance": "unavailable" });
 	        } else {
@@ -38150,9 +38149,11 @@
 	        var _this5 = this;
 
 	        event.preventDefault();
-	        (0, _chats2.default)().ask(this.props.params.chatId, this.state.question, this.props.route.user.username).then(function (response) {
-	            _this5.setState({ question: '' });
-	        });
+	        if (this.state.question !== undefined && this.state.question !== '') {
+	            (0, _chats2.default)().ask(this.props.params.chatId, this.state.question, this.props.route.user.username).then(function (response) {
+	                _this5.setState({ question: '' });
+	            });
+	        }
 	    },
 	    handleQuestionChange: function handleQuestionChange(event) {
 	        this.setState({
