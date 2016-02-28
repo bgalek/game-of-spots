@@ -1,11 +1,19 @@
 import React from 'react';
 
+const customStyles = {
+    defaultPadding: {
+        padding: '15'
+    }
+}
+
 export default React.createClass({
     displayName: 'About',
     render() {
         return (
-            <div>
-                about page
+            <div style={customStyles.defaultPadding}>
+                <p>
+                    About the project.
+                </p>
             </div>
         );
     }
