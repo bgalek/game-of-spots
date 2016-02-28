@@ -15,6 +15,7 @@ import Dialog from "material-ui/lib/dialog";
 import TextField from "material-ui/lib/text-field";
 import RaisedButton from "material-ui/lib/raised-button";
 import Colors from "material-ui/lib/styles/colors";
+import FlatButton from "material-ui/lib/flat-button";
 
 const customStyles = {
     defaultPadding: {

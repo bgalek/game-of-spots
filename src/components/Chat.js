@@ -134,7 +134,8 @@ export default React.createClass({
     },
 
     calculateDistance(lat1, lon1, latlon2) {
-        if (latlon2 === "undefined") {
+        console.log(latlon2);
+        if (typeof latlon2 === "undefined") {
             this.setState({"distance": "unavailable"});
         } else {
             let radlat1 = Math.PI * lat1 / 180;
