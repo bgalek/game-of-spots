@@ -146,7 +146,9 @@ export default React.createClass({
 
             return (
                 <div className="app">
-                    <AppBar title="Spotcheck" onTouchTap={this.handleToggle} onLeftIconButtonTouchTap={this.handleToggle}/>
+                    <AppBar title="Spotcheck"
+                            onLeftIconButtonTouchTap={this.handleToggle}
+                            iconElementRight={<FlatButton label={`Hello, ${this.state.user.username}!`} />}/>
                     <LeftNav docked={false} width={200} open={this.state.leftNavVisible} onRequestChange={leftNavVisible => this.setState({leftNavVisible})}>
                         <MenuItem onTouchTap={this.handleGoTo.bind(this, '/')}>Available spots</MenuItem>
                         <MenuItem onTouchTap={this.handleGoTo.bind(this, '/about')}>About</MenuItem>
