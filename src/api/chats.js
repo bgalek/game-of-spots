@@ -66,9 +66,21 @@ class GameOfSpotsAPI {
 
     ask(chatId, message, username) {
         return new Promise((resolve, reject) => {
-            let requestInstance = request.post(`${API_HOST}/chats/${chatId}/private/`)
+            let requestInstance = request.post(`${API_HOST}/messages/private/`)
                 .accept('application/json')
-                .send(`{"body":"${message}","username":"${username}"}`);
+                .send(`{"body":"${message}","username":"${username}","chat_id":"${chatId}"}`);
+            requestInstance.end((error, res) => {
+                if (error) reject(error);
+                resolve(res.body);
+            });
+        });
+    }
+
+    answer(messageId, responseMessage) {
+        return new Promise((resolve, reject) => {
+            let requestInstance = request.post(`${API_HOST}/messages/${messageId}/response/`)
+                .accept('application/json')
+                .send(`{"body":"${responseMessage}"}`);
             requestInstance.end((error, res) => {
                 if (error) reject(error);
                 resolve(res.body);
@@ -109,9 +121,9 @@ class GameOfSpotsAPI {
         });
     }
 
-    chatPrivateLog(chatId, username) {
+    chatPrivateLog(username) {
         return new Promise((resolve, reject) => {
-            let requestInstance = request.get(`${API_HOST}/chats/${chatId}/private/?username=${username}`)
+            let requestInstance = request.get(`${API_HOST}/messages/private/?username=${username}`)
                 .accept('application/json');
             requestInstance.end((error, res) => {
                 if (error) reject(error);

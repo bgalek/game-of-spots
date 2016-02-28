@@ -19738,9 +19738,38 @@
 
 	var _flatButton2 = _interopRequireDefault(_flatButton);
 
+	var _textField = __webpack_require__(308);
+
+	var _textField2 = _interopRequireDefault(_textField);
+
+	var _raisedButton = __webpack_require__(325);
+
+	var _raisedButton2 = _interopRequireDefault(_raisedButton);
+
+	var _colors = __webpack_require__(242);
+
+	var _colors2 = _interopRequireDefault(_colors);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var LocalStorageMixin = __webpack_require__(472);
+
+	var customStyles = {
+	    defaultPadding: {
+	        padding: '15'
+	    },
+	    questionInputStyle: {
+	        fontSize: 20,
+	        marginBottom: '7'
+	    },
+	    chatNameHeading: {
+	        fontSize: 14,
+	        fontWeight: '700',
+	        textTransform: 'uppercase',
+	        color: _colors2.default.red500,
+	        margin: '0'
+	    }
+	};
 
 	exports.default = _react2.default.createClass({
 	    displayName: 'App',
@@ -19758,7 +19787,8 @@
 	            user: null,
 	            leftNavVisible: false,
 	            showPrivateQuestionDialog: false,
-	            privateQuestion: { body: null }
+	            privateQuestion: { body: null, chat: { name: null } },
+	            responseMessage: ''
 	        };
 	    },
 
@@ -19772,14 +19802,17 @@
 	        }
 	    },
 	    componentDidMount: function componentDidMount() {
-	        this.modalInterval = setInterval(this.tryToshowModal, 1000);
+	        this.modalInterval = setInterval(this.tryToshowModal, 3000);
 	    },
 	    tryToshowModal: function tryToshowModal() {
 	        var _this2 = this;
 
-	        (0, _chats2.default)().chatPrivateLog("piwpaw", this.state.user.username).then(function (response) {
+	        // TODO: use parameter instead of static chat name
+	        (0, _chats2.default)().chatPrivateLog(this.state.user.username).then(function (response) {
 	            console.log('privates:', response);
-	            //response = response.filter(it => it.was_seen == false);
+	            response = response.filter(function (it) {
+	                return it.was_seen == false;
+	            });
 	            if (response.length > 0) {
 	                _this2.setState({ privateQuestion: response[0] });
 	            }
@@ -19791,17 +19824,6 @@
 	            clearInterval(this.modalInterval);
 	            this.setState({ showPrivateQuestionDialog: true });
 	        }
-	    },
-	    answerQuestion: function answerQuestion() {
-	        var _this3 = this;
-
-	        (0, _chats2.default)().markAsSeen(this.state.privateQuestion.id).then(function (response) {
-	            console.log('marked as seen:', _this3.state.privateQuestion.id);
-	        }).catch(function (error) {
-	            console.log(error);
-	        });
-	        this.setState({ showPrivateQuestionDialog: false, privateQuestion: { body: null } });
-	        this.modalInterval = setInterval(this.tryToshowModal, 1000);
 	    },
 
 
@@ -19821,15 +19843,58 @@
 	        this.setState({ leftNavVisible: !this.state.leftNavVisible });
 	        this.refs.router.router.push(route);
 	    },
-	    render: function render() {
+	    handleAnswer: function handleAnswer(event) {
+	        event.preventDefault();
+	        if (typeof event.target.value !== "undefined") {
+	            this.answerQuestion(event.target.value);
+	        }
+	    },
+	    handleAnswerSubmit: function handleAnswerSubmit(event) {
+	        var _this3 = this;
+
+	        event.preventDefault();
+	        (0, _chats2.default)().answer(this.state.privateQuestion.id, this.state.responseMessage).then(function (response) {
+	            _this3.setState({ responseMessage: '' });
+	            console.log(response);
+	            console.log('question answered:', _this3.state.privateQuestion.id);
+	        }).catch(function (error) {
+	            console.log(error);
+	        });
+	        this.setState({ showPrivateQuestionDialog: false, privateQuestion: { body: null, chat: { name: null } } });
+	        this.modalInterval = setInterval(this.tryToshowModal, 3000);
+	    },
+	    handleAnswerChange: function handleAnswerChange(event) {
+	        this.setState({
+	            responseMessage: event.target.value
+	        });
+	    },
+	    handleMarkAsSeen: function handleMarkAsSeen(event) {
 	        var _this4 = this;
+
+	        event.preventDefault();
+	        (0, _chats2.default)().markAsSeen(this.state.privateQuestion.id).then(function (response) {
+	            console.log(response);
+	            console.log('answer marked as seen:', _this4.state.privateQuestion.id);
+	        }).catch(function (error) {
+	            console.log(error);
+	        });
+	        this.setState({ showPrivateQuestionDialog: false, privateQuestion: { body: null, chat: { name: null } } });
+	    },
+	    render: function render() {
+	        var _this5 = this;
 
 	        if (this.state.user !== null) {
 
-	            var actions = [_react2.default.createElement(_flatButton2.default, {
+	            var actionsAnswer = [_react2.default.createElement(_raisedButton2.default, {
 	                label: "Answer",
 	                secondary: true,
-	                onTouchTap: this.answerQuestion
+	                onTouchTap: this.handleAnswerSubmit
+	            })];
+
+	            var actionsNotify = [_react2.default.createElement(_raisedButton2.default, {
+	                label: "Thank you!",
+	                primary: true,
+	                onTouchTap: this.handleMarkAsSeen
 	            })];
 
 	            return _react2.default.createElement(
@@ -19839,7 +19904,7 @@
 	                _react2.default.createElement(
 	                    _leftNav2.default,
 	                    { docked: false, width: 200, open: this.state.leftNavVisible, onRequestChange: function onRequestChange(leftNavVisible) {
-	                            return _this4.setState({ leftNavVisible: leftNavVisible });
+	                            return _this5.setState({ leftNavVisible: leftNavVisible });
 	                        } },
 	                    _react2.default.createElement(
 	                        _menuItem2.default,
@@ -19864,14 +19929,32 @@
 	                _react2.default.createElement(
 	                    _dialog2.default,
 	                    {
-	                        title: "New Question!",
+	                        title: this.state.privateQuestion.chat.name,
 	                        modal: true,
-	                        actions: actions,
+	                        actions: this.state.privateQuestion.is_response ? actionsNotify : actionsAnswer,
 	                        open: this.state.showPrivateQuestionDialog },
-	                    this.state.privateQuestion.body
+	                    _react2.default.createElement(
+	                        "h3",
+	                        { style: customStyles.chatNameHeading },
+	                        this.state.privateQuestion.body
+	                    ),
+	                    _react2.default.createElement(
+	                        "form",
+	                        { onSubmit: this.handleAnswerSubmit },
+	                        _react2.default.createElement(_textField2.default, {
+	                            hintText: "Your answer...",
+	                            fullWidth: true,
+	                            value: this.state.responseMessage,
+	                            onChange: this.handleAnswerChange,
+	                            inputStyle: customStyles.questionInputStyle
+	                        })
+	                    )
 	                )
 	            );
 	        } else {
+	            (0, _chats2.default)().register().then(function (response) {
+	                _this5.setState({ user: response });
+	            });
 	            return _react2.default.createElement(
 	                "div",
 	                null,
@@ -36348,7 +36431,18 @@
 	        key: "ask",
 	        value: function ask(chatId, message, username) {
 	            return new Promise(function (resolve, reject) {
-	                var requestInstance = _superagent2.default.post(API_HOST + "/chats/" + chatId + "/private/").accept('application/json').send("{\"body\":\"" + message + "\",\"username\":\"" + username + "\"}");
+	                var requestInstance = _superagent2.default.post(API_HOST + "/messages/private/").accept('application/json').send("{\"body\":\"" + message + "\",\"username\":\"" + username + "\",\"chat_id\":\"" + chatId + "\"}");
+	                requestInstance.end(function (error, res) {
+	                    if (error) reject(error);
+	                    resolve(res.body);
+	                });
+	            });
+	        }
+	    }, {
+	        key: "answer",
+	        value: function answer(messageId, responseMessage) {
+	            return new Promise(function (resolve, reject) {
+	                var requestInstance = _superagent2.default.post(API_HOST + "/messages/" + messageId + "/response/").accept('application/json').send("{\"body\":\"" + responseMessage + "\"}");
 	                requestInstance.end(function (error, res) {
 	                    if (error) reject(error);
 	                    resolve(res.body);
@@ -36390,9 +36484,9 @@
 	        }
 	    }, {
 	        key: "chatPrivateLog",
-	        value: function chatPrivateLog(chatId, username) {
+	        value: function chatPrivateLog(username) {
 	            return new Promise(function (resolve, reject) {
-	                var requestInstance = _superagent2.default.get(API_HOST + "/chats/" + chatId + "/private/?username=" + username).accept('application/json');
+	                var requestInstance = _superagent2.default.get(API_HOST + "/messages/private/?username=" + username).accept('application/json');
 	                requestInstance.end(function (error, res) {
 	                    if (error) reject(error);
 	                    resolve(res.body.results);
@@ -37983,7 +38077,7 @@
 	    componentDidMount: function componentDidMount() {
 	        this.fetchChatDetails();
 	        this.fetchChatLog();
-	        this.logInterval = setInterval(this.fetchChatLog, 1000);
+	        this.logInterval = setInterval(this.fetchChatLog, 2000);
 	    },
 	    componentWillUnmount: function componentWillUnmount() {
 	        clearInterval(this.logInterval);

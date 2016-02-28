@@ -13,8 +13,28 @@ import CustomTheme from "../CustomTheme";
 import chats from "../api/chats";
 import Dialog from "material-ui/lib/dialog";
 import FlatButton from "material-ui/lib/flat-button";
+import TextField from "material-ui/lib/text-field";
+import RaisedButton from "material-ui/lib/raised-button";
+import Colors from "material-ui/lib/styles/colors";
 
 var LocalStorageMixin = require('react-localstorage');
+
+const customStyles = {
+    defaultPadding: {
+        padding: '15'
+    },
+    questionInputStyle: {
+        fontSize: 20,
+        marginBottom: '7'
+    },
+    chatNameHeading: {
+        fontSize: 14,
+        fontWeight: '700',
+        textTransform: 'uppercase',
+        color: Colors.red500,
+        margin: '0'
+    }
+}
 
 export default React.createClass({
     displayName: 'App',
@@ -32,7 +52,8 @@ export default React.createClass({
             user: null,
             leftNavVisible: false,
             showPrivateQuestionDialog: false,
-            privateQuestion: {body: null}
+            privateQuestion: {body: null, chat: {name: null}},
+            responseMessage: ''
         }
     },
 
@@ -45,13 +66,14 @@ export default React.createClass({
     },
 
     componentDidMount() {
-        this.modalInterval = setInterval(this.tryToshowModal, 1000);
+        this.modalInterval = setInterval(this.tryToshowModal, 3000);
     },
 
     tryToshowModal() {
-        chats().chatPrivateLog("piwpaw", this.state.user.username).then(response => {
+        // TODO: use parameter instead of static chat name
+        chats().chatPrivateLog(this.state.user.username).then(response => {
             console.log('privates:', response);
-            //response = response.filter(it => it.was_seen == false);
+            response = response.filter(it => it.was_seen == false);
             if (response.length > 0) {
                 this.setState({privateQuestion: response[0]})
             }
@@ -64,17 +86,6 @@ export default React.createClass({
             this.setState({showPrivateQuestionDialog: true});
         }
     },
-
-    answerQuestion() {
-        chats().markAsSeen(this.state.privateQuestion.id).then(response => {
-            console.log('marked as seen:', this.state.privateQuestion.id)
-        }).catch(error => {
-            console.log(error);
-        });
-        this.setState({showPrivateQuestionDialog: false, privateQuestion: {body : null}});
-        this.modalInterval = setInterval(this.tryToshowModal, 1000);
-    },
-
 
     childContextTypes: {
         muiTheme: React.PropTypes.object,
@@ -95,14 +106,59 @@ export default React.createClass({
         this.refs.router.router.push(route);
     },
 
+    handleAnswer(event){
+        event.preventDefault();
+        if (typeof event.target.value !== "undefined") {
+            this.answerQuestion(event.target.value);
+        }
+    },
+
+    handleAnswerSubmit(event){
+        event.preventDefault();
+        chats().answer(this.state.privateQuestion.id, this.state.responseMessage).then(response => {
+            this.setState({responseMessage: ''});
+            console.log(response);
+            console.log('question answered:', this.state.privateQuestion.id)
+        }).catch(error => {
+            console.log(error);
+        });
+        this.setState({showPrivateQuestionDialog: false, privateQuestion: {body : null, chat: {name: null}}});
+        this.modalInterval = setInterval(this.tryToshowModal, 3000);
+    },
+
+    handleAnswerChange(event){
+        this.setState({
+            responseMessage: event.target.value
+        });
+    },
+
+    handleMarkAsSeen(event) {
+        event.preventDefault();
+        chats().markAsSeen(this.state.privateQuestion.id).then(response => {
+            console.log(response);
+            console.log('answer marked as seen:', this.state.privateQuestion.id)
+        }).catch(error => {
+            console.log(error);
+        });
+        this.setState({showPrivateQuestionDialog: false, privateQuestion: {body : null, chat: {name: null}}});
+    },
+
     render() {
         if (this.state.user !== null) {
 
-            const actions = [
-                <FlatButton
+            const actionsAnswer = [
+                <RaisedButton
                     label="Answer"
                     secondary={true}
-                    onTouchTap={this.answerQuestion}
+                    onTouchTap={this.handleAnswerSubmit}
+                />
+            ];
+
+            const actionsNotify = [
+                <RaisedButton
+                    label="Thank you!"
+                    primary={true}
+                    onTouchTap={this.handleMarkAsSeen}
                 />
             ];
 
@@ -121,15 +177,27 @@ export default React.createClass({
                         <Route path="*" component={Error404}/>
                     </Router>
                     <Dialog
-                        title="New Question!"
+                        title={this.state.privateQuestion.chat.name}
                         modal={true}
-                        actions={actions}
+                        actions={this.state.privateQuestion.is_response ? actionsNotify : actionsAnswer}
                         open={this.state.showPrivateQuestionDialog}>
-                        {this.state.privateQuestion.body}
+                        <h3 style={customStyles.chatNameHeading}>{this.state.privateQuestion.body}</h3>
+                        <form onSubmit={this.handleAnswerSubmit}>
+                            <TextField
+                                hintText="Your answer..."
+                                fullWidth={true}
+                                value={this.state.responseMessage}
+                                onChange={this.handleAnswerChange}
+                                inputStyle={customStyles.questionInputStyle}
+                            />
+                        </form>
                     </Dialog>
                 </div>
             );
         } else {
+            chats().register().then(response => {
+                this.setState({user: response});
+            });
             return (<div>loading...</div>)
         }
     }

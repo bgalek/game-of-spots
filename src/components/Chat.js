@@ -104,7 +104,7 @@ export default React.createClass({
     componentDidMount() {
         this.fetchChatDetails();
         this.fetchChatLog();
-        this.logInterval = setInterval(this.fetchChatLog, 1000);
+        this.logInterval = setInterval(this.fetchChatLog, 2000);
     },
 
     componentWillUnmount(){
