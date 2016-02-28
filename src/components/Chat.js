@@ -128,8 +128,7 @@ export default React.createClass({
     },
 
     predefinedTextSubmit: function (event) {
-        chats().sendMessage(this.props.params.chatId, event.target.innerHTML, this.props.route.user.username).then(response => {
-            this.fetchChatLog();
+        chats().ask(this.props.params.chatId, event.target.innerHTML, this.props.route.user.username).then(response => {
             this.setState({question: ''});
         });
     },
@@ -154,7 +153,6 @@ export default React.createClass({
     handleQuestionSubmit(event){
         event.preventDefault();
         chats().ask(this.props.params.chatId, this.state.question, this.props.route.user.username).then(response => {
-            this.fetchChatLog();
             this.setState({question: ''});
         });
     },
