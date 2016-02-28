@@ -3,6 +3,9 @@ import Paper from "material-ui/lib/paper";
 import Tabs from "material-ui/lib/tabs/tabs";
 import Tab from "material-ui/lib/tabs/tab";
 import TextField from "material-ui/lib/text-field";
+import RaisedButton from "material-ui/lib/raised-button";
+import SendIcon from "material-ui/lib/svg-icons/content/send";
+import IconButton from "material-ui/lib/icon-button";
 import List from "material-ui/lib/lists/list";
 import ListItem from "material-ui/lib/lists/list-item";
 import ContentInbox from "material-ui/lib/svg-icons/action/touch-app";
@@ -10,8 +13,6 @@ import Card from "material-ui/lib/card/card";
 import CardMedia from "material-ui/lib/card/card-media";
 import CardTitle from "material-ui/lib/card/card-title";
 import Colors from "material-ui/lib/styles/colors";
-import RaisedButton from "material-ui/lib/raised-button";
-import PostSender from "./PostSender";
 import ChatLog from "./ChatLog";
 import chats from "../api/chats";
 
@@ -30,13 +31,43 @@ const customStyles = {
         textTransform: 'uppercase',
         color: Colors.red500,
         margin: '0'
+    },
+    defaultPadding2: {
+        padding: '15',
+        backgroundColor: Colors.darkBlack,
+        color: Colors.white
+    },
+    sendButtonStyle: {
+        float: 'right'
+    },
+    postInputHintStyle: {
+        color: Colors.grey400
+    },
+    postInputUnderlineStyle: {
+        borderColor: Colors.grey400
+    },
+    postInputStyle: {
+        color: Colors.white
+    },
+    postSenderInputWrapper: {
+        display: 'inline-block',
+        width: '80%'
+    },
+    postSenderButtonWrapper: {
+        display: 'inline-block',
+        textAlign: 'right',
+        width: '20%'
+    },
+    sendPostIcon: {
+        color: Colors.red500,
+        fill: Colors.red500
     }
 };
 
 export default React.createClass({
 
     displayName: 'Chat',
-    interval: null,
+    logInterval: null,
 
     contextTypes: {
         router: React.PropTypes.object
@@ -68,11 +99,11 @@ export default React.createClass({
     componentDidMount() {
         this.fetchChatDetails();
         this.fetchChatLog();
-        this.interval = setInterval(this.fetchChatLog, 1000);
+        this.logInterval = setInterval(this.fetchChatLog, 1000);
     },
 
     componentWillUnmount(){
-        clearInterval(this.interval)
+        clearInterval(this.logInterval)
     },
 
     fetchChatLog: function () {
@@ -113,7 +144,7 @@ export default React.createClass({
 
     handleQuestionSubmit(event){
         event.preventDefault();
-        chats().sendMessage(this.props.params.chatId, this.state.question, this.props.route.user.username).then(response => {
+        chats().ask(this.props.params.chatId, this.state.question, this.props.route.user.username).then(response => {
             this.fetchChatLog();
             this.setState({question: ''});
         });
@@ -122,6 +153,20 @@ export default React.createClass({
     handleQuestionChange(event){
         this.setState({
             question: event.target.value
+        });
+    },
+
+    handleMessageSubmit(event){
+        event.preventDefault();
+        chats().sendMessage(this.props.params.chatId, this.state.message, this.props.route.user.username).then(response => {
+            this.fetchChatLog();
+            this.setState({message: ''});
+        });
+    },
+
+    handleMessageChange(event){
+        this.setState({
+            message: event.target.value
         });
     },
 
@@ -166,7 +211,24 @@ export default React.createClass({
                     </Tab>
                     <Tab label="Chat" value="chat">
                         <ChatLog chatLog={this.state.chatLog} chatId={this.props.params.chatId} user={this.props.route.user}/>
-                        <PostSender/>
+                        <form style={customStyles.defaultPadding2} onSubmit={this.handleMessageSubmit}>
+                            <div style={customStyles.postSenderInputWrapper}>
+                                <TextField
+                                    hintText="Post a message..."
+                                    fullWidth={true}
+                                    value={this.state.message}
+                                    onChange={this.handleMessageChange}
+                                    inputStyle={customStyles.postInputStyle}
+                                    hintStyle={customStyles.postInputHintStyle}
+                                    underlineStyle={customStyles.postInputUnderlineStyle}
+                                />
+                            </div>
+                            <div style={customStyles.postSenderButtonWrapper}>
+                                <IconButton iconStyle={customStyles.sendPostIcon}>
+                                    <SendIcon />
+                                </IconButton>
+                            </div>
+                        </form>
                     </Tab>
                 </Tabs>
             </div>

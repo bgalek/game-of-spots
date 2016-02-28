@@ -63,6 +63,42 @@ class GameOfSpotsAPI {
         });
     }
 
+    ask(chatId, message, username) {
+        return new Promise((resolve, reject) => {
+            let requestInstance = request.post(`${API_HOST}/chats/${chatId}/private/`)
+                .accept('application/json')
+                .send(`{"body":"${message}","username":"${username}"}`);
+            requestInstance.end((error, res) => {
+                if (error) reject(error);
+                resolve(res.body);
+            });
+        });
+    }
+
+    getAnswers(chatId, username) {
+        return new Promise((resolve, reject) => {
+            let requestInstance = request.get(`${API_HOST}/chats/${chatId}/private/?name=${username}`)
+                .accept('application/json')
+            requestInstance.end((error, res) => {
+                if (error) reject(error);
+                resolve(res.body);
+            });
+        });
+    }
+
+    markAsSeen(messageId) {
+        return new Promise((resolve, reject) => {
+            let requestInstance = request.post(`${API_HOST}/messages/${messageId}/as_seen/`)
+                .accept('application/json')
+            requestInstance.end((error, res) => {
+                if (error) reject(error);
+                resolve(res.body);
+            });
+        });
+    }
+
+
+
     chatLog(chatId) {
         return new Promise((resolve, reject) => {
             let requestInstance = request.get(`${API_HOST}/chats/${chatId}/messages/`)
