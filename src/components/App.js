@@ -27,6 +27,13 @@ const customStyles = {
     },
     chatNameHeading: {
         fontSize: 14,
+        fontWeight: '400',
+        textTransform: 'uppercase',
+        color: Colors.grey900,
+        margin: '0'
+    },
+    chatNameHeadingOriginalBody: {
+        fontSize: 16,
         fontWeight: '700',
         textTransform: 'uppercase',
         color: Colors.red500,
@@ -145,6 +152,32 @@ export default React.createClass({
 
             console.log(this.state.user);
 
+            let dialog;
+
+            if(this.state.privateQuestion.is_response) {
+                dialog = (
+                    <div>
+                        <h2 style={customStyles.chatNameHeadingOriginalBody}>{this.state.privateQuestion.original_body}</h2>
+                        <h3 style={customStyles.chatNameHeading}>{this.state.privateQuestion.body}</h3>
+                    </div>
+                );
+            } else {
+                dialog = (
+                    <div>
+                        <h3 style={customStyles.chatNameHeading}>{this.state.privateQuestion.body}</h3>
+                        <form onSubmit={this.handleAnswerSubmit}>
+                            <TextField
+                                hintText="Your answer..."
+                                fullWidth={true}
+                                value={this.state.responseMessage}
+                                onChange={this.handleAnswerChange}
+                                inputStyle={customStyles.questionInputStyle}
+                            />
+                        </form>
+                    </div>
+                );
+            }
+
             return (
                 <div className="app">
                     <AppBar title="Spotcheck"
@@ -166,16 +199,7 @@ export default React.createClass({
                         modal={true}
                         actions={this.state.privateQuestion.is_response ? actionsNotify : actionsAnswer}
                         open={this.state.showPrivateQuestionDialog}>
-                        <h3 style={customStyles.chatNameHeading}>{this.state.privateQuestion.body}</h3>
-                        <form onSubmit={this.handleAnswerSubmit}>
-                            <TextField
-                                hintText="Your answer..."
-                                fullWidth={true}
-                                value={this.state.responseMessage}
-                                onChange={this.handleAnswerChange}
-                                inputStyle={customStyles.questionInputStyle}
-                            />
-                        </form>
+                        {dialog}
                     </Dialog>
                 </div>
             );

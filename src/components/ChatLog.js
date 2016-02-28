@@ -70,7 +70,7 @@ export default React.createClass({
             } else {
                 return (
                     <ListItem key={`${id}`}
-                              rightAvatar={<Avatar src={`https://robohash.org/${from_user.username}`} />}
+                              leftAvatar={<Avatar src={`https://robohash.org/${from_user.username}`} />}
                               primaryText={body}
                               secondaryText={
                                   <p>
