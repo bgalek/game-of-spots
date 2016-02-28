@@ -134,7 +134,6 @@ export default React.createClass({
     },
 
     calculateDistance(lat1, lon1, latlon2) {
-        console.log(latlon2);
         if (typeof latlon2 === "undefined") {
             this.setState({"distance": "unavailable"});
         } else {
@@ -153,9 +152,11 @@ export default React.createClass({
 
     handleQuestionSubmit(event){
         event.preventDefault();
-        chats().ask(this.props.params.chatId, this.state.question, this.props.route.user.username).then(response => {
-            this.setState({question: ''});
-        });
+        if (this.state.question !== undefined && this.state.question !== '') {
+            chats().ask(this.props.params.chatId, this.state.question, this.props.route.user.username).then(response => {
+                this.setState({question: ''});
+            });
+        }
     },
 
     handleQuestionChange(event){

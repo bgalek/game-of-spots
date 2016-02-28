@@ -96,22 +96,22 @@ export default React.createClass({
 
     handleAnswer(event){
         event.preventDefault();
-        if (typeof event.target.value !== "undefined") {
+        if (typeof event.target.value !== "undefined" && event.target.value !== '') {
             this.answerQuestion(event.target.value);
         }
     },
 
     handleAnswerSubmit(event){
         event.preventDefault();
-        chats().answer(this.state.privateQuestion.id, this.state.responseMessage).then(response => {
-            this.setState({responseMessage: ''});
-            console.log(response);
-            console.log('question answered:', this.state.privateQuestion.id)
-        }).catch(error => {
-            console.log(error);
-        });
-        this.setState({showPrivateQuestionDialog: false, privateQuestion: {body: null, chat: {name: null}}});
-        this.modalInterval = setInterval(this.tryToshowModal, 3000);
+        if (this.state.responseMessage !== undefined && this.state.responseMessage !== '') {
+            chats().answer(this.state.privateQuestion.id, this.state.responseMessage).then(response => {
+                this.setState({responseMessage: ''});
+            }).catch(error => {
+                console.log(error);
+            });
+            this.setState({showPrivateQuestionDialog: false, privateQuestion: {body: null, chat: {name: null}}});
+            this.modalInterval = setInterval(this.tryToshowModal, 3000);
+        }
     },
 
     handleAnswerChange(event){
@@ -182,7 +182,7 @@ export default React.createClass({
                 <div className="app">
                     <AppBar title="Spotcheck"
                             onLeftIconButtonTouchTap={this.handleToggle}
-                            iconElementRight={<FlatButton label={`Hello, ${this.state.user.username}!`} />}/>
+                            iconElementRight={<FlatButton label={this.state.user.username} />}/>
                     <LeftNav docked={false} width={200} open={this.state.leftNavVisible} onRequestChange={leftNavVisible => this.setState({leftNavVisible})}>
                         <MenuItem onTouchTap={this.handleGoTo.bind(this, '/')}>Available spots</MenuItem>
                         <MenuItem onTouchTap={this.handleGoTo.bind(this, '/about')}>About</MenuItem>
